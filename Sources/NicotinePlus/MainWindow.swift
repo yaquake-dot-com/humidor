@@ -83,6 +83,9 @@ final class MainWindow: NSObject {
     private(set) var userStatusUsername: String?
     var downloadStatusText = ""
     var uploadStatusText = ""
+    var isDownloadLimitAlternative = false
+    var isUploadLimitAlternative = false
+    var isShutdownPending = false
 
     // Log pane
     var isLogPaneVisible: Bool {
@@ -308,6 +311,12 @@ final class MainWindow: NSObject {
         mainPage.onFocus()
     }
 
+    func showCurrentPage() {
+        let mainPage = page(currentPage)
+        mainPage.onShow()
+        mainPage.onFocus()
+    }
+
     func changeMainPage(_ page: Page) {
         showTab(page)
         setCurrentPage(page)
@@ -424,7 +433,7 @@ final class MainWindow: NSObject {
 
     // MARK: Connection
 
-    private func updateUserStatus() {
+    func updateUserStatus() {
         let status = core.users.loginStatus
 
         // Away mode
@@ -439,7 +448,11 @@ final class MainWindow: NSObject {
     }
 
     var userStatusText: String {
-        switch userStatus {
+        if isShutdownPending {
+            return String(localized: "Quitting...")
+        }
+
+        return switch userStatus {
         case .away: String(localized: "Away")
         case .online: String(localized: "Online")
         case .offline: String(localized: "Offline")

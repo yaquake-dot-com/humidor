@@ -24,10 +24,6 @@ import SwiftUI
 @MainActor final class About { func present() {} }
 @MainActor final class Shortcuts { func present() {} }
 
-struct TransferSpeedsView: View {
-    let direction: TransferDirection
-    var body: some View { Text("") }
-}
 
 @MainActor final class InterestsPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
 @MainActor final class ChatRoomsPage: MainPage {
@@ -40,13 +36,12 @@ struct TransferSpeedsView: View {
     enum SearchMode { case global, buddies, rooms, user }
     var unreadPages: [Int: Bool] = [:]
     var userSearchText = ""
+    var searchText = ""
     init(window: MainWindow) {}
     func onFocus() {}
     func setSearchMode(_ mode: SearchMode) {}
     func focusSearchEntry() {}
 }
-@MainActor final class DownloadsPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
-@MainActor final class UploadsPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
 @MainActor final class BuddiesPage: MainPage {
     init(window: MainWindow) {}
     func onFocus() {}
@@ -63,10 +58,6 @@ struct TransferSpeedsView: View {
 @MainActor final class UserBrowsesPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
 
 struct SearchesView: View { let page: SearchesPage; var body: some View { Text("Search") } }
-struct TransfersView: View {
-    let page: any MainPage
-    var body: some View { Text("Transfers") }
-}
 struct UserBrowsesView: View { let page: UserBrowsesPage; var body: some View { Text("Browse") } }
 struct UserInfosView: View { let page: UserInfosPage; var body: some View { Text("Info") } }
 struct PrivateChatsView: View { let page: PrivateChatsPage; var body: some View { Text("Private") } }

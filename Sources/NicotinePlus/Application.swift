@@ -82,6 +82,9 @@ final class Application: NSObject, NSApplicationDelegate {
         if !shouldStartHidden {
             window.present()
         }
+
+        // Show active page and focus default widget
+        window.showCurrentPage()
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {

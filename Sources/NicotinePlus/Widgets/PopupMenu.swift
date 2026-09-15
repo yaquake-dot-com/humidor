@@ -227,7 +227,7 @@ final class UserPopupMenu: PopupMenu {
         }
     }
 
-    private func setupUserMenu(_ username: String?) {
+    func setupUserMenu(_ username: String?) {
         setUser(username)
 
         addItems(

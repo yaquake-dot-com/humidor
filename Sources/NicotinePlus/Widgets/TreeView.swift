@@ -172,7 +172,13 @@ final class TreeView: NSObject {
     let outlineView = TreeOutlineView()
 
     private(set) var iterators: [TreeValue: TreeRow] = [:]
-    let hasTree: Bool
+    /// Whether rows can have child rows. Clear the list view before changing it.
+    var hasTree: Bool {
+        didSet {
+            setShowExpanders(hasTree)
+            outlineView.reloadData()
+        }
+    }
     let multiSelect: Bool
 
     var popupMenu: PopupMenu?
@@ -202,6 +208,9 @@ final class TreeView: NSObject {
     private var needsReload = false
     private var changedRows: [TreeRow] = []
     private var isApplyingColumnConfig = false
+    private var isFillingWidth = false
+    private weak var fillColumn: NSTableColumn?
+    private var fillExtraWidth: CGFloat = 0
     private var isSelectingProgrammatically = false
 
     init(columns: [TreeColumn], hasTree: Bool = false, multiSelect: Bool = false, persistentSort: Bool = false,
@@ -248,6 +257,9 @@ final class TreeView: NSObject {
         initialiseColumns()
 
         let notificationCenter = NotificationCenter.default
+        scrollView.contentView.postsFrameChangedNotifications = true
+        notificationCenter.addObserver(self, selector: #selector(onContentViewFrameChanged(_:)),
+                                       name: NSView.frameDidChangeNotification, object: scrollView.contentView)
         notificationCenter.addObserver(self, selector: #selector(onColumnsChanged(_:)),
                                        name: NSTableView.columnDidMoveNotification, object: outlineView)
         notificationCenter.addObserver(self, selector: #selector(onColumnsChanged(_:)),
@@ -289,7 +301,6 @@ final class TreeView: NSObject {
         let columnConfig = columnConfig()
         var visibleColumns: [(position: Int, column: NSTableColumn)] = []
         var hasVisibleColumnHeader = false
-        var hasExpandingColumn = false
 
         for (index, column) in columns.enumerated() {
             let sortColumnIndex = columnIndices[column.sortColumn ?? column.id] ?? index
@@ -348,12 +359,8 @@ final class TreeView: NSObject {
                 tableColumn.width = width ?? 24
                 tableColumn.maxWidth = max(tableColumn.width, 48)
             } else {
-                tableColumn.resizingMask = column.expandsColumn ? [.autoresizingMask, .userResizingMask] : .userResizingMask
+                tableColumn.resizingMask = .userResizingMask
                 tableColumn.width = width ?? 100
-            }
-
-            if column.expandsColumn {
-                hasExpandingColumn = true
             }
 
             tableColumn.isHidden = !(columnProperties["visible"]?.boolValue ?? true)
@@ -372,8 +379,8 @@ final class TreeView: NSObject {
 
         isApplyingColumnConfig = false
 
-        outlineView.columnAutoresizingStyle = hasExpandingColumn
-            ? .uniformColumnAutoresizingStyle : .lastColumnOnlyAutoresizingStyle
+        // Columns keep their width, expanding columns take up any remaining space
+        outlineView.columnAutoresizingStyle = .noColumnAutoresizing
 
         if !hasVisibleColumnHeader {
             outlineView.headerView = nil
@@ -417,7 +424,7 @@ final class TreeView: NSObject {
 
         for (position, tableColumn) in outlineView.tableColumns.enumerated() {
             let columnID = tableColumn.identifier.rawValue
-            let width = Int(tableColumn.width)
+            let width = Int(tableColumn.width - (tableColumn === fillColumn ? fillExtraWidth : 0))
             let isVisible = !tableColumn.isHidden
             var properties: [String: JSONValue] = [
                 "visible": .bool(isVisible),
@@ -451,7 +458,62 @@ final class TreeView: NSObject {
     }
 
     @objc private func onColumnsChanged(_ notification: Notification) {
+        guard !isFillingWidth else {
+            return
+        }
+
+        if notification.name == NSTableView.columnDidResizeNotification,
+           let resizedColumn = notification.userInfo?["NSTableColumn"] as? NSTableColumn,
+           resizedColumn === fillColumn {
+            // The user resized the expanding column, keep its new width
+            fillExtraWidth = 0
+            fillColumn = nil
+        }
+
         saveColumns()
+        fillAvailableWidth()
+    }
+
+    @objc private func onContentViewFrameChanged(_ notification: Notification) {
+        fillAvailableWidth()
+    }
+
+    /// Widens the last visible expanding column to fill the available width.
+    private func fillAvailableWidth() {
+        guard !isFillingWidth else {
+            return
+        }
+
+        isFillingWidth = true
+        defer { isFillingWidth = false }
+
+        if let fillColumn, fillExtraWidth > 0 {
+            fillColumn.width -= fillExtraWidth
+        }
+
+        fillColumn = nil
+        fillExtraWidth = 0
+
+        let visibleTableColumns = outlineView.tableColumns.filter { !$0.isHidden }
+        let spacing = outlineView.intercellSpacing.width
+        let totalWidth = visibleTableColumns.reduce(0) { $0 + $1.width + spacing }
+        let availableWidth = scrollView.contentView.bounds.width
+
+        guard availableWidth > totalWidth + 1 else {
+            return
+        }
+
+        let expandingColumn = visibleTableColumns.last { column(for: $0)?.expandsColumn == true }
+            ?? visibleTableColumns.last
+
+        guard let expandingColumn else {
+            return
+        }
+
+        let extraWidth = floor(availableWidth - totalWidth)
+        expandingColumn.width += extraWidth
+        fillColumn = expandingColumn
+        fillExtraWidth = extraWidth
     }
 
     var visibleColumns: [String] {
@@ -495,6 +557,7 @@ final class TreeView: NSObject {
         tableColumn.isHidden.toggle()
         updateColumnProperties()
         saveColumns()
+        fillAvailableWidth()
     }
 
     // MARK: Sorting
