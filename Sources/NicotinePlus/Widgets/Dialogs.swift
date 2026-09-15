@@ -98,7 +98,10 @@ class MessageDialog {
             }
         }
 
-        if let window = MainWindow.shared?.window, window.isVisible {
+        // Prioritize other dialogs as parent
+        let keyWindow = NSApp.keyWindow.flatMap { $0.isVisible && !$0.isSheet ? $0 : nil }
+
+        if let window = keyWindow ?? MainWindow.shared?.window, window.isVisible {
             alert.beginSheetModal(for: window, completionHandler: completion)
             alert.window.initialFirstResponder = initialFirstResponder
             return

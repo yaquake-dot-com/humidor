@@ -19,10 +19,6 @@ import SwiftUI
     func present() {}
 }
 
-@MainActor final class StatisticsDialog { func present() {} }
-@MainActor final class WishList { init(application: Application) {}; func present() {} }
-@MainActor final class About { func present() {} }
-@MainActor final class Shortcuts { func present() {} }
 
 
 

@@ -80,6 +80,16 @@ enum DebugHooks {
                     core.chatrooms.sendMessage(parts[0], parts[1])
                 }
             case "buddy": core.buddies.addBuddy(argument)
+            case "wish": core.search.addWish(argument)
+            case "dialog":
+                switch argument {
+                case "wishlist": Application.shared.onWishlist()
+                case "statistics": Application.shared.onTransferStatistics()
+                case "shortcuts": Application.shared.onKeyboardShortcuts()
+                case "preferences": Application.shared.onPreferences()
+                case "setup": Application.shared.onFastConfigure()
+                default: break
+                }
             case "select-all": (NSApp.keyWindow?.firstResponder as? NSTableView)?.selectAll(nil)
             default: break
             }
