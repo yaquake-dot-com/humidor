@@ -259,14 +259,11 @@ public func censorText(_ text: String, patterns: [String], filler: Character = "
 
 public enum CommandError: LocalizedError {
     case executionFailed(command: [String], index: Int, total: Int, underlying: Error)
-    case unsupportedPlatform
 
     public var errorDescription: String? {
         switch self {
         case let .executionFailed(command, index, total, underlying):
             return "Problem while executing command \(command) (\(index) of \(total)): \(underlying.localizedDescription)"
-        case .unsupportedPlatform:
-            return "Running external commands is not supported on this platform"
         }
     }
 }
@@ -336,7 +333,6 @@ private extension Substring {
 @discardableResult
 public func executeCommand(_ command: String, replacement: String? = nil, background: Bool = true,
                            returnOutput: Bool = false, placeholder: String = "$") throws -> Data? {
-    #if os(macOS)
     var command = command.trimmingCharacters(in: .whitespacesAndNewlines)
     var background = returnOutput ? false : background
 
@@ -394,9 +390,6 @@ public func executeCommand(_ command: String, replacement: String? = nil, backgr
     }
 
     return nil
-    #else
-    throw CommandError.unsupportedPlatform
-    #endif
 }
 
 // MARK: - File Loading/Saving

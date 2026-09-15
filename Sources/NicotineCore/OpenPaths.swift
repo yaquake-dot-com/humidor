@@ -2,23 +2,11 @@
 //
 // Opening files, folders and URLs with external applications.
 
+import AppKit
 import Foundation
 
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
-
 private func openWithSystem(_ url: URL) -> Bool {
-    #if canImport(AppKit)
-    return NSWorkspace.shared.open(url)
-    #elseif canImport(UIKit)
-    UIApplication.shared.open(url)
-    return true
-    #else
-    return false
-    #endif
+    NSWorkspace.shared.open(url)
 }
 
 /// Opens a folder, or plays an audio file. Tries to run a user-specified

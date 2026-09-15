@@ -5,7 +5,7 @@ A Swift port of [Nicotine+](https://nicotine-plus.org), the graphical client for
 
 The goal is a faithful port of Nicotine+ 3.3.10: the same protocol implementation, networking,
 transfer queues, shares, search, chat rooms and plugin behavior, written as idiomatic Swift for
-macOS and iOS.
+macOS.
 
 ## Status
 
@@ -19,7 +19,7 @@ macOS and iOS.
 | Chat rooms, private chat, buddies, interests, network filters | Ported |
 | Plugin system and built-in plugins | Ported (plugins are compiled in) |
 | Headless command line client | Ported |
-| SwiftUI user interface | Not started |
+| macOS user interface (SwiftUI, AppKit tables) | In progress |
 | Translations | `.mo` catalogs included, String Catalog conversion pending |
 
 ## Building
