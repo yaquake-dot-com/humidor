@@ -15,6 +15,30 @@ protocol NotebookPage: AnyObject {
 
     /// The content of the page
     @ViewBuilder var content: Content { get }
+
+    /// Items of the context menu of the page's tab. Items without an action are separators.
+    var tabMenuItems: [TabMenuItem] { get }
+}
+
+extension NotebookPage {
+    var tabMenuItems: [TabMenuItem] { [] }
+}
+
+struct TabMenuItem {
+    let title: String
+    let action: (@MainActor () -> Void)?
+
+    init(_ title: String, action: @escaping @MainActor () -> Void) {
+        self.title = title
+        self.action = action
+    }
+
+    private init() {
+        title = ""
+        action = nil
+    }
+
+    static let separator = TabMenuItem()
 }
 
 /// Label of a notebook tab.
@@ -476,6 +500,15 @@ private struct NotebookTab<Page: NotebookPage>: View {
         }
         .onHover { isHovering = $0 }
         .help(label?.tooltip ?? "")
+        .contextMenu {
+            ForEach(Array(page.tabMenuItems.enumerated()), id: \.offset) { _, item in
+                if let action = item.action {
+                    Button(item.title, action: action)
+                } else {
+                    Divider()
+                }
+            }
+        }
         .overlay(MiddleClickView { notebook.closePage(page) })
     }
 

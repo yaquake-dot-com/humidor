@@ -32,16 +32,6 @@ import SwiftUI
     func onFocus() {}
     func clearNotifications() {}
 }
-@MainActor final class SearchesPage: MainPage {
-    enum SearchMode { case global, buddies, rooms, user }
-    var unreadPages: [Int: Bool] = [:]
-    var userSearchText = ""
-    var searchText = ""
-    init(window: MainWindow) {}
-    func onFocus() {}
-    func setSearchMode(_ mode: SearchMode) {}
-    func focusSearchEntry() {}
-}
 @MainActor final class BuddiesPage: MainPage {
     init(window: MainWindow) {}
     func onFocus() {}
@@ -57,7 +47,6 @@ import SwiftUI
 @MainActor final class UserInfosPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
 @MainActor final class UserBrowsesPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
 
-struct SearchesView: View { let page: SearchesPage; var body: some View { Text("Search") } }
 struct UserBrowsesView: View { let page: UserBrowsesPage; var body: some View { Text("Browse") } }
 struct UserInfosView: View { let page: UserInfosPage; var body: some View { Text("Info") } }
 struct PrivateChatsView: View { let page: PrivateChatsPage; var body: some View { Text("Private") } }

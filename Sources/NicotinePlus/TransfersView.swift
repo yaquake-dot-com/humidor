@@ -160,6 +160,7 @@ struct GroupingMenu: View {
             .labelsHidden()
         } label: {
             Label(String(localized: "File Grouping Mode"), systemImage: "list.bullet.indent")
+                .labelStyle(.iconOnly)
         }
         .help(String(localized: "File Grouping Mode"))
     }

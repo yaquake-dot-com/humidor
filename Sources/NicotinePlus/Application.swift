@@ -66,7 +66,7 @@ final class Application: NSObject, NSApplicationDelegate {
         setUpSignalHandlers()
 
         #if DEBUG
-        WindowSnapshots.enableIfRequested()
+        DebugHooks.enableIfRequested()
         #endif
 
         window = MainWindow(application: self)
