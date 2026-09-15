@@ -179,7 +179,7 @@ struct TransfersView: View {
 struct GroupingMenu: View {
 
     let mode: GroupingMode
-    let action: (GroupingMode) -> Void
+    let action: @MainActor @Sendable (GroupingMode) -> Void
 
     var body: some View {
         Menu {

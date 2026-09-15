@@ -236,7 +236,7 @@ final class PrivateChatTab: NotebookPage {
                             font: Theme.font(config.ui.chatFont)) { [unowned self] point, username in
             usernameEvent(username)
         }
-        chatView.pageDownCallback = { [unowned self] in
+        chatView.pageDownCallback = { [unowned chats] in
             chats.chatEntry.grabFocus()
             return true
         }
@@ -251,7 +251,7 @@ final class PrivateChatTab: NotebookPage {
         for menu in [popupMenuUserChat!, popupMenuUserTab!] {
             menu.addItems(
                 .separator,
-                .action(String(localized: "Close All Tabs…")) { [unowned self] in chats.notebook.removeAllPages() },
+                .action(String(localized: "Close All Tabs…")) { [unowned chats] in chats.notebook.removeAllPages() },
                 .action(String(localized: "Close Tab")) { [unowned self] in onClose() }
             )
         }
@@ -286,7 +286,7 @@ final class PrivateChatTab: NotebookPage {
 
     var tabMenuItems: [TabMenuItem] {
         [
-            TabMenuItem(String(localized: "Close All Tabs…")) { [unowned self] in chats.notebook.removeAllPages() },
+            TabMenuItem(String(localized: "Close All Tabs…")) { [unowned chats] in chats.notebook.removeAllPages() },
             TabMenuItem(String(localized: "Close Tab")) { [unowned self] in onClose() }
         ]
     }

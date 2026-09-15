@@ -19,8 +19,12 @@ macOS.
 | Chat rooms, private chat, buddies, interests, network filters | Ported |
 | Plugin system and built-in plugins | Ported (plugins are compiled in) |
 | Headless command line client | Ported |
-| macOS user interface (SwiftUI, AppKit tables) | In progress |
+| macOS user interface (SwiftUI, AppKit tables) | Ported |
 | Translations | `.mo` catalogs included, String Catalog conversion pending |
+
+The macOS interface covers all pages and dialogs of the GTK interface. Options that only apply to
+GTK (header bar, tray icon, icon theme, tab bar positions) are left out of the preferences, and
+the MPRIS "Now Playing" source is not available on macOS.
 
 ## Building
 
@@ -29,6 +33,12 @@ Requires Xcode 16 or later (Swift 6).
 ```sh
 swift build
 swift test
+```
+
+Build the application bundle (`dist/Nicotine+.app`):
+
+```sh
+Scripts/build-app.sh
 ```
 
 Run the headless client:
@@ -48,6 +58,11 @@ swift run nicotine --help
   - `Plugins/` – built-in plugins
   - `External/` – TinyTag audio metadata reader (MIT)
 - `Sources/nicotine` – headless command line client
+- `Sources/NicotinePlus` – macOS application
+  - `Widgets/` – list views (`NSOutlineView`), text views, menus, dialogs, tab bar
+  - `Dialogs/` – preferences, setup assistant and other dialogs
+- `Packaging/` – `Info.plist` and application icon (from the Nicotine+ icon)
+- `Scripts/build-app.sh` – builds the application bundle
 - `Tests/NicotineCoreTests` – tests, with expected values produced by the upstream implementation
 
 ## License

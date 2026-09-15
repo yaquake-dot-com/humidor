@@ -324,7 +324,7 @@ final class ChatRoomTab: NotebookPage {
             usernameEvent(username)
         }
         chatView.statusUsers = { core.chatrooms.joinedRooms[room]?.users ?? [] }
-        chatView.pageDownCallback = { [unowned self] in
+        chatView.pageDownCallback = { [unowned chatrooms] in
             chatrooms.chatEntry.grabFocus()
             return true
         }
