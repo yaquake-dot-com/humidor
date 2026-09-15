@@ -1153,6 +1153,22 @@ final class TreeView: NSObject {
         return popupMenu.menu
     }
 
+    /// Selects the first row matching a search term, like typing in a search entry.
+    func selectFirstMatch(_ searchTerm: String) {
+        update()
+
+        guard outlineView.numberOfRows > 0 else {
+            return
+        }
+
+        let index = typeSelectMatch(from: 0, to: -1, searchTerm: searchTerm)
+
+        if index >= 0 {
+            outlineView.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
+            outlineView.scrollRowToVisible(index)
+        }
+    }
+
     fileprivate func typeSelectMatch(from startRow: Int, to endRow: Int, searchTerm: String) -> Int {
         guard !searchTerm.isEmpty else {
             return -1
@@ -1160,19 +1176,26 @@ final class TreeView: NSObject {
 
         let searchTerm = searchTerm.lowercased()
         let textColumns = columns.enumerated().filter { $0.element.title != nil && [.text, .number].contains($0.element.kind) }
+        let numberOfRows = outlineView.numberOfRows
+
+        guard numberOfRows > 0, startRow >= 0, startRow < numberOfRows else {
+            return -1
+        }
+
         var index = startRow
 
-        while index != endRow {
+        for _ in 0..<numberOfRows {
             if let row = outlineView.item(atRow: index) as? TreeRow {
                 for (columnIndex, _) in textColumns where row.values[columnIndex].string.lowercased().contains(searchTerm) {
                     return index
                 }
             }
 
-            index += 1
+            // Wrap around to the start, and stop at the end row
+            index = (index + 1) % numberOfRows
 
-            if index >= outlineView.numberOfRows {
-                index = 0
+            if index == endRow {
+                break
             }
         }
         return -1

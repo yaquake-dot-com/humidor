@@ -36,6 +36,15 @@ public struct OrderedDictionary<Key: Hashable, Value>: Sequence, ExpressibleByDi
         return nil
     }
 
+    public var last: (key: Key, value: Value)? {
+        for key in orderedKeys.reversed() {
+            if let key, let entry = storage[key] {
+                return (key, entry.value)
+            }
+        }
+        return nil
+    }
+
     public subscript(key: Key) -> Value? {
         get { storage[key]?.value }
         set {

@@ -25,12 +25,6 @@ import SwiftUI
 @MainActor final class Shortcuts { func present() {} }
 
 
-@MainActor final class ChatRoomsPage: MainPage {
-    var highlightedRooms: [(String, String?)] = []
-    init(window: MainWindow) {}
-    func onFocus() {}
-    func clearNotifications() {}
-}
 @MainActor final class BuddiesPage: MainPage {
     init(window: MainWindow) {}
     func onFocus() {}
@@ -38,4 +32,3 @@ import SwiftUI
     var pageContent: some View { Text("") }
 }
 
-struct ChatRoomsView: View { let page: ChatRoomsPage; var body: some View { Text("Rooms") } }
