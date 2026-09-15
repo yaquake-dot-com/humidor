@@ -14,7 +14,8 @@ let package = Package(
     ],
     products: [
         .library(name: "NicotineCore", targets: ["NicotineCore"]),
-        .executable(name: "nicotine", targets: ["nicotine"])
+        .executable(name: "nicotine", targets: ["nicotine"]),
+        .executable(name: "NicotinePlus", targets: ["NicotinePlus"])
     ],
     targets: [
         // Protocol, networking and application logic (no UI)
@@ -29,6 +30,11 @@ let package = Package(
         // Headless command line client
         .executableTarget(
             name: "nicotine",
+            dependencies: ["NicotineCore"]
+        ),
+        // macOS application (SwiftUI, with AppKit list views)
+        .executableTarget(
+            name: "NicotinePlus",
             dependencies: ["NicotineCore"]
         ),
         .testTarget(
