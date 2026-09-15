@@ -11,13 +11,6 @@ import SwiftUI
     func present() {}
 }
 
-@MainActor final class FastConfigure {
-    var invalidPassword = false
-    var isVisible = false
-    init(application: Application) {}
-    func hide() {}
-    func present() {}
-}
 
 
 
