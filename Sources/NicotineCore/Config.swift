@@ -378,6 +378,8 @@ public struct Settings: Codable, Sendable {
     public var notifications = NotificationsSettings()
     public var plugins = PluginsSettings()
     public var statistics = StatisticsSettings()
+
+    public init() {}
 }
 
 // MARK: - Config

@@ -99,7 +99,7 @@ final class SearchesPage: TabbedPage {
 
     // MARK: Search History
 
-    private func populateSearchHistory() {
+    func populateSearchHistory() {
         if !config.searches.enableHistory {
             searchHistory.removeAll()
             return

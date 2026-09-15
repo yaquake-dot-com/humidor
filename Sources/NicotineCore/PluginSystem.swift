@@ -138,7 +138,7 @@ open class BasePlugin {
 
     public var commands: [String: PluginCommand] = [:]
     public var settings: [String: JSONValue] = [:]
-    public var metaSettings: [String: PluginSettingMeta] = [:]
+    public var metaSettings: OrderedDictionary<String, PluginSettingMeta> = [:]
 
     fileprivate var eventConnections: [EventConnection] = []
     fileprivate var scheduledEvents: [Int] = []
@@ -588,7 +588,7 @@ public final class PluginHandler {
         enablePlugin(pluginName)
     }
 
-    public func pluginSettings(_ pluginName: String) -> [String: PluginSettingMeta]? {
+    public func pluginSettings(_ pluginName: String) -> OrderedDictionary<String, PluginSettingMeta>? {
         guard let plugin = enabledPlugins[pluginName], !plugin.metaSettings.isEmpty else {
             return nil
         }

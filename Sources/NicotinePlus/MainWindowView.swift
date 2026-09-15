@@ -19,7 +19,7 @@ struct MainWindowView: View {
                         currentPageView
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                        if config.ui.buddyListInChatrooms == "always" {
+                        if mainWindow.buddies.position == "always" {
                             Divider()
                             mainWindow.buddies.content
                                 .frame(minWidth: 200, idealWidth: 250, maxWidth: 400)

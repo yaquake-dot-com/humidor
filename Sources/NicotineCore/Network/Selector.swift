@@ -127,10 +127,10 @@ final class Selector {
 }
 
 /// Network interface addresses.
-enum NetworkInterfaces {
+public enum NetworkInterfaces {
 
     /// Returns a dictionary of network interface names and IPv4 addresses.
-    static func interfaceAddresses() -> [String: String] {
+    public static func interfaceAddresses() -> [String: String] {
         var addresses: [String: String] = [:]
         var interfaces: UnsafeMutablePointer<ifaddrs>?
 

@@ -180,7 +180,7 @@ final class TreeView: NSObject {
     let scrollView = NSScrollView()
     let outlineView = TreeOutlineView()
 
-    private(set) var iterators: [TreeValue: TreeRow] = [:]
+    private(set) var iterators = OrderedDictionary<TreeValue, TreeRow>()
     /// Whether rows can have child rows. Clear the list view before changing it.
     var hasTree: Bool {
         didSet {

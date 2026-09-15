@@ -21,7 +21,7 @@ final class Application: NSObject, NSApplicationDelegate {
     private var signalSources: [DispatchSourceSignal] = []
 
     private(set) var window: MainWindow!
-    private var preferences: Preferences?
+    private(set) var preferences: Preferences?
     private var fastConfigure: FastConfigure?
     private var statistics: StatisticsDialog?
     private var wishlist: WishList?

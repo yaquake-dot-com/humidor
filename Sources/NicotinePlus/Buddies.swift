@@ -19,6 +19,8 @@ final class BuddiesPage: MainPage {
 
     var buddyText = ""
     private(set) var hasBuddies = false
+    /// Where the buddy list is shown: "tab", "chatrooms" or "always"
+    private(set) var position = config.ui.buddyListInChatrooms
 
     init(window: MainWindow) {
         self.window = window
@@ -98,7 +100,11 @@ final class BuddiesPage: MainPage {
 
     /// Whether the buddy list is shown in its own page
     var isShownAsPage: Bool {
-        !["always", "chatrooms"].contains(config.ui.buddyListInChatrooms)
+        !["always", "chatrooms"].contains(position)
+    }
+
+    func setBuddyListPosition() {
+        position = config.ui.buddyListInChatrooms
     }
 
     private func updateVisible() {

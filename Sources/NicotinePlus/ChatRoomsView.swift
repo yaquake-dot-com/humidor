@@ -24,7 +24,7 @@ struct ChatRoomsView: View {
             .frame(minWidth: 400)
             .layoutPriority(1)
 
-            if config.ui.buddyListInChatrooms == "chatrooms" {
+            if page.window.buddies.position == "chatrooms" {
                 page.window.buddies.content
                     .frame(minWidth: 200, idealWidth: 250, maxWidth: 400)
             }

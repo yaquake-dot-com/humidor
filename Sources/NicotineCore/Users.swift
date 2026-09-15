@@ -100,7 +100,7 @@ public final class Users {
         }
 
         let login = loginUsername.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? loginUsername
-        openURI(String(format: Application.privilegesURL, login))
+        openURI(Application.privilegesURL(username: login))
     }
 
     public func requestChangePassword(_ password: String) {

@@ -12,8 +12,13 @@ public enum Application {
         © 2001–2003 PySoulSeek Contributors
         """
     public static let websiteURL = "https://nicotine-plus.org"
-    public static let privilegesURL = "https://www.slsknet.org/qtlogin.php?username=%@"
-    public static let portCheckerURL = "https://www.slsknet.org/porttest.php?port=%d"
+    public static func privilegesURL(username: String) -> String {
+        "https://www.slsknet.org/qtlogin.php?username=\(username)"
+    }
+
+    public static func portCheckerURL(port: Int) -> String {
+        "https://www.slsknet.org/porttest.php?port=\(String(port))"
+    }
     public static let issueTrackerURL = "https://github.com/nicotine-plus/nicotine-plus/issues"
     public static let translationsURL = "https://nicotine-plus.org/doc/TRANSLATIONS"
 }

@@ -90,6 +90,12 @@ enum DebugHooks {
                 case "setup": Application.shared.onFastConfigure()
                 default: break
                 }
+            case "preferences": Application.shared.onPreferences(pageID: argument)
+            case "apply-preferences": Application.shared.preferences?.updateSettings(isClosing: true)
+            case "plugin-settings":
+                Application.shared.onPreferences(pageID: "plugins")
+                _ = core.pluginHandler?.enablePlugin(argument)
+                Application.shared.preferences?.showPluginSettings(argument)
             case "select-all": (NSApp.keyWindow?.firstResponder as? NSTableView)?.selectAll(nil)
             default: break
             }
