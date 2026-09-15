@@ -25,7 +25,6 @@ import SwiftUI
 @MainActor final class Shortcuts { func present() {} }
 
 
-@MainActor final class InterestsPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
 @MainActor final class ChatRoomsPage: MainPage {
     var highlightedRooms: [(String, String?)] = []
     init(window: MainWindow) {}
@@ -44,9 +43,6 @@ import SwiftUI
     func onFocus() {}
     func clearNotifications() {}
 }
-@MainActor final class UserInfosPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
 
-struct UserInfosView: View { let page: UserInfosPage; var body: some View { Text("Info") } }
 struct PrivateChatsView: View { let page: PrivateChatsPage; var body: some View { Text("Private") } }
 struct ChatRoomsView: View { let page: ChatRoomsPage; var body: some View { Text("Rooms") } }
-struct InterestsView: View { let page: InterestsPage; var body: some View { Text("Interests") } }

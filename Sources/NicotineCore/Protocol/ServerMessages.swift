@@ -1532,7 +1532,7 @@ public final class WishlistInterval: ServerMessage, @unchecked Sendable {
 ///
 /// DEPRECATED, used in Soulseek NS but not SoulseekQt
 public final class SimilarUsers: ServerMessage, @unchecked Sendable {
-    public var users: [String: Int] = [:]
+    public var users = OrderedDictionary<String, Int>()
 
     override func makeNetworkMessage() throws -> Data {
         Data()
