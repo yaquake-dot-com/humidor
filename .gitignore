@@ -1,0 +1,10 @@
+.DS_Store
+/.build
+/.swiftpm
+/Packages
+xcuserdata/
+DerivedData/
+*.xcodeproj
+
+# Upstream Python source, used as reference while porting
+/Reference
