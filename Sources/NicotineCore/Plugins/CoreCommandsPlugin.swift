@@ -303,9 +303,9 @@ final class CoreCommandsPlugin: BasePlugin {
         }
 
         if searchQuery.isEmpty {
-            outputText += "\n\n" + String(localized: "Type /help [query] to list similar commands", bundle: .module)
+            outputText += "\n\n" + String(localized: "Type \("/help [query]") to list similar commands", bundle: .module)
         } else if numCommands == 0 {
-            outputText += "\n" + String(localized: "Type /help to list available commands", bundle: .module)
+            outputText += "\n" + String(localized: "Type \("/help") to list available commands", bundle: .module)
         }
 
         output(outputText)

@@ -504,7 +504,7 @@ public final class PluginHandler {
 
             for commandInterface in CommandInterface.allCases where !data.disabledInterfaces.contains(commandInterface) {
                 if commands[commandInterface]?[command] != nil {
-                    log.add(String(localized: "Conflicting \(commandInterface.rawValue) command in plugin \(plugin.humanName): /\(command)",
+                    log.add(String(localized: "Conflicting \(commandInterface.rawValue) command in plugin \(plugin.humanName): \("/" + command)",
                                    bundle: .module))
                     continue
                 }
@@ -747,7 +747,7 @@ public final class PluginHandler {
 
                 if let rejectionMessage {
                     plugin.output(rejectionMessage)
-                    plugin.output(String(localized: "Usage: /\(command) \(parameters.joined(separator: " "))",
+                    plugin.output(String(localized: "Usage: \("/" + command) \(parameters.joined(separator: " "))",
                                          bundle: .module))
                     break
                 }
@@ -763,7 +763,7 @@ public final class PluginHandler {
         }
 
         if let lastPlugin {
-            lastPlugin.output(String(localized: "Unknown command: /\(command). Type /help to list available commands.",
+            lastPlugin.output(String(localized: "Unknown command: \("/" + command). Type \("/help") to list available commands.",
                                      bundle: .module))
         }
 

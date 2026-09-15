@@ -275,7 +275,8 @@ final class UserInfoTab: NotebookPage {
         }
 
         guard let image = NSImage(data: data) else {
-            log.add(String(localized: "Failed to load picture for user \(user): invalid image data"))
+            let error = "Invalid image data"
+            log.add(String(localized: "Failed to load picture for user \(user): \(error)"))
             removePicture()
             return
         }

@@ -20,7 +20,7 @@ macOS.
 | Plugin system and built-in plugins | Ported (plugins are compiled in) |
 | Headless command line client | Ported |
 | macOS user interface (SwiftUI, AppKit tables) | Ported |
-| Translations | `.mo` catalogs included, String Catalog conversion pending |
+| Translations | Converted from the upstream catalogs to String Catalogs |
 
 The macOS interface covers all pages and dialogs of the GTK interface. Options that only apply to
 GTK (header bar, tray icon, icon theme, tab bar positions) are left out of the preferences, and

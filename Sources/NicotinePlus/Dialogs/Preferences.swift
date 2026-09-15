@@ -548,13 +548,7 @@ final class Preferences {
         }
 
         if isLanguageChanged {
-            // Applied when the application is restarted
-            if settings.ui.language.isEmpty {
-                UserDefaults.standard.removeObject(forKey: "AppleLanguages")
-            } else {
-                UserDefaults.standard.set([settings.ui.language.replacingOccurrences(of: "_", with: "-")],
-                                          forKey: "AppleLanguages")
-            }
+            Application.setLanguage(settings.ui.language)
         }
 
         // Dark mode

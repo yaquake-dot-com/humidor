@@ -29,6 +29,8 @@ mkdir -p "$app_path/Contents/MacOS" "$app_path/Contents/Resources"
 
 cp "$bin_path/NicotinePlus" "$app_path/Contents/MacOS/Nicotine+"
 cp -R "$bin_path/NicotinePlus_NicotineCore.bundle" "$app_path/Contents/Resources/"
+# Translations of the application target are looked up in the main bundle
+cp -R "$bin_path/NicotinePlus_NicotinePlus.bundle/Contents/Resources/"*.lproj "$app_path/Contents/Resources/"
 cp "$package_path/Packaging/AppIcon.icns" "$app_path/Contents/Resources/"
 sed "s/@VERSION@/$version/g" "$package_path/Packaging/Info.plist" > "$app_path/Contents/Info.plist"
 printf "APPL????" > "$app_path/Contents/PkgInfo"

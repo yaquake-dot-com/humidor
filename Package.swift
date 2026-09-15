@@ -22,7 +22,7 @@ let package = Package(
         .target(
             name: "NicotineCore",
             resources: [
-                .copy("Resources/locale"),
+                .process("Localizable.xcstrings"),
                 // IP2Location LITE data, licensed under CC BY-SA 4.0
                 .copy("Resources/ip_country_data.csv")
             ]
@@ -35,7 +35,10 @@ let package = Package(
         // macOS application (SwiftUI, with AppKit list views)
         .executableTarget(
             name: "NicotinePlus",
-            dependencies: ["NicotineCore"]
+            dependencies: ["NicotineCore"],
+            resources: [
+                .process("Localizable.xcstrings")
+            ]
         ),
         .testTarget(
             name: "NicotineCoreTests",

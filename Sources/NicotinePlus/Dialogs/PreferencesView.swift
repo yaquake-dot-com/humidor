@@ -32,7 +32,6 @@ struct PreferencesView: View {
                 Button(String(localized: "Cancel")) { preferences.close() }
                     .keyboardShortcut(.cancelAction)
                 Button(String(localized: "Export…")) { preferences.onBackUpConfig() }
-                    .help(String(localized: "Export"))
                 Spacer()
                 Button(String(localized: "Apply")) { preferences.updateSettings() }
                 Button(String(localized: "OK")) { preferences.updateSettings(isClosing: true) }

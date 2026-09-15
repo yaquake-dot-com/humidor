@@ -170,12 +170,12 @@ enum MainMenu {
         findItem.tag = NSTextFinder.Action.showFindInterface.rawValue
         menu.addItem(findItem)
 
-        let findNextItem = NSMenuItem(title: String(localized: "Find Next"),
+        let findNextItem = NSMenuItem(title: String(localized: "Find Next Match"),
                                       action: #selector(NSResponder.performTextFinderAction(_:)), keyEquivalent: "g")
         findNextItem.tag = NSTextFinder.Action.nextMatch.rawValue
         menu.addItem(findNextItem)
 
-        let findPreviousItem = NSMenuItem(title: String(localized: "Find Previous"),
+        let findPreviousItem = NSMenuItem(title: String(localized: "Find Previous Match"),
                                           action: #selector(NSResponder.performTextFinderAction(_:)),
                                           keyEquivalent: "g")
         findPreviousItem.tag = NSTextFinder.Action.previousMatch.rawValue
