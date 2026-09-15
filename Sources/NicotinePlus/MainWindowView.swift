@@ -74,14 +74,9 @@ private struct PageList: View {
 
         List(selection: selection) {
             ForEach(mainWindow.orderedVisiblePages) { page in
-                Label {
-                    Text(page.title)
-                        .fontWeight(mainWindow.highlightedPages[page] != nil ? .bold : .regular)
-                } icon: {
-                    Image(systemName: page.systemImage)
-                }
-                .badge(badge(for: page))
-                .tag(page)
+                Label(page.title, systemImage: page.systemImage)
+                    .badge(badge(for: page))
+                    .tag(page)
             }
             .onMove { source, destination in
                 mainWindow.movePages(fromOffsets: source, toOffset: destination)

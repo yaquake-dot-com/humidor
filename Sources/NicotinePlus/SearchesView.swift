@@ -7,6 +7,7 @@ import SwiftUI
 struct SearchesView: View {
 
     @Bindable var page: SearchesPage
+    @FocusState private var isSearchFocused: Bool
 
     var body: some View {
         Group {
@@ -22,7 +23,7 @@ struct SearchesView: View {
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                searchBar
+                scopeBar
                     .disabled(!page.isSearchEnabled)
             }
 
@@ -42,9 +43,25 @@ struct SearchesView: View {
                 .help(String(localized: "Configure Searches"))
             }
         }
+        .searchable(text: $page.searchText, placement: .toolbar, prompt: String(localized: "Search term…"))
+        .searchSuggestions {
+            ForEach(page.searchHistory.filter { !$0.isEmpty }, id: \.self) { term in
+                Text(term)
+                    .searchCompletion(term)
+            }
+        }
+        .searchFocused($isSearchFocused)
+        .onSubmit(of: .search) {
+            if page.isSearchEnabled {
+                page.onSearch()
+            }
+        }
+        .onChange(of: page.searchEntryFocusRequest) {
+            isSearchFocused = true
+        }
     }
 
-    private var searchBar: some View {
+    private var scopeBar: some View {
         HStack(spacing: 6) {
             Menu(page.searchModeLabel) {
                 Picker(String(localized: "Search Scope"),
@@ -60,36 +77,19 @@ struct SearchesView: View {
             .help(String(localized: "Search Scope"))
 
             if page.searchMode == .rooms {
-                ComboBox(placeholder: String(localized: "Room…"), text: $page.roomSearchText,
-                         items: page.roomSearchItems) {
+                ToolbarTextField(placeholder: String(localized: "Room…"), text: $page.roomSearchText,
+                                 suggestions: page.roomSearchItems) {
                     page.onSearch()
                 }
                 .frame(width: 140)
             }
 
             if page.searchMode == .user {
-                ComboBox(placeholder: String(localized: "Username…"), text: $page.userSearchText,
-                         items: page.window.buddyUsernames) {
+                ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.userSearchText,
+                                 suggestions: page.window.buddyUsernames) {
                     page.onSearch()
                 }
                 .frame(width: 140)
-            }
-
-            ComboBox(
-                placeholder: String(localized: "Search term…"),
-                text: $page.searchText,
-                items: page.searchHistory,
-                tooltip: String(localized: "Search patterns: with a word = term, without a word = -term, partial word = *erm"),
-                focusRequest: page.searchEntryFocusRequest
-            ) {
-                page.onSearch()
-            }
-            .frame(minWidth: 220, idealWidth: 360, maxWidth: 480)
-
-            Button {
-                page.onSearch()
-            } label: {
-                Image(systemName: "magnifyingglass")
             }
         }
     }

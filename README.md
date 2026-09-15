@@ -28,7 +28,7 @@ the MPRIS "Now Playing" source is not available on macOS.
 
 ## Building
 
-Requires Xcode 16 or later (Swift 6).
+Requires Xcode 16 or later (Swift 6) and macOS 15 or later.
 
 ```sh
 swift build

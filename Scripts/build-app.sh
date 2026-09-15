@@ -28,6 +28,15 @@ rm -rf "$app_path"
 mkdir -p "$app_path/Contents/MacOS" "$app_path/Contents/Resources"
 
 cp "$bin_path/NicotinePlus" "$app_path/Contents/MacOS/Nicotine+"
+
+# SwiftPM links without reading the SDK version, which records the deployment
+# target as the SDK version. macOS then shows the legacy appearance instead of
+# the current design, so record the SDK the executable was built with.
+executable="$app_path/Contents/MacOS/Nicotine+"
+deployment_target="$(otool -l "$executable" | awk '/LC_BUILD_VERSION/ { found = 1 } found && $1 == "minos" { print $2; exit }')"
+vtool -set-build-version macos "$deployment_target" "$(xcrun --show-sdk-version)" -replace \
+    -output "$executable.tmp" "$executable" 2>/dev/null
+mv "$executable.tmp" "$executable"
 cp -R "$bin_path/NicotinePlus_NicotineCore.bundle" "$app_path/Contents/Resources/"
 # Translations of the application target are looked up in the main bundle
 cp -R "$bin_path/NicotinePlus_NicotinePlus.bundle/Contents/Resources/"*.lproj "$app_path/Contents/Resources/"

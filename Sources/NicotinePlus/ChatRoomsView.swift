@@ -32,11 +32,12 @@ struct ChatRoomsView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 6) {
-                    ComboBox(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
-                             items: page.roomList.roomNames, focusRequest: page.roomFocusRequest,
-                             onSubmit: { page.onCreateRoom() }, onSelectItem: { page.onCreateRoom() })
-                        .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
-                        .disabled(!page.isRoomEntryEnabled)
+                    ToolbarTextField(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
+                                     suggestions: page.roomList.roomNames, focusRequest: page.roomFocusRequest) {
+                        page.onCreateRoom()
+                    }
+                    .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
+                    .disabled(!page.isRoomEntryEnabled)
 
                     Button {
                         page.isRoomListShown.toggle()

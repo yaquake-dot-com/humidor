@@ -562,10 +562,11 @@ struct UserInfosView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 6) {
-                    ComboBox(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                             items: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest,
-                             onSubmit: { page.onShowUserProfile() }, onSelectItem: { page.onShowUserProfile() })
-                        .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
+                    ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                                     suggestions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
+                        page.onShowUserProfile()
+                    }
+                    .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
 
                     Button {
                         page.onShowUserProfile()

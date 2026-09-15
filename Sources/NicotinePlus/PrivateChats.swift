@@ -657,10 +657,11 @@ struct PrivateChatsView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 6) {
-                    ComboBox(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                             items: page.history.usernames, focusRequest: page.usernameFocusRequest,
-                             onSubmit: { page.onGetPrivateChat() }, onSelectItem: { page.onGetPrivateChat() })
-                        .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
+                    ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                                     suggestions: page.history.usernames, focusRequest: page.usernameFocusRequest) {
+                        page.onGetPrivateChat()
+                    }
+                    .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
 
                     Button {
                         page.isHistoryShown.toggle()

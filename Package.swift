@@ -10,7 +10,7 @@ let package = Package(
     name: "NicotinePlus",
     defaultLocalization: "en",
     platforms: [
-        .macOS(.v14)
+        .macOS(.v15)
     ],
     products: [
         .library(name: "NicotineCore", targets: ["NicotineCore"]),

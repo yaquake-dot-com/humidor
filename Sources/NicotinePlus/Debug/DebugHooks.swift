@@ -37,8 +37,26 @@ enum DebugHooks {
         }
     }
 
+    private typealias WindowImageFunction = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
+
+    /// Captures windows as composited by the window server, including glass effects
+    private static let windowImage: WindowImageFunction? = {
+        guard let symbol = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "CGWindowListCreateImage") else {
+            return nil
+        }
+        return unsafeBitCast(symbol, to: WindowImageFunction.self)
+    }()
+
     private static func saveSnapshots(to folderPath: String) {
         for (index, window) in NSApp.windows.enumerated() where window.isVisible {
+            // Window server image: on-screen, list option "including window", "best resolution" and "ignore framing"
+            if let windowImage, let image = windowImage(.null, 1 << 3, UInt32(window.windowNumber), 1 << 0 | 1 << 3)?
+                .takeRetainedValue() {
+                let filePath = (folderPath as NSString).appendingPathComponent("window-\(index)-composited.png")
+                let bitmap = NSBitmapImageRep(cgImage: image)
+                try? bitmap.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: filePath))
+            }
+
             guard let view = window.contentView?.superview ?? window.contentView,
                   let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds) else {
                 continue
@@ -96,6 +114,9 @@ enum DebugHooks {
                 Application.shared.onPreferences(pageID: "plugins")
                 _ = core.pluginHandler?.enablePlugin(argument)
                 Application.shared.preferences?.showPluginSettings(argument)
+            case "dump-views":
+                func dump(_ view: NSView, _ depth: Int) { if depth < 7 { log.add("VIEW " + String(repeating: "  ", count: depth) + String(describing: type(of: view)) + " \(view.frame)"); view.subviews.forEach { dump($0, depth + 1) } } }
+                if let frameView = MainWindow.shared?.window.contentView?.superview { dump(frameView, 0) }
             case "select-all": (NSApp.keyWindow?.firstResponder as? NSTableView)?.selectAll(nil)
             default: break
             }
