@@ -25,10 +25,4 @@ import SwiftUI
 @MainActor final class Shortcuts { func present() {} }
 
 
-@MainActor final class BuddiesPage: MainPage {
-    init(window: MainWindow) {}
-    func onFocus() {}
-    var content: some View { Text("") }
-    var pageContent: some View { Text("") }
-}
 

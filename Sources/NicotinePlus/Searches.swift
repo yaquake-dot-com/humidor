@@ -28,8 +28,6 @@ final class SearchesPage: TabbedPage {
     var userSearchText = ""
     /// Joined rooms, suggested in the room entry
     var roomSearchItems: [String] = []
-    /// Buddies, suggested in the user entry
-    var userSearchItems: [String] = []
     private(set) var searchHistory: [String] = []
     private(set) var isSearchEnabled = false
     private(set) var searchEntryFocusRequest = 0

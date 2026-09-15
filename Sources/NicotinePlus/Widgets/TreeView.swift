@@ -369,7 +369,13 @@ final class TreeView: NSObject {
                 tableColumn.maxWidth = max(tableColumn.width, 48)
             } else {
                 tableColumn.resizingMask = .userResizingMask
-                tableColumn.width = width ?? 100
+
+                if width == 0 {
+                    // Fit the column to its title
+                    tableColumn.width = max(tableColumn.headerCell.cellSize.width + 12, tableColumn.minWidth)
+                } else {
+                    tableColumn.width = width ?? 100
+                }
             }
 
             tableColumn.isHidden = !(columnProperties["visible"]?.boolValue ?? true)

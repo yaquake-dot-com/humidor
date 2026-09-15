@@ -79,6 +79,7 @@ enum DebugHooks {
                 if parts.count == 2 {
                     core.chatrooms.sendMessage(parts[0], parts[1])
                 }
+            case "buddy": core.buddies.addBuddy(argument)
             case "select-all": (NSApp.keyWindow?.firstResponder as? NSTableView)?.selectAll(nil)
             default: break
             }

@@ -69,7 +69,7 @@ struct SearchesView: View {
 
             if page.searchMode == .user {
                 ComboBox(placeholder: String(localized: "Username…"), text: $page.userSearchText,
-                         items: page.userSearchItems) {
+                         items: page.window.buddyUsernames) {
                     page.onSearch()
                 }
                 .frame(width: 140)
