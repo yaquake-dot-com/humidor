@@ -134,7 +134,7 @@ final class MainWindow: NSObject {
         events.connect(.sharesPreparing) { [unowned self] in sharesPreparing() }
         events.connect(.sharesReady) { [unowned self] _ in sharesReady() }
         events.connect(.sharesScanning) { [unowned self] folderCount in sharesScanning(folderCount) }
-        events.connect(.userStatus) { [unowned self] msg in onUserStatusMessage(msg) }
+        events.connectMessage(.userStatus) { [unowned self] msg in onUserStatusMessage(msg) }
 
         // Secondary pages
         interests = InterestsPage(window: self)

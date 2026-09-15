@@ -32,7 +32,7 @@ final class UserBrowsesPage: TabbedPage {
         events.connect(.sharedFileListResponse) { [unowned self] in sharedFileList($0) }
         events.connect(.userBrowseRemoveUser) { [unowned self] in removeUser($0) }
         events.connect(.userBrowseShowUser) { [unowned self] in showUser($0) }
-        events.connect(.userStatus) { [unowned self] in userStatus($0) }
+        events.connectMessage(.userStatus) { [unowned self] in userStatus($0) }
     }
 
     func onFocus() {

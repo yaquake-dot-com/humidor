@@ -50,7 +50,7 @@ final class UserInfosPage: TabbedPage {
         events.connect(.userInfoShowUser) { [unowned self] in showUser($0) }
         events.connect(.userInterests) { [unowned self] in pages[$0.user]?.userInterests($0) }
         events.connect(.userStats) { [unowned self] in pages[$0.user]?.userStats($0) }
-        events.connect(.userStatus) { [unowned self] msg in
+        events.connectMessage(.userStatus) { [unowned self] msg in
             if let page = pages[msg.user] {
                 notebook.setUserStatus(page, user: msg.user, status: UserStatus(rawValue: msg.status) ?? .offline)
             }

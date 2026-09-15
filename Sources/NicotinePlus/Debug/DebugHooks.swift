@@ -69,6 +69,16 @@ enum DebugHooks {
             case "userinfo": core.userInfo.showUser(argument)
             case "join": core.chatrooms.showRoom(argument)
             case "message": core.privateChat.showUser(argument)
+            case "send":
+                let parts = argument.split(separator: " ", maxSplits: 1).map(String.init)
+                if parts.count == 2 {
+                    core.privateChat.sendMessage(parts[0], parts[1])
+                }
+            case "say":
+                let parts = argument.split(separator: " ", maxSplits: 1).map(String.init)
+                if parts.count == 2 {
+                    core.chatrooms.sendMessage(parts[0], parts[1])
+                }
             case "select-all": (NSApp.keyWindow?.firstResponder as? NSTableView)?.selectAll(nil)
             default: break
             }

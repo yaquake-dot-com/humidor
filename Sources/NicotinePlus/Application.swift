@@ -52,7 +52,7 @@ final class Application: NSObject, NSApplicationDelegate {
         events.connect(.showDownloadNotification) { [unowned self] in showDownloadNotification($0) }
         events.connect(.showPrivateChatNotification) { [unowned self] in showPrivateChatNotification($0) }
         events.connect(.showSearchNotification) { [unowned self] in showSearchNotification($0) }
-        events.connect(.userStatus) { [unowned self] msg in onUserStatus(msg) }
+        events.connectMessage(.userStatus) { [unowned self] msg in onUserStatus(msg) }
 
         enabledLogLevels = Set(config.logging.debugModes)
     }

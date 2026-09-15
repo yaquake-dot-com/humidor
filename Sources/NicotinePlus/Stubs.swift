@@ -37,12 +37,5 @@ import SwiftUI
     var content: some View { Text("") }
     var pageContent: some View { Text("") }
 }
-@MainActor final class PrivateChatsPage: MainPage {
-    var highlightedUsers: [String] = []
-    init(window: MainWindow) {}
-    func onFocus() {}
-    func clearNotifications() {}
-}
 
-struct PrivateChatsView: View { let page: PrivateChatsPage; var body: some View { Text("Private") } }
 struct ChatRoomsView: View { let page: ChatRoomsPage; var body: some View { Text("Rooms") } }

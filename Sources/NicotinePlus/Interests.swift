@@ -155,7 +155,7 @@ final class InterestsPage: MainPage {
         events.connect(.similarUsers) { [unowned self] in setSimilarUsers($0.users) }
         events.connect(.userCountry) { [unowned self] in userCountry($0) }
         events.connect(.userStats) { [unowned self] in userStats($0) }
-        events.connect(.userStatus) { [unowned self] in userStatus($0) }
+        events.connectMessage(.userStatus) { [unowned self] in userStatus($0) }
     }
 
     func onFocus() {
