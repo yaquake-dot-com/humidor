@@ -96,6 +96,15 @@ extension TreeValue: ExpressibleByStringLiteral, ExpressibleByIntegerLiteral, Ex
     init(booleanLiteral value: Bool) { self = .bool(value) }
 }
 
+/// Wraps a value type, so it can be stored in a list view column.
+final class Box<Value> {
+    let value: Value
+
+    init(_ value: Value) {
+        self.value = value
+    }
+}
+
 // MARK: - Rows
 
 /// A row in a list view. Rows are identified by reference, and stay valid

@@ -20,6 +20,38 @@ struct PageDescription: View {
     }
 }
 
+/// Message bar shown above the content of a page.
+struct InfoBar: View {
+
+    enum MessageType {
+        case info
+        case error
+    }
+
+    let message: String
+    let messageType: MessageType
+    var buttonLabel: String?
+    var buttonAction: (() -> Void)?
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: messageType == .error ? "exclamationmark.triangle.fill" : "info.circle.fill")
+                .foregroundStyle(messageType == .error ? .red : .accentColor)
+
+            Text(message)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let buttonLabel, let buttonAction {
+                Button(buttonLabel, action: buttonAction)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(messageType == .error ? Color.red.opacity(0.12) : Color.accentColor.opacity(0.12))
+    }
+}
+
 /// Downloads or uploads page.
 struct TransfersView: View {
 

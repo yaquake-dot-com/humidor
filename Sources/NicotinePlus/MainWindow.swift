@@ -87,6 +87,9 @@ final class MainWindow: NSObject {
     var isUploadLimitAlternative = false
     var isShutdownPending = false
 
+    /// Buddies, suggested in username entries
+    var buddyUsernames: [String] = []
+
     // Log pane
     var isLogPaneVisible: Bool {
         didSet {

@@ -28,6 +28,7 @@ class PopupMenu: NSObject {
     private(set) var items: [String: NSMenuItem] = [:]
     private var handlers: [ObjectIdentifier: @MainActor (NSMenuItem) -> Void] = [:]
     private(set) var submenus: [PopupMenu] = []
+    private var submenuItems: [(menuItem: NSMenuItem, popupMenu: PopupMenu)] = []
 
     init(callback: (@MainActor (PopupMenu) -> Void)? = nil) {
         self.callback = callback
@@ -84,8 +85,14 @@ class PopupMenu: NSObject {
         case let .submenu(title, popupMenu):
             label = title
             menuItem = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-            menuItem.submenu = popupMenu.menu
             submenus.append(popupMenu)
+            submenuItems.append((menuItem, popupMenu))
+
+            // A menu can only be the submenu of one menu at a time. Menus shared by
+            // several menus are attached when shown.
+            if popupMenu.menu.supermenu == nil {
+                menuItem.submenu = popupMenu.menu
+            }
         }
 
         items[label] = menuItem
@@ -108,6 +115,11 @@ class PopupMenu: NSObject {
             submenu.clear()
         }
         submenus.removeAll()
+
+        for (menuItem, _) in submenuItems {
+            menuItem.submenu = nil
+        }
+        submenuItems.removeAll()
         menu.removeAllItems()
         items.removeAll()
         handlers.removeAll()
@@ -148,6 +160,7 @@ class PopupMenu: NSObject {
 
     /// Updates the menu before it is shown.
     func prepare() {
+        attachSubmenus()
         callback?(self)
 
         for submenu in submenus {
@@ -160,6 +173,23 @@ class PopupMenu: NSObject {
 
         let location = point ?? NSPoint(x: 0, y: view.isFlipped ? view.bounds.maxY : 0)
         menu.popUp(positioning: nil, at: location, in: view)
+    }
+
+    private func attachSubmenus() {
+        for (menuItem, popupMenu) in submenuItems where menuItem.submenu !== popupMenu.menu {
+            if let supermenu = popupMenu.menu.supermenu {
+                for item in supermenu.items where item.submenu === popupMenu.menu {
+                    item.submenu = nil
+                }
+            }
+            menuItem.submenu = popupMenu.menu
+        }
+    }
+
+    /// Shows the menu at the mouse pointer.
+    func popupAtMouseLocation() {
+        prepare()
+        menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil)
     }
 
     private final class HiddenWhenDisabled {}

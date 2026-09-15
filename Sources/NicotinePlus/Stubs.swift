@@ -45,9 +45,7 @@ import SwiftUI
     func clearNotifications() {}
 }
 @MainActor final class UserInfosPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
-@MainActor final class UserBrowsesPage: MainPage { init(window: MainWindow) {}; func onFocus() {} }
 
-struct UserBrowsesView: View { let page: UserBrowsesPage; var body: some View { Text("Browse") } }
 struct UserInfosView: View { let page: UserInfosPage; var body: some View { Text("Info") } }
 struct PrivateChatsView: View { let page: PrivateChatsPage; var body: some View { Text("Private") } }
 struct ChatRoomsView: View { let page: ChatRoomsPage; var body: some View { Text("Rooms") } }
