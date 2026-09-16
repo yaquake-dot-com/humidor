@@ -223,7 +223,7 @@ final class ChatRoomsPage: TabbedPage {
         }
 
         highlightedRooms[room] = user
-        window.updateTitle()
+        window.updateNotificationBadge()
     }
 
     func unhighlightRoom(_ room: String) {
@@ -231,7 +231,7 @@ final class ChatRoomsPage: TabbedPage {
             return
         }
 
-        window.updateTitle()
+        window.updateNotificationBadge()
     }
 
     private func joinRoom(_ msg: JoinRoom) {

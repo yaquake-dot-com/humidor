@@ -56,8 +56,6 @@ final class MainWindow {
     static private(set) var shared: MainWindow?
 
     @ObservationIgnored let application: AppDelegate
-    /// Title of the window, shown in the Window menu and Mission Control
-    private(set) var title = Application.name
     /// Whether the window is open, and whether it is the active window
     @ObservationIgnored private var isOpen = false
     @ObservationIgnored private(set) var isActive = false
@@ -198,20 +196,9 @@ final class MainWindow {
             return
         }
 
-        switch config.ui.exitDialog {
-        case 0:
-            // Quit Program
-            core.quit()
-        case 1:
-            // Show Confirmation Dialog, once the window has finished closing
-            Task { @MainActor [application] in
-                application.onConfirmWindowClose()
-            }
-        default:
-            // Run in Background
-            MessageDialog.closeAll()
-            config.writeConfiguration()
-        }
+        // Closing the window keeps the application running, as on macOS
+        MessageDialog.closeAll()
+        config.writeConfiguration()
     }
 
     func onWindowActiveChanged(_ isActive: Bool) {
@@ -227,31 +214,15 @@ final class MainWindow {
         setUrgencyHint(false)
     }
 
-    func updateTitle() {
-        var notificationText = ""
+    /// Shows the number of private chats and chat room mentions on the Dock icon
+    func updateNotificationBadge() {
+        let count = privateChat.highlightedUsers.count + chatrooms.highlightedRooms.count
 
-        if !config.notifications.windowTitle {
-            // Reset Title
-        } else if let user = privateChat.highlightedUsers.last {
-            // Private Chats have a higher priority
-            notificationText = String(localized: "Private Message from \(user)")
+        if count > 0 {
             setUrgencyHint(true)
-
-        } else if let (room, user) = chatrooms.highlightedRooms.last {
-            // Allow for the possibility the username is not available
-            notificationText = String(localized: "Mentioned by \(user ?? "") in Room \(room)")
-            setUrgencyHint(true)
-
-        } else if search.unreadPages.values.contains(true) {
-            notificationText = String(localized: "Wishlist Results Found")
         }
 
-        guard !notificationText.isEmpty else {
-            title = Application.name
-            return
-        }
-
-        title = "\(Application.name) - \(notificationText)"
+        application.setBadgeCount(count)
     }
 
     private var attentionRequest: Int?

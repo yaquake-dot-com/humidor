@@ -69,7 +69,7 @@ final class SearchesPage: TabbedPage {
 
     private func onSwitchSearchPage() {
         if window.currentPage == .search {
-            window.updateTitle()
+            window.updateNotificationBadge()
         }
     }
 
@@ -238,7 +238,7 @@ final class SearchesPage: TabbedPage {
         }
 
         pages.removeValue(forKey: token)
-        window.updateTitle()
+        window.updateNotificationBadge()
     }
 
     private func fileSearchResponse(_ msg: FileSearchResponse) {
@@ -805,7 +805,7 @@ final class SearchTab: NotebookPage {
             let isTabChanged = searches.notebook.requestTabChanged(self, isImportant: isWishResult)
 
             if isTabChanged && isWishResult {
-                window.updateTitle()
+                window.updateNotificationBadge()
 
                 if config.notifications.popupWish {
                     core.notifications?.showSearchNotification(searchToken: token, message: text,

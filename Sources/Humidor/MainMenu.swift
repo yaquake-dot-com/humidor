@@ -16,11 +16,6 @@ struct MainCommands: Commands {
             Button(String(localized: "About \(Application.name)")) { application.onAbout() }
         }
 
-        CommandGroup(before: .appTermination) {
-            Button(String(localized: "Force Quit")) { application.onForceQuitRequest() }
-                .keyboardShortcut("q", modifiers: [.command, .option])
-        }
-
         CommandGroup(replacing: .newItem) {
             Button(String(localized: "Connect")) { application.onConnect() }
                 .keyboardShortcut("c", modifiers: [.command, .shift])

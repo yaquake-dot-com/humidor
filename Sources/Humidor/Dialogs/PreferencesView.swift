@@ -348,19 +348,11 @@ private struct UserInterfaceSettingsPage: View {
                         Text(language.name).tag(language.code)
                     }
                 }
-
-                Picker(String(localized: "When closing window:"), selection: $preferences.draft.ui.exitDialog) {
-                    Text(String(localized: "Quit \(Application.name)")).tag(0)
-                    Text(String(localized: "Show confirmation dialog")).tag(1)
-                    Text(String(localized: "Run in the background")).tag(2)
-                }
             }
 
             Section(String(localized: "Notifications")) {
                 Toggle(String(localized: "Enable sound for notifications"),
                        isOn: $preferences.draft.notifications.popupSound)
-                Toggle(String(localized: "Show notification for private chats and mentions in the window title"),
-                       isOn: $preferences.draft.notifications.windowTitle)
 
                 LabeledContent(String(localized: "Show notifications for:")) {
                     VStack(alignment: .leading) {

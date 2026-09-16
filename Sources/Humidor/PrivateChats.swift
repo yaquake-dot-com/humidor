@@ -155,7 +155,7 @@ final class PrivateChatsPage: TabbedPage {
         }
 
         highlightedUsers.append(user)
-        window.updateTitle()
+        window.updateNotificationBadge()
     }
 
     func unhighlightUser(_ user: String) {
@@ -164,7 +164,7 @@ final class PrivateChatsPage: TabbedPage {
         }
 
         highlightedUsers.remove(at: index)
-        window.updateTitle()
+        window.updateNotificationBadge()
     }
 
     private func updateCompletions(_ completions: Set<String>) {

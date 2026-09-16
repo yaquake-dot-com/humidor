@@ -32,7 +32,6 @@ struct MainWindowView: View {
         }
         .frame(minWidth: 700, minHeight: 450)
         // The title stays in the Window menu and Mission Control, but not in the toolbar
-        .navigationTitle(mainWindow.title)
         .toolbar(removing: .title)
         .onAppear {
             let application = mainWindow.application

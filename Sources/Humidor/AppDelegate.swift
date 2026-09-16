@@ -33,8 +33,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @ObservationIgnored private var startHidden = false
     @ObservationIgnored private var awayAcceleratorCooldownTime: TimeInterval = 0
     @ObservationIgnored private(set) var isTerminating = false
-    /// The confirmation dialog is shown after the main window was closed
-    @ObservationIgnored private var isConfirmingWindowClose = false
     @ObservationIgnored private var signalSources: [DispatchSourceSignal] = []
 
     @ObservationIgnored private(set) var window: MainWindow!
@@ -112,7 +110,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         if Bundle.main.bundleIdentifier != nil {
             UNUserNotificationCenter.current().delegate = self
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
         }
 
         setUpSignalHandlers()
@@ -130,7 +128,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Show active page and focus default widget
         window.showCurrentPage()
 
-        if startHidden || (config.ui.trayIcon && config.ui.startupHidden) {
+        if startHidden {
             NSApp.hide(nil)
         }
     }
@@ -156,9 +154,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if eventType == nil || eventType == .appKitDefined || eventType == .systemDefined {
             // Logging out or shutting down
             core.quit(isTerminating: true)
-        } else if eventType == .keyDown {
-            // Command-Q
-            onConfirmQuitRequest()
         } else {
             onQuitRequest()
         }
@@ -264,6 +259,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func setBadgeCount(_ count: Int) {
+        guard Bundle.main.bundleIdentifier != nil else {
+            return
+        }
+        UNUserNotificationCenter.current().setBadgeCount(count)
+    }
+
     private func showChatroomNotification(_ notification: NotificationMessage) {
         showNotification(notification, action: "chatroom")
 
@@ -315,13 +317,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func onConfirmQuit() {
         let hasActiveUploads = core.uploads.hasActiveUploads
 
-        if !window.isVisible && !isConfirmingWindowClose {
+        if !window.isVisible {
             // Never show confirmation dialog when main window is hidden
             core.quit()
             return
         }
-
-        isConfirmingWindowClose = false
 
         let message: String
         let optionLabel: String?
@@ -539,20 +539,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         core.users.setAwayMode(core.users.loginStatus != .away, saveState: true)
-    }
-
-    func onConfirmQuitRequest() {
-        core.confirmQuit()
-    }
-
-    func onForceQuitRequest() {
-        core.quit()
-    }
-
-    /// The main window was closed, with "Show confirmation dialog" chosen for closing the window
-    func onConfirmWindowClose() {
-        isConfirmingWindowClose = true
-        core.confirmQuit()
     }
 
     func onQuitRequest() {
