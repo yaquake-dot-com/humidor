@@ -484,47 +484,28 @@ struct InterestsView: View {
     @Bindable var page: InterestsPage
 
     var body: some View {
-        SplitView(.horizontal, resizingPane: 1, panes: [
-            SplitPane(minLength: 200, idealLength: 260) {
-                SplitView(.vertical, panes: [
-                    SplitPane(minLength: 120) {
-                        interestList(title: String(localized: "Personal Interests"),
-                                     placeholder: String(localized: "Add something you like…"),
-                                     text: $page.likeText, listView: page.likesListView) {
-                            page.onAddThingILike()
+        SplitPane("Interests.Personal", edge: .leading, range: 160...700, idealLength: 300) {
+            SplitPane("Interests.SimilarUsers", edge: .trailing, range: 160...700, idealLength: 300) {
+                VStack(spacing: 0) {
+                    HStack {
+                        Text(page.recommendationsLabel)
+                            .font(.headline)
+                        Spacer()
+                        Button {
+                            page.showRecommendations()
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
                         }
-                    },
-                    SplitPane(minLength: 120) {
-                        interestList(title: String(localized: "Personal Dislikes"),
-                                     placeholder: String(localized: "Add something you dislike…"),
-                                     text: $page.dislikeText, listView: page.dislikesListView) {
-                            page.onAddThingIDislike()
-                        }
+                        .buttonStyle(.borderless)
+                        .disabled(!page.isRecommendationsEnabled)
+                        .help(String(localized: "Refresh Recommendations"))
                     }
-                ])
-            },
-            SplitPane(minLength: 200) {
-            VStack(spacing: 0) {
-                HStack {
-                    Text(page.recommendationsLabel)
-                        .font(.headline)
-                    Spacer()
-                    Button {
-                        page.showRecommendations()
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    .buttonStyle(.borderless)
-                    .disabled(!page.isRecommendationsEnabled)
-                    .help(String(localized: "Refresh Recommendations"))
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
 
-                page.recommendationsListView.view
-            }
-            },
-            SplitPane(minLength: 250, idealLength: 300) {
+                    page.recommendationsListView.view
+                }
+            } pane: {
                 VStack(spacing: 0) {
                     Text(page.similarUsersLabel)
                         .font(.headline)
@@ -535,15 +516,19 @@ struct InterestsView: View {
                     page.similarUsersListView.view
                 }
             }
-        ])
-        .toolbar {
-            ToolbarItem {
-                Button {
-                    Application.shared.onConfigureUserProfile()
-                } label: {
-                    Label(String(localized: "Configure User Profile"), systemImage: "gearshape")
+        } pane: {
+            SplitPane("Interests.Likes", edge: .top, range: 120...900, idealLength: 300) {
+                interestList(title: String(localized: "Personal Dislikes"),
+                             placeholder: String(localized: "Add something you dislike…"),
+                             text: $page.dislikeText, listView: page.dislikesListView) {
+                    page.onAddThingIDislike()
                 }
-                .help(String(localized: "Configure User Profile"))
+            } pane: {
+                interestList(title: String(localized: "Personal Interests"),
+                             placeholder: String(localized: "Add something you like…"),
+                             text: $page.likeText, listView: page.likesListView) {
+                    page.onAddThingILike()
+                }
             }
         }
     }

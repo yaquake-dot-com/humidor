@@ -10,7 +10,7 @@ struct ChatRoomsView: View {
 
     private var hasTabs: Bool { !page.notebook.pages.isEmpty }
 
-    /// Current room, if it has a list of users
+    /// Current room, if it has a list of users.
     private var currentRoom: ChatRoomTab? {
         guard let tab = page.notebook.currentPage, !tab.isGlobal else {
             return nil
@@ -18,11 +18,12 @@ struct ChatRoomsView: View {
         return tab
     }
 
-    private var usersInspectorBinding: Binding<Bool> {
-        Binding(
-            get: { page.isUsersListShown && currentRoom != nil },
-            set: { page.isUsersListShown = $0 }
-        )
+    private var showsBuddies: Bool {
+        page.window.buddies.position == "chatrooms"
+    }
+
+    private var showsUsers: Bool {
+        page.isUsersListShown && currentRoom != nil
     }
 
     private var entryBar: some View {
@@ -54,7 +55,7 @@ struct ChatRoomsView: View {
                 title: String(localized: "Chat Rooms"),
                 description: String(localized: "Join an existing chat room, or create a new room to chat with other users on the Soulseek network"),
                 recentTitle: String(localized: "Rooms"),
-                recentItems: page.roomList.roomNames,
+                recentItems: page.roomList.popularRoomNames,
                 onSelectItem: { room in
                     page.roomText = room
                     page.onCreateRoom()
@@ -66,14 +67,19 @@ struct ChatRoomsView: View {
     }
 
     var body: some View {
-        SplitView(.horizontal, panes: [
-            SplitPane(minLength: 300) {
+        SplitPane("ChatRooms.Users", edge: .trailing, range: 200...700, idealLength: 280,
+                  isPaneVisible: showsUsers) {
+            SplitPane("ChatRooms.Buddies", edge: .trailing, range: 180...600, idealLength: 250,
+                      isPaneVisible: showsBuddies) {
                 roomsContent
-            },
-            SplitPane(minLength: 200, idealLength: 250, isVisible: page.window.buddies.position == "chatrooms") {
+            } pane: {
                 page.window.buddies.content
             }
-        ])
+        } pane: {
+            if let currentRoom {
+                RoomUsersView(tab: currentRoom)
+            }
+        }
         .toolbar {
             if hasTabs {
                 ToolbarItem(placement: .navigation) {
@@ -82,31 +88,20 @@ struct ChatRoomsView: View {
                 }
             }
 
-            ToolbarItem {
-                Button {
-                    Application.shared.onConfigureChats()
-                } label: {
-                    Label(String(localized: "Configure Chats"), systemImage: "gearshape")
-                }
-                .help(String(localized: "Configure Chats"))
-            }
 
             if currentRoom != nil {
                 ToolbarItem {
-                    Toggle(isOn: $page.isUsersListShown) {
+                    Button {
+                        page.isUsersListShown.toggle()
+                    } label: {
                         Label(String(localized: "Users"), systemImage: "sidebar.trailing")
                     }
                     .help(String(localized: "Users"))
                 }
             }
         }
-        .inspector(isPresented: usersInspectorBinding) {
-            if let room = currentRoom {
-                RoomUsersView(tab: room)
-                    .inspectorColumnWidth(min: 220, ideal: 320, max: 700)
-            }
-        }
     }
+
 }
 
 /// A single chat room: activity log, chat messages and room users.
@@ -119,14 +114,11 @@ struct ChatRoomTabView: View {
             if tab.isGlobal {
                 tab.chatView.view
             } else {
-                SplitView(.vertical, resizingPane: 1, panes: [
-                    SplitPane(minLength: 48, idealLength: 80) {
-                        tab.activityView.view
-                    },
-                    SplitPane(minLength: 100) {
-                        tab.chatView.view
-                    }
-                ])
+                SplitPane("ChatRooms.Activity", edge: .top, range: 48...400, idealLength: 80) {
+                    tab.chatView.view
+                } pane: {
+                    tab.activityView.view
+                }
             }
 
             Divider()
@@ -170,23 +162,28 @@ struct ChatRoomTabView: View {
 
 }
 
-/// Users of a chat room, shown in the inspector of the chat rooms page.
+/// Users of a chat room, shown in the trailing pane of the chat rooms split view.
 struct RoomUsersView: View {
 
     @Bindable var tab: ChatRoomTab
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Label(tab.userCountText, systemImage: "person.2")
-                    .help(String(localized: "Users"))
+            HStack(spacing: 8) {
+                Label(String(localized: "Users"), systemImage: "person.2")
+                    .font(.headline)
 
                 Spacer()
+
+                Text(tab.userCountText)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
 
                 Button {
                     tab.isRoomWallShown.toggle()
                 } label: {
                     Label(String(localized: "Room Wall"), systemImage: "note.text")
+                        .labelStyle(.iconOnly)
                 }
                 .buttonStyle(.borderless)
                 .help(String(localized: "Room Wall"))
@@ -195,7 +192,8 @@ struct RoomUsersView: View {
                 }
             }
             .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .frame(height: notebookTabBarHeight)
+            .background(.bar)
 
             Divider()
             tab.usersListView.view

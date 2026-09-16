@@ -120,10 +120,6 @@ final class Notebook<Page: NotebookPage> {
         insertPage(page, text: text, closeCallback: closeCallback, user: user, position: -1)
     }
 
-    func prependPage(_ page: Page, text: String, closeCallback: (@MainActor () -> Void)? = nil, user: String? = nil) {
-        insertPage(page, text: text, closeCallback: closeCallback, user: user, position: 0)
-    }
-
     func insertPage(_ page: Page, text: String, closeCallback: (@MainActor () -> Void)? = nil, user: String? = nil,
                     position: Int? = nil) {
         let fullText = text
@@ -387,6 +383,9 @@ extension MainWindow {
 
 // MARK: - Views
 
+/// Height of the tab bar of a notebook, shared by bars shown next to it so their dividers line up
+let notebookTabBarHeight: CGFloat = 34
+
 /// Tab bar and content of a notebook.
 struct NotebookView<Page: NotebookPage>: View {
 
@@ -425,7 +424,6 @@ private struct NotebookTabBar<Page: NotebookPage>: View {
                         }
                     }
                     .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
                 }
                 .onChange(of: notebook.currentPage.map(ObjectIdentifier.init)) { _, pageID in
                     if let pageID {
@@ -439,6 +437,7 @@ private struct NotebookTabBar<Page: NotebookPage>: View {
             NotebookPagesMenu(notebook: notebook)
                 .padding(.trailing, 6)
         }
+        .frame(height: notebookTabBarHeight)
         .background(.bar)
     }
 }
@@ -457,48 +456,76 @@ private struct NotebookTab<Page: NotebookPage>: View {
         let label = notebook.label(page)
         let isSelected = (notebook.currentPage === page)
 
-        HStack(spacing: 4) {
+        HStack(spacing: 2) {
+            Button {
+                notebook.setCurrentPage(page)
+            } label: {
+                HStack(spacing: 4) {
+                    if let status = label?.status {
+                        Circle()
+                            .fill(Color(nsColor: Theme.color(forID: Theme.userStatusColorID(status))
+                                        ?? .secondaryLabelColor))
+                            .frame(width: 8, height: 8)
+                    }
+
+                    Text(label?.text ?? "")
+                        .lineLimit(1)
+                        .fontWeight(label?.isChanged == true ? .bold : .regular)
+                        .foregroundStyle(tabColor(label))
+
+                    if label?.isChanged == true {
+                        Image(systemName: label?.isImportant == true ? "exclamationmark.circle.fill" : "circle.fill")
+                            .font(.system(size: label?.isImportant == true ? 10 : 6))
+                            .foregroundStyle(tabColor(label))
+                    }
+                }
+                .padding(.leading, 8)
+                .padding(.vertical, 5)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(label?.text ?? "")
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+
             if label?.closeCallback != nil && config.ui.tabClosers {
                 Button {
                     notebook.closePage(page)
                 } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 9, weight: .bold))
-                        .frame(width: 14, height: 14)
+                        .frame(width: 20, height: 20)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.borderless)
                 .opacity(isHovering || isSelected ? 1 : 0.4)
+                .accessibilityLabel(String(localized: "Close Tab"))
                 .help(String(localized: "Close Tab"))
-            }
-
-            if let status = label?.status {
-                Circle()
-                    .fill(Color(nsColor: Theme.color(forID: Theme.userStatusColorID(status)) ?? .secondaryLabelColor))
-                    .frame(width: 8, height: 8)
-            }
-
-            Text(label?.text ?? "")
-                .lineLimit(1)
-                .fontWeight(label?.isChanged == true ? .bold : .regular)
-                .foregroundStyle(tabColor(label))
-
-            if label?.isChanged == true {
-                Image(systemName: label?.isImportant == true ? "exclamationmark.circle.fill" : "circle.fill")
-                    .font(.system(size: label?.isImportant == true ? 10 : 6))
-                    .foregroundStyle(tabColor(label))
+                .padding(.trailing, 3)
+            } else {
+                Spacer(minLength: 5)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
         .background(in: .capsule)
         .backgroundStyle(tabBackground(isSelected: isSelected))
-        .contentShape(Rectangle())
-        .onTapGesture {
-            notebook.setCurrentPage(page)
+        .onHover { isHovering in
+            self.isHovering = isHovering
+
+            // Middle click closes the tab under the pointer
+            let pageID = ObjectIdentifier(page)
+
+            if isHovering {
+                MainWindow.shared?.hoveredTab = (pageID, { notebook.closePage(page) })
+            } else if MainWindow.shared?.hoveredTab?.pageID == pageID {
+                MainWindow.shared?.hoveredTab = nil
+            }
         }
-        .onHover { isHovering = $0 }
         .help(label?.tooltip ?? "")
         .contextMenu {
+            if label?.closeCallback != nil {
+                Button(String(localized: "Close Tab")) {
+                    notebook.closePage(page)
+                }
+                Divider()
+            }
             ForEach(Array(page.tabMenuItems.enumerated()), id: \.offset) { _, item in
                 if let action = item.action {
                     Button(item.title, action: action)
@@ -507,7 +534,6 @@ private struct NotebookTab<Page: NotebookPage>: View {
                 }
             }
         }
-        .overlay(MiddleClickView { notebook.closePage(page) })
     }
 
     private func tabBackground(isSelected: Bool) -> AnyShapeStyle {
@@ -575,42 +601,5 @@ private struct NotebookPagesMenu<Page: NotebookPage>: View {
         .menuIndicator(.hidden)
         .fixedSize()
         .help(notebook.pagesMenuTooltip)
-    }
-}
-
-/// Invisible view that reports middle mouse button clicks.
-private struct MiddleClickView: NSViewRepresentable {
-
-    let action: @MainActor () -> Void
-
-    func makeNSView(context: Context) -> NSView {
-        let view = ClickView()
-        view.action = action
-        return view
-    }
-
-    func updateNSView(_ nsView: NSView, context: Context) {
-        (nsView as? ClickView)?.action = action
-    }
-
-    private final class ClickView: NSView {
-        var action: (@MainActor () -> Void)?
-
-        override func otherMouseUp(with event: NSEvent) {
-            if event.buttonNumber == 2 {
-                MainActor.assumeIsolated {
-                    action?()
-                }
-            }
-        }
-
-        override func hitTest(_ point: NSPoint) -> NSView? {
-            // Only intercept middle clicks, let other events pass through
-            guard let event = NSApp.currentEvent,
-                  [.otherMouseDown, .otherMouseUp].contains(event.type) else {
-                return nil
-            }
-            return super.hitTest(point)
-        }
     }
 }

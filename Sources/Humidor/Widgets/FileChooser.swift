@@ -11,37 +11,37 @@ enum FileChooser {
 
     static func chooseFiles(title: String = String(localized: "Select a File"), initialFolder: String? = nil,
                             selectMultiple: Bool = false, callback: @escaping @MainActor ([String]) -> Void) {
-        let panel = NSOpenPanel()
-        panel.title = title
-        panel.message = title
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = false
-        panel.allowsMultipleSelection = selectMultiple
-        present(panel, initialFolder: initialFolder, callback: callback)
+        Presentations.shared.present(FileRequest(
+            title: title, initialFolder: folderURL(initialFolder), contentTypes: [.item],
+            selectMultiple: selectMultiple, callback: callback
+        ))
     }
 
     static func chooseFolders(title: String = String(localized: "Select a Folder"), initialFolder: String? = nil,
                               selectMultiple: Bool = false, callback: @escaping @MainActor ([String]) -> Void) {
-        let panel = NSOpenPanel()
-        panel.title = title
-        panel.message = title
-        panel.prompt = String(localized: "Select")
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.canCreateDirectories = true
-        panel.allowsMultipleSelection = selectMultiple
-        present(panel, initialFolder: initialFolder, callback: callback)
+        Presentations.shared.present(FileRequest(
+            title: title, initialFolder: folderURL(initialFolder), contentTypes: [.folder],
+            selectMultiple: selectMultiple, confirmationLabel: String(localized: "Select"), callback: callback
+        ))
     }
 
     static func chooseImage(title: String = String(localized: "Select an Image"), initialFolder: String? = nil,
                             callback: @escaping @MainActor ([String]) -> Void) {
-        let panel = NSOpenPanel()
-        panel.title = title
-        panel.message = title
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = false
-        panel.allowedContentTypes = [.image]
-        present(panel, initialFolder: initialFolder, callback: callback)
+        Presentations.shared.present(FileRequest(
+            title: title, initialFolder: folderURL(initialFolder), contentTypes: [.image],
+            selectMultiple: false, callback: callback
+        ))
+    }
+
+    /// Folder shown first in a file dialog, created if it doesn't exist
+    private static func folderURL(_ folder: String?) -> URL? {
+        guard let folder, !folder.isEmpty else {
+            return nil
+        }
+
+        let folderPath = config.expandingDataFolder(folder)
+        try? FileManager.default.createDirectory(atPath: folderPath, withIntermediateDirectories: true)
+        return URL(fileURLWithPath: folderPath, isDirectory: true)
     }
 
     static func saveFile(title: String = String(localized: "Save as…"), initialFolder: String? = nil,
@@ -73,7 +73,7 @@ enum FileChooser {
             }
         }
 
-        if let window = NSApp.keyWindow ?? MainWindow.shared?.window, window.isVisible {
+        if let window = NSApp.keyWindow ?? NSApp.mainWindow, window.isVisible {
             panel.beginSheetModal(for: window, completionHandler: completion)
         } else {
             panel.begin(completionHandler: completion)

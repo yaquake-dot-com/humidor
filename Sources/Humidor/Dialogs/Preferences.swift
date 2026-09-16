@@ -5,8 +5,7 @@ import HumidorCore
 import Observation
 import SwiftUI
 
-/// Preferences dialog. Pages edit a working copy of the settings, which is
-/// applied when pressing Apply or OK.
+/// Settings window. Pages edit a working copy that is committed when the window closes.
 @MainActor
 @Observable
 final class Preferences {
@@ -74,11 +73,15 @@ final class Preferences {
         "krusader --left $", "xterm -e mc $"
     ]
 
-    @ObservationIgnored let application: Application
-    @ObservationIgnored private var dialog: DialogWindow!
+    @ObservationIgnored let application: AppDelegate
+    @ObservationIgnored private var needsRescanAfterClose = false
 
     let pages: [PageInfo]
     var activePageID = "network"
+
+    var activePageTitle: String {
+        pages.first { $0.id == activePageID }?.title ?? String(localized: "Settings")
+    }
 
     /// Working copy of the settings
     var draft = HumidorCore.Settings()
@@ -129,7 +132,7 @@ final class Preferences {
     private(set) var selectedPlugin: String?
     private(set) var selectedPluginInfo: PluginInfo?
     private(set) var isPluginSettingsEnabled = false
-    @ObservationIgnored private var pluginSettingsDialog: PluginSettingsDialog?
+    @ObservationIgnored private(set) lazy var pluginSettingsDialog = PluginSettingsDialog()
 
     /// Changes to banned or ignored users, applied through the network filter
     private struct UserChanges {
@@ -139,7 +142,7 @@ final class Preferences {
         var removedIPs = Set<[String]>()
     }
 
-    init(application: Application) {
+    init(application: AppDelegate) {
         self.application = application
 
         var pages = [
@@ -167,21 +170,8 @@ final class Preferences {
 
         createListViews()
 
-        dialog = DialogWindow(title: String(localized: "Preferences"), width: 960, height: 650,
-                              hasSidebar: true) { [unowned self] in
-            PreferencesView(preferences: self)
-        }
-
         events.connect(.serverLogin) { [unowned self] _ in updatePortLabel() }
         events.connect(.serverDisconnect) { [unowned self] _ in updatePortLabel() }
-    }
-
-    func present() {
-        dialog.present()
-    }
-
-    func close() {
-        dialog.close()
     }
 
     func setActivePage(_ pageID: String) {
@@ -407,7 +397,7 @@ final class Preferences {
 
         publicAddressText = String(localized: "\(core.users.publicIPAddress ?? unknownLabel), port \(String(publicPort))")
         portCheckerURL = application.isolatedMode
-            ? nil : HumidorCore.Application.portCheckerURL(port: publicPort)
+            ? nil : Application.portCheckerURL(port: publicPort)
     }
 
     // MARK: Applying Settings
@@ -490,7 +480,7 @@ final class Preferences {
         return settings
     }
 
-    func updateSettings(isClosing: Bool = false) {
+    func updateSettings() {
         let settings = collectSettings()
         let current = config.settings
 
@@ -510,6 +500,7 @@ final class Preferences {
         let isPrivateRoomRequired = settings.server.privateChatrooms != current.server.privateChatrooms
         let isSearchHistoryRequired = settings.searches.enableHistory != current.searches.enableHistory
         let isLanguageChanged = settings.ui.language != current.ui.language
+        needsRescanAfterClose = needsRescanAfterClose || isRescanRequired
 
         config.settings = settings
 
@@ -549,7 +540,7 @@ final class Preferences {
         }
 
         if isLanguageChanged {
-            Application.setLanguage(settings.ui.language)
+            AppDelegate.setLanguage(settings.ui.language)
         }
 
         // Dark mode
@@ -576,13 +567,17 @@ final class Preferences {
         // Update configuration
         config.writeConfiguration()
 
-        guard isClosing else {
-            return
-        }
+    }
 
-        close()
+    /// Settings are applied when the window closes, as in system settings windows
+    func onClose() {
+        updateSettings()
+        finishApplyingSettings()
+    }
 
-        if isRescanRequired {
+    private func finishApplyingSettings() {
+        if needsRescanAfterClose {
+            needsRescanAfterClose = false
             core.shares.rescanShares()
         }
 
@@ -1367,11 +1362,7 @@ final class Preferences {
             return
         }
 
-        if pluginSettingsDialog == nil {
-            pluginSettingsDialog = PluginSettingsDialog()
-        }
-
-        pluginSettingsDialog?.updateSettings(pluginID: pluginID, metaSettings: settings)
-        pluginSettingsDialog?.present()
+        pluginSettingsDialog.updateSettings(pluginID: pluginID, metaSettings: settings)
+        pluginSettingsDialog.present()
     }
 }

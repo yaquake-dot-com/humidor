@@ -138,7 +138,6 @@ final class UserInfoTab: NotebookPage {
     @ObservationIgnored private(set) var likesListView: TreeView!
     @ObservationIgnored private(set) var dislikesListView: TreeView!
     @ObservationIgnored private var userPopupMenu: UserPopupMenu!
-    @ObservationIgnored private(set) var picturePopupMenu: PopupMenu!
     @ObservationIgnored private var pictureData: Data?
 
     // Widget state
@@ -204,14 +203,6 @@ final class UserInfoTab: NotebookPage {
         }
         dislikesPopupMenu.addItems(interests.interestItems(dislikesListView, columnID: "dislikes"))
         dislikesListView.popupMenu = dislikesPopupMenu
-
-        picturePopupMenu = PopupMenu()
-        picturePopupMenu.addItems(
-            .action(String(localized: "Copy Picture")) { [unowned self] in onCopyPicture() },
-            .action(String(localized: "Save Picture")) { [unowned self] in onSavePicture() },
-            .separator,
-            .action(String(localized: "Remove")) { [unowned self] in isPictureVisible = false }
-        )
 
         removePicture()
         populateStats()
@@ -501,7 +492,7 @@ final class UserInfoTab: NotebookPage {
         }.present()
     }
 
-    private func onCopyPicture() {
+    func onCopyPicture() {
         guard let picture else {
             return
         }
@@ -511,7 +502,11 @@ final class UserInfoTab: NotebookPage {
         pasteboard.writeObjects([picture])
     }
 
-    private func onSavePicture() {
+    func onRemovePicture() {
+        isPictureVisible = false
+    }
+
+    func onSavePicture() {
         guard let picture, let tiffData = picture.tiffRepresentation,
               let pngData = NSBitmapImageRep(data: tiffData)?.representation(using: .png, properties: [:]) else {
             return
@@ -593,20 +588,14 @@ struct UserInfosView: View {
                 }
             }
 
-            ToolbarItemGroup {
+            ToolbarItem {
                 Button {
-                    Application.shared.onPersonalProfile()
+                    AppDelegate.shared.onPersonalProfile()
                 } label: {
                     Label(String(localized: "Personal Profile"), systemImage: "person.crop.circle")
                         .labelStyle(.titleAndIcon)
                 }
 
-                Button {
-                    Application.shared.onConfigureAccount()
-                } label: {
-                    Label(String(localized: "Configure Account"), systemImage: "gearshape")
-                }
-                .help(String(localized: "Configure Account"))
             }
         }
     }
@@ -629,23 +618,27 @@ struct UserInfoTabView: View {
                 }
             }
 
-            SplitView(.horizontal, resizingPane: isPictureShown ? 2 : 0, panes: [
-                SplitPane(minLength: 260, idealLength: 320) {
-                    userInfo
-                },
-                SplitPane(minLength: 200, idealLength: isPictureShown ? 250 : nil) {
+            SplitPane("UserInfo.Details", edge: .leading, range: 260...600, idealLength: 320) {
+                SplitPane("UserInfo.Picture", edge: .trailing, range: 150...900, idealLength: 400,
+                          isPaneVisible: isPictureShown) {
                     interests
-                },
-                SplitPane(minLength: 150, isVisible: isPictureShown) {
+                } pane: {
                     if let picture = tab.picture {
                         Image(nsImage: picture)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .overlay(PictureMenuView(menu: tab.picturePopupMenu))
+                            .contextMenu {
+                                Button(String(localized: "Copy Picture")) { tab.onCopyPicture() }
+                                Button(String(localized: "Save Picture")) { tab.onSavePicture() }
+                                Divider()
+                                Button(String(localized: "Remove")) { tab.onRemovePicture() }
+                            }
                     }
                 }
-            ])
+            } pane: {
+                userInfo
+            }
 
             Divider()
             actionBar
@@ -728,14 +721,11 @@ struct UserInfoTabView: View {
                 }
             }
 
-            SplitView(.vertical, panes: [
-                SplitPane(minLength: 80) {
-                    tab.likesListView.view
-                },
-                SplitPane(minLength: 80) {
-                    tab.dislikesListView.view
-                }
-            ])
+            SplitPane("UserInfo.Likes", edge: .top, range: 80...800, idealLength: 200) {
+                tab.dislikesListView.view
+            } pane: {
+                tab.likesListView.view
+            }
         }
         .padding(12)
     }
@@ -773,30 +763,5 @@ struct UserInfoTabView: View {
         .buttonStyle(.borderless)
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-    }
-}
-
-/// Transparent view showing a context menu on right click.
-private struct PictureMenuView: NSViewRepresentable {
-
-    let menu: PopupMenu
-
-    func makeNSView(context: Context) -> MenuView {
-        let view = MenuView()
-        view.popupMenu = menu
-        return view
-    }
-
-    func updateNSView(_ view: MenuView, context: Context) {
-        view.popupMenu = menu
-    }
-
-    final class MenuView: NSView {
-        var popupMenu: PopupMenu?
-
-        override func menu(for event: NSEvent) -> NSMenu? {
-            popupMenu?.prepare()
-            return popupMenu?.menu
-        }
     }
 }

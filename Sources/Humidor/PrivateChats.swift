@@ -692,14 +692,6 @@ struct PrivateChatsView: View {
                 }
             }
 
-            ToolbarItem {
-                Button {
-                    Application.shared.onConfigureChats()
-                } label: {
-                    Label(String(localized: "Configure Chats"), systemImage: "gearshape")
-                }
-                .help(String(localized: "Configure Chats"))
-            }
         }
     }
 }

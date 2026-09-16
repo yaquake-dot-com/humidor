@@ -18,8 +18,7 @@ final class FastConfigure {
         case summary
     }
 
-    @ObservationIgnored private let application: Application
-    @ObservationIgnored private var dialog: DialogWindow!
+    @ObservationIgnored private let application: AppDelegate
     @ObservationIgnored private(set) var sharesListView: TreeView!
     @ObservationIgnored private var isRescanRequired = false
 
@@ -36,7 +35,7 @@ final class FastConfigure {
     }
     private(set) var usernameFocusRequest = 0
 
-    init(application: Application) {
+    init(application: AppDelegate) {
         self.application = application
 
         sharesListView = TreeView(
@@ -49,24 +48,25 @@ final class FastConfigure {
             activateRow: { [unowned self] _, _, _ in onEditSharedFolder() },
             deleteAccelerator: { [unowned self] _ in onRemoveSharedFolder() }
         )
+    }
 
-        dialog = DialogWindow(title: String(localized: "Setup Assistant"), width: 720, height: 450) { [unowned self] in
-            FastConfigureView(assistant: self)
+    @ObservationIgnored private(set) var isVisible = false
+
+    func present(invalidPassword: Bool) {
+        if invalidPassword, isVisible {
+            // Show the account page again
+            onClose()
+            self.invalidPassword = invalidPassword
+            onShow()
+            return
         }
-        dialog.showCallback = { [unowned self] in onShow() }
-        dialog.closeCallback = { [unowned self] in onClose() }
+
+        self.invalidPassword = invalidPassword
+        AppDelegate.shared.openWindow(.setupAssistant)
     }
 
-    var isVisible: Bool {
-        dialog.isVisible
-    }
-
-    func present() {
-        dialog.present()
-    }
-
-    func hide() {
-        dialog.hide()
+    private func close() {
+        AppDelegate.shared.closeWindow(.setupAssistant)
     }
 
     // MARK: Navigation
@@ -125,7 +125,7 @@ final class FastConfigure {
 
     func onPrevious() {
         if invalidPassword {
-            dialog.close()
+            close()
             return
         }
 
@@ -152,15 +152,17 @@ final class FastConfigure {
             core.connect()
         }
 
-        dialog.close()
+        close()
     }
 
-    private func onClose() {
+    func onClose() {
+        isVisible = false
         invalidPassword = false
         isRescanRequired = false
     }
 
-    private func onShow() {
+    func onShow() {
+        isVisible = true
         isAccountPageVisible = invalidPassword || config.needsConfig
         setPage(invalidPassword ? .account : .welcome)
 
@@ -255,11 +257,21 @@ final class FastConfigure {
     }
 }
 
-private struct FastConfigureView: View {
+struct FastConfigureView: View {
 
     @Bindable var assistant: FastConfigure
 
     var body: some View {
+        content
+            .onAppear {
+                assistant.onShow()
+            }
+            .onDisappear {
+                assistant.onClose()
+            }
+    }
+
+    @ViewBuilder private var content: some View {
         VStack(spacing: 0) {
             Group {
                 switch assistant.page {
@@ -300,7 +312,7 @@ private struct FastConfigureView: View {
                 .resizable()
                 .frame(width: 128, height: 128)
 
-            Text(String(localized: "Welcome to \(HumidorCore.Application.name)"))
+            Text(String(localized: "Welcome to \(Application.name)"))
                 .font(.largeTitle.bold())
 
             Text(String(localized: "Graphical client for the Soulseek peer-to-peer network"))
@@ -373,7 +385,7 @@ private struct FastConfigureView: View {
                 .font(.headline)
 
             FileChooserButton(path: $assistant.downloadFolder, chooserType: .folder,
-                              showsOpenButton: !Application.shared.isolatedMode)
+                              showsOpenButton: !AppDelegate.shared.isolatedMode)
 
             Text(String(localized: "Share Folders"))
                 .font(.headline)
@@ -392,7 +404,7 @@ private struct FastConfigureView: View {
 
     private var summaryPage: some View {
         VStack(spacing: 24) {
-            Text(String(localized: "You are ready to use \(HumidorCore.Application.name)!"))
+            Text(String(localized: "You are ready to use \(Application.name)!"))
                 .font(.largeTitle.bold())
                 .multilineTextAlignment(.center)
 

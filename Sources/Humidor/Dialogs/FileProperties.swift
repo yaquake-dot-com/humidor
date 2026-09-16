@@ -27,13 +27,7 @@ final class FileProperties {
     private(set) var currentIndex = 0
     @ObservationIgnored private var totalSize = 0
     @ObservationIgnored private var totalLength = 0
-    @ObservationIgnored private var dialog: DialogWindow!
-
-    init() {
-        dialog = DialogWindow(title: String(localized: "File Properties"), width: 600, height: 380) { [unowned self] in
-            FilePropertiesView(fileProperties: self)
-        }
-    }
+    private(set) var title = String(localized: "File Properties")
 
     private func updateTitle() {
         let index = currentIndex + 1
@@ -41,11 +35,11 @@ final class FileProperties {
         let totalSize = humanSize(self.totalSize)
 
         if totalLength > 0 {
-            dialog.window.title = String(localized: "File Properties (\(index) of \(totalFiles)  /  \(totalSize)  /  \(humanLength(totalLength)))")
+            title = String(localized: "File Properties (\(index) of \(totalFiles)  /  \(totalSize)  /  \(humanLength(totalLength)))")
             return
         }
 
-        dialog.window.title = String(localized: "File Properties (\(index) of \(totalFiles)  /  \(totalSize))")
+        title = String(localized: "File Properties (\(index) of \(totalFiles)  /  \(totalSize))")
     }
 
     var currentFile: FilePropertiesItem? {
@@ -61,7 +55,7 @@ final class FileProperties {
     }
 
     func present() {
-        dialog.present()
+        AppDelegate.shared.openWindow(.fileProperties)
     }
 
     func onPrevious() {
@@ -83,11 +77,16 @@ final class FileProperties {
     }
 }
 
-private struct FilePropertiesView: View {
+struct FilePropertiesView: View {
 
     let fileProperties: FileProperties
 
     var body: some View {
+        content
+            .navigationTitle(fileProperties.title)
+    }
+
+    @ViewBuilder private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let file = fileProperties.currentFile {
                 let quality = FileListMessage.parseAudioQualityLength(fileSize: file.size, attributes: file.fileAttributes,

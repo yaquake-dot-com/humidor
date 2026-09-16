@@ -40,7 +40,6 @@ struct InfoBar: View {
 
             Text(message)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .fixedSize(horizontal: false, vertical: true)
 
             if let buttonLabel, let buttonAction {
                 Button(buttonLabel, action: buttonAction)
@@ -83,7 +82,7 @@ struct TransfersView: View {
         .toolbar {
             ToolbarItemGroup {
                 Button {
-                    Application.shared.onTransferStatistics()
+                    AppDelegate.shared.onTransferStatistics()
                 } label: {
                     Label(page.userCountText, systemImage: "person.2")
                         .labelStyle(.titleAndIcon)
@@ -91,7 +90,7 @@ struct TransfersView: View {
                 .help(String(localized: "Users"))
 
                 Button {
-                    Application.shared.onTransferStatistics()
+                    AppDelegate.shared.onTransferStatistics()
                 } label: {
                     Label(page.fileCountText, systemImage: "doc.on.doc")
                         .labelStyle(.titleAndIcon)
@@ -99,7 +98,9 @@ struct TransfersView: View {
                 .help(String(localized: "Files"))
 
                 if page.groupingMode != .ungrouped {
-                    Toggle(isOn: $page.isExpanded) {
+                    Button {
+                        page.isExpanded.toggle()
+                    } label: {
                         Label(String(localized: "Expand / Collapse All"),
                               systemImage: page.isExpanded
                                 ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
@@ -111,17 +112,6 @@ struct TransfersView: View {
                     page.onToggleTree(mode)
                 }
 
-                Button {
-                    if isDownloads {
-                        Application.shared.onConfigureDownloads()
-                    } else {
-                        Application.shared.onConfigureUploads()
-                    }
-                } label: {
-                    Label(isDownloads ? String(localized: "Configure Downloads") : String(localized: "Configure Uploads"),
-                          systemImage: "gearshape")
-                }
-                .help(isDownloads ? String(localized: "Configure Downloads") : String(localized: "Configure Uploads"))
             }
         }
     }
@@ -153,7 +143,7 @@ struct TransfersView: View {
                 .help(String(localized: "Clear All Finished/Cancelled Uploads"))
 
                 Button(String(localized: "Message All"), systemImage: "paperplane") {
-                    Application.shared.onMessageDownloadingUsers()
+                    AppDelegate.shared.onMessageDownloadingUsers()
                 }
                 .help(String(localized: "Message All"))
             }

@@ -37,20 +37,14 @@ struct SearchesView: View {
                 }
             }
 
-            ToolbarItemGroup {
+            ToolbarItem {
                 Button {
-                    Application.shared.onWishlist()
+                    AppDelegate.shared.onWishlist()
                 } label: {
                     Label(String(localized: "Wishlist"), systemImage: "list.star")
                         .labelStyle(.titleAndIcon)
                 }
 
-                Button {
-                    Application.shared.onConfigureSearches()
-                } label: {
-                    Label(String(localized: "Configure Searches"), systemImage: "gearshape")
-                }
-                .help(String(localized: "Configure Searches"))
             }
         }
     }

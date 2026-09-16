@@ -13,7 +13,6 @@ final class UserBrowsesPage: TabbedPage {
     @ObservationIgnored let window: MainWindow
     let notebook: Notebook<UserBrowseTab>
     @ObservationIgnored private(set) var pages: [String: UserBrowseTab] = [:]
-    @ObservationIgnored var fileProperties: FileProperties?
 
     var usernameText = ""
     private(set) var usernameFocusRequest = 0
@@ -1054,12 +1053,9 @@ final class UserBrowseTab: NotebookPage {
             return
         }
 
-        if userBrowses.fileProperties == nil {
-            userBrowses.fileProperties = FileProperties()
-        }
-
-        userBrowses.fileProperties?.updateProperties(data, totalSize: selectedSize, totalLength: selectedLength)
-        userBrowses.fileProperties?.present()
+        let fileProperties = AppDelegate.shared.fileProperties
+        fileProperties.updateProperties(data, totalSize: selectedSize, totalLength: selectedLength)
+        fileProperties.present()
     }
 
     private func onCopyFilePath() {

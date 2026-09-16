@@ -9,7 +9,7 @@ import SwiftUI
 /// the status bar.
 @MainActor
 @Observable
-final class MainWindow: NSObject {
+final class MainWindow {
 
     enum Page: String, CaseIterable, Identifiable {
         case search
@@ -55,8 +55,12 @@ final class MainWindow: NSObject {
 
     static private(set) var shared: MainWindow?
 
-    @ObservationIgnored let application: Application
-    @ObservationIgnored private(set) var window: NSWindow!
+    @ObservationIgnored let application: AppDelegate
+    /// Title of the window, shown in the Window menu and Mission Control
+    private(set) var title = Application.name
+    /// Whether the window is open, and whether it is the active window
+    @ObservationIgnored private var isOpen = false
+    @ObservationIgnored private(set) var isActive = false
 
     // Pages
     @ObservationIgnored private(set) var interests: InterestsPage!
@@ -112,14 +116,15 @@ final class MainWindow: NSObject {
     @ObservationIgnored private var awayCooldownTime: TimeInterval = 0
     @ObservationIgnored private var eventMonitor: Any?
 
-    init(application: Application) {
+    /// Notebook tab under the pointer, closed with a middle click
+    @ObservationIgnored var hoveredTab: (pageID: ObjectIdentifier, close: @MainActor () -> Void)?
+
+    init(application: AppDelegate) {
         self.application = application
         self.isLogPaneVisible = !config.logging.logCollapsed
 
         logView = TextView(autoScroll: !config.logging.logCollapsed, parseURLs: false, isEditable: false,
                            verticalMargin: 5, paragraphSpacing: 2)
-
-        super.init()
 
         Self.shared = self
 
@@ -135,6 +140,25 @@ final class MainWindow: NSObject {
         events.connect(.sharesReady) { [unowned self] _ in sharesReady() }
         events.connect(.sharesScanning) { [unowned self] folderCount in sharesScanning(folderCount) }
         events.connectMessage(.userStatus) { [unowned self] msg in onUserStatusMessage(msg) }
+
+        // Auto-away mode
+        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyUp, .leftMouseDown, .rightMouseDown,
+                                                                   .otherMouseDown, .otherMouseUp]) { [weak self] event in
+            guard let self, isActive || event.type == .otherMouseUp else {
+                return event
+            }
+
+            if event.type == .otherMouseUp {
+                if event.buttonNumber == 2, let hoveredTab {
+                    hoveredTab.close()
+                    return nil
+                }
+                return event
+            }
+
+            onCancelAutoAway()
+            return event
+        }
 
         // Secondary pages
         interests = InterestsPage(window: self)
@@ -152,71 +176,46 @@ final class MainWindow: NSObject {
         setMainTabsVisibility()
         setLastSessionTab()
 
-        initWindow()
     }
 
     // MARK: Initialize
 
-    private func initWindow() {
-        let hostingController = NSHostingController(rootView: MainWindowView(mainWindow: self))
-        hostingController.sceneBridgingOptions = [.toolbars]
-
-        let window = NSWindow(contentViewController: hostingController)
-        window.title = HumidorCore.Application.name
-        // The title stays in the Window menu and Mission Control, but not in the toolbar
-        window.titleVisibility = .hidden
-        window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
-        window.toolbarStyle = .unified
-        window.isReleasedWhenClosed = false
-        window.delegate = self
-        window.tabbingMode = .disallowed
-        window.setContentSize(NSSize(width: config.ui.width, height: config.ui.height))
-        window.minSize = NSSize(width: 700, height: 450)
-        self.window = window
-
-        // Set main window position
-        let xPosition = config.ui.xPosition
-        let yPosition = config.ui.yPosition
-
-        if xPosition == -1 && yPosition == -1 {
-            window.center()
-        } else {
-            window.setFrameOrigin(NSPoint(x: xPosition, y: yPosition))
-        }
-
-        // Maximize main window if necessary
-        if config.ui.maximized || application.isolatedMode {
-            window.setFrame(window.screen?.visibleFrame ?? window.frame, display: false)
-        }
-
-        // Auto-away mode
-        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyUp, .leftMouseDown, .rightMouseDown,
-                                                                   .otherMouseDown]) { [weak self] event in
-            if event.window === self?.window {
-                self?.onCancelAutoAway()
-            }
-            return event
-        }
-    }
-
     var isVisible: Bool {
-        window.isVisible && !NSApp.isHidden
-    }
-
-    var isActive: Bool {
-        window.isKeyWindow && NSApp.isActive
+        isOpen && !NSApp.isHidden
     }
 
     func present() {
         NSApp.unhide(nil)
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate()
+        application.openWindow(.main)
     }
 
     // MARK: Window State
 
-    fileprivate func onWindowActiveChanged() {
-        saveWindowState()
+    func onWindowOpenChanged(_ isOpen: Bool) {
+        self.isOpen = isOpen
+
+        guard !isOpen, !application.isTerminating else {
+            return
+        }
+
+        switch config.ui.exitDialog {
+        case 0:
+            // Quit Program
+            core.quit()
+        case 1:
+            // Show Confirmation Dialog, once the window has finished closing
+            Task { @MainActor [application] in
+                application.onConfirmWindowClose()
+            }
+        default:
+            // Run in Background
+            MessageDialog.closeAll()
+            config.writeConfiguration()
+        }
+    }
+
+    func onWindowActiveChanged(_ isActive: Bool) {
+        self.isActive = isActive
 
         guard isActive else {
             return
@@ -248,11 +247,11 @@ final class MainWindow: NSObject {
         }
 
         guard !notificationText.isEmpty else {
-            window.title = HumidorCore.Application.name
+            title = Application.name
             return
         }
 
-        window.title = "\(HumidorCore.Application.name) - \(notificationText)"
+        title = "\(Application.name) - \(notificationText)"
     }
 
     private var attentionRequest: Int?
@@ -266,25 +265,6 @@ final class MainWindow: NSObject {
         if isEnabled && !isActive {
             attentionRequest = NSApp.requestUserAttention(.informationalRequest)
         }
-    }
-
-    func saveWindowState() {
-        guard let screenFrame = window.screen?.visibleFrame else {
-            return
-        }
-
-        let frame = window.frame
-        config.ui.maximized = window.isZoomed || frame == screenFrame
-
-        guard !config.ui.maximized, frame.width > 0, frame.height > 0 else {
-            return
-        }
-
-        let contentSize = window.contentRect(forFrameRect: frame).size
-        config.ui.width = Int(contentSize.width)
-        config.ui.height = Int(contentSize.height)
-        config.ui.xPosition = Int(frame.origin.x)
-        config.ui.yPosition = Int(frame.origin.y)
     }
 
     // MARK: Main Pages
@@ -537,7 +517,7 @@ final class MainWindow: NSObject {
     private func createLogContextMenu() {
         logCategoriesMenu = PopupMenu { menu in
             for (label, level) in Self.logCategories {
-                menu.setState(label, Application.shared.isLogLevelEnabled(level))
+                menu.setState(label, AppDelegate.shared.isLogLevelEnabled(level))
             }
         }
 
@@ -547,7 +527,7 @@ final class MainWindow: NSObject {
             }
 
             logCategoriesMenu.addItems(.toggle(label) { isEnabled in
-                Application.shared.setLogLevel(level, enabled: isEnabled)
+                AppDelegate.shared.setLogLevel(level, enabled: isEnabled)
             })
         }
 
@@ -658,24 +638,7 @@ final class MainWindow: NSObject {
 
     // MARK: Exit
 
-    fileprivate func onCloseWindowRequest() -> Bool {
-        switch config.ui.exitDialog {
-        case 0:
-            // Quit Program
-            core.quit()
-        case 1:
-            // Show Confirmation Dialog
-            core.confirmQuit()
-        default:
-            // Run in Background
-            hide()
-        }
-        return false
-    }
-
     private func onQuit() {
-        saveWindowState()
-
         if let eventMonitor {
             NSEvent.removeMonitor(eventMonitor)
             self.eventMonitor = nil
@@ -695,31 +658,6 @@ final class MainWindow: NSObject {
 
         // Hide the application, to ensure it is restored when clicking the dock icon
         NSApp.hide(nil)
-    }
-}
-
-// MARK: - Window Delegate
-
-extension MainWindow: NSWindowDelegate {
-
-    func windowShouldClose(_ sender: NSWindow) -> Bool {
-        onCloseWindowRequest()
-    }
-
-    func windowDidBecomeKey(_ notification: Notification) {
-        onWindowActiveChanged()
-    }
-
-    func windowDidResignKey(_ notification: Notification) {
-        onWindowActiveChanged()
-    }
-
-    func windowDidEndLiveResize(_ notification: Notification) {
-        saveWindowState()
-    }
-
-    func windowDidMove(_ notification: Notification) {
-        saveWindowState()
     }
 }
 

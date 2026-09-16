@@ -19,19 +19,9 @@ final class About {
 
     private(set) var versionStatus: VersionStatus?
     @ObservationIgnored private var isVersionOutdated = false
-    @ObservationIgnored private var dialog: DialogWindow!
 
     init() {
-        dialog = DialogWindow(title: String(localized: "About"), width: 425, height: 540) { [unowned self] in
-            AboutView(about: self)
-        }
-        dialog.showCallback = { [unowned self] in onShow() }
-
         events.connect(.checkLatestVersion) { [unowned self] in onCheckLatestVersion($0) }
-    }
-
-    func present() {
-        dialog.present()
     }
 
     private func onCheckLatestVersion(_ info: LatestVersionInfo) {
@@ -46,7 +36,7 @@ final class About {
         isVersionOutdated = info.isOutdated
     }
 
-    private func onShow() {
+    func onShow() {
         guard let updateChecker = core.updateChecker, !isVersionOutdated else {
             // Update checker is not loaded, or no need to check latest version again
             return
@@ -57,18 +47,25 @@ final class About {
     }
 }
 
-private struct AboutView: View {
+struct AboutView: View {
 
     let about: About
 
     var body: some View {
+        content
+            .onAppear {
+                about.onShow()
+            }
+    }
+
+    @ViewBuilder private var content: some View {
         ScrollView {
             VStack(spacing: 16) {
                 Image(nsImage: NSApp.applicationIconImage)
                     .resizable()
                     .frame(width: 96, height: 96)
 
-                Text("\(HumidorCore.Application.name) \(HumidorCore.Application.version)")
+                Text("\(Application.name) \(Application.version)")
                     .font(.title2.bold())
                     .textSelection(.enabled)
 
@@ -81,14 +78,14 @@ private struct AboutView: View {
                     versionStatusView(status)
                 }
 
-                Text(String(localized: "Based on \(HumidorCore.Application.originalName), a graphical client for the Soulseek network"))
+                Text(String(localized: "Based on \(Application.originalName), a graphical client for the Soulseek network"))
                     .font(.callout)
                     .multilineTextAlignment(.center)
 
-                Link(HumidorCore.Application.originalName,
-                     destination: URL(string: HumidorCore.Application.originalWebsiteURL)!)
+                Link(Application.originalName,
+                     destination: URL(string: Application.originalWebsiteURL)!)
 
-                Text(HumidorCore.Application.copyright)
+                Text(Application.copyright)
                     .font(.caption)
                     .multilineTextAlignment(.center)
                     .textSelection(.enabled)

@@ -27,10 +27,6 @@ struct AppKitView: NSViewRepresentable {
         }
     }
 
-    static func dismantleNSView(_ container: NSView, coordinator: ()) {
-        container.subviews.forEach { $0.removeFromSuperview() }
-    }
-
     private func embed(in container: NSView) {
         view.removeFromSuperview()
 

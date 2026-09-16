@@ -101,7 +101,6 @@ class TransfersPage: MainPage {
     @ObservationIgnored private var pendingFolderRows = Set<String>()
     @ObservationIgnored private var pendingUserRows = Set<String>()
     @ObservationIgnored private var rowID = 0
-    @ObservationIgnored private var fileProperties: FileProperties?
     @ObservationIgnored private var isInitialized = false
 
     // Selected users and transfers, in the order they were selected
@@ -1115,12 +1114,9 @@ class TransfersPage: MainPage {
             return
         }
 
-        if fileProperties == nil {
-            fileProperties = FileProperties()
-        }
-
-        fileProperties?.updateProperties(data, totalSize: selectedSize, totalLength: selectedLength)
-        fileProperties?.present()
+        let fileProperties = AppDelegate.shared.fileProperties
+        fileProperties.updateProperties(data, totalSize: selectedSize, totalLength: selectedLength)
+        fileProperties.present()
     }
 
     private func onCopyFilePath() {

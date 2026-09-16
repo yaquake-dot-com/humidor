@@ -392,20 +392,13 @@ private struct BuddyListPageView: View {
                 }
             }
 
-            ToolbarItemGroup {
+            ToolbarItem {
                 Button {
-                    Application.shared.onMessageBuddies()
+                    AppDelegate.shared.onMessageBuddies()
                 } label: {
                     Label(String(localized: "Message All"), systemImage: "paperplane")
                         .labelStyle(.titleAndIcon)
                 }
-
-                Button {
-                    Application.shared.onConfigureIgnoredUsers()
-                } label: {
-                    Label(String(localized: "Configure Ignored Users"), systemImage: "gearshape")
-                }
-                .help(String(localized: "Configure Ignored Users"))
             }
         }
     }

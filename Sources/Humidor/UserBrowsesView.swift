@@ -54,21 +54,15 @@ struct UserBrowsesView: View {
                 }
             }
 
-            ToolbarItemGroup {
+            ToolbarItem {
                 Button {
-                    Application.shared.onLoadSharesFromDisk()
+                    AppDelegate.shared.onLoadSharesFromDisk()
                 } label: {
                     Label(String(localized: "Open List"), systemImage: "doc.badge.arrow.up")
                         .labelStyle(.titleAndIcon)
                 }
                 .help(String(localized: "Opens a local list of shared files that was previously saved to disk"))
 
-                Button {
-                    Application.shared.onConfigureShares()
-                } label: {
-                    Label(String(localized: "Configure Shares"), systemImage: "gearshape")
-                }
-                .help(String(localized: "Configure Shares"))
             }
         }
     }
@@ -96,18 +90,15 @@ struct UserBrowseTabView: View {
 
             Divider()
 
-            SplitView(.horizontal, resizingPane: 1, panes: [
-                SplitPane(minLength: 240, idealLength: 300) {
-                    tab.folderTreeView.view
-                },
-                SplitPane(minLength: 250) {
-                    VStack(spacing: 0) {
-                        pathBar
-                        Divider()
-                        tab.fileListView.view
-                    }
+            SplitPane("UserBrowse.Folders", edge: .leading, range: 160...700, idealLength: 300) {
+                VStack(spacing: 0) {
+                    pathBar
+                    Divider()
+                    tab.fileListView.view
                 }
-            ])
+            } pane: {
+                tab.folderTreeView.view
+            }
         }
     }
 

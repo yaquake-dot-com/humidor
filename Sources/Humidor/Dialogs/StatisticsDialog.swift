@@ -12,19 +12,9 @@ final class StatisticsDialog {
     private(set) var sessionValues: [StatisticID: String] = [:]
     private(set) var totalValues: [StatisticID: String] = [:]
     private(set) var totalSinceText = String(localized: "Total")
-    @ObservationIgnored private var dialog: DialogWindow!
 
     init() {
-        dialog = DialogWindow(title: String(localized: "Transfer Statistics"), isResizable: false) { [unowned self] in
-            StatisticsView(statistics: self)
-        }
-        dialog.showCallback = { core.statistics.updateStats() }
-
         events.connect(.updateStat) { [unowned self] in updateStat($0) }
-    }
-
-    func present() {
-        dialog.present()
     }
 
     private func updateStat(_ update: StatUpdate) {
@@ -56,11 +46,18 @@ final class StatisticsDialog {
     }
 }
 
-private struct StatisticsView: View {
+struct StatisticsView: View {
 
     let statistics: StatisticsDialog
 
     var body: some View {
+        content
+            .onAppear {
+                core.statistics.updateStats()
+            }
+    }
+
+    @ViewBuilder private var content: some View {
         VStack(alignment: .leading, spacing: 18) {
             section(String(localized: "Current Session"), values: statistics.sessionValues)
             section(statistics.totalSinceText, values: statistics.totalValues)

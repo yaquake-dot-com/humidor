@@ -3,8 +3,7 @@
 // Development aids, only available in debug builds when NICOTINE_DEBUG_DIR is set:
 // - SIGUSR1 saves an image of each visible window to that folder
 // - SIGUSR2 runs the actions listed in the "actions" file in that folder, one per line
-//   ("ping" writes the current time to the "ping" file, to measure main thread delays;
-//   "window-layout" logs the minimum size of the main window and the lengths of its panes)
+//   ("ping" writes the current time to the "ping" file, to measure main thread delays)
 
 #if DEBUG
 
@@ -71,17 +70,23 @@ enum DebugHooks {
         }
     }
 
-    /// Logs the view hierarchy of a window, used to check the appearance of system views
-    private static func dumpViews(_ view: NSView, depth: Int = 0) {
+    /// Adds the view hierarchy of a window to a development report.
+    private static func dumpViews(_ view: NSView, depth: Int = 0, lines: inout [String]) {
         guard depth < 14 else {
             return
         }
 
-        log.add("VIEW " + String(repeating: "  ", count: depth) + String(describing: type(of: view)) + " \(view.frame)")
+        lines.append("VIEW " + String(repeating: "  ", count: depth)
+                     + String(describing: type(of: view)) + " \(view.frame)")
 
         for subview in view.subviews {
-            dumpViews(subview, depth: depth + 1)
+            dumpViews(subview, depth: depth + 1, lines: &lines)
         }
+    }
+
+    private static func writeReport(_ lines: [String], name: String, to folderPath: String) {
+        let filePath = (folderPath as NSString).appendingPathComponent(name)
+        try? (lines.joined(separator: "\n") + "\n").write(toFile: filePath, atomically: true, encoding: .utf8)
     }
 
     private static func runActions(from folderPath: String) {
@@ -116,52 +121,47 @@ enum DebugHooks {
             case "wish": core.search.addWish(argument)
             case "dialog":
                 switch argument {
-                case "wishlist": Application.shared.onWishlist()
-                case "statistics": Application.shared.onTransferStatistics()
-                case "shortcuts": Application.shared.onKeyboardShortcuts()
-                case "preferences": Application.shared.onPreferences()
-                case "setup": Application.shared.onFastConfigure()
-                case "about": Application.shared.onAbout()
+                case "wishlist": AppDelegate.shared.onWishlist()
+                case "statistics": AppDelegate.shared.onTransferStatistics()
+                case "shortcuts": AppDelegate.shared.onKeyboardShortcuts()
+                case "preferences": AppDelegate.shared.onPreferences()
+                case "setup": AppDelegate.shared.onFastConfigure()
+                case "about": AppDelegate.shared.onAbout()
                 default: break
                 }
-            case "preferences": Application.shared.onPreferences(pageID: argument)
-            case "apply-preferences": Application.shared.preferences?.updateSettings(isClosing: true)
+            case "preferences": AppDelegate.shared.onPreferences(pageID: argument)
+            case "apply-preferences": AppDelegate.shared.preferences.updateSettings()
             case "plugin-settings":
-                Application.shared.onPreferences(pageID: "plugins")
+                AppDelegate.shared.onPreferences(pageID: "plugins")
                 _ = core.pluginHandler?.enablePlugin(argument)
-                Application.shared.preferences?.showPluginSettings(argument)
+                AppDelegate.shared.preferences.showPluginSettings(argument)
             case "dump-views":
+                var lines: [String] = []
+
                 for window in NSApp.windows where window.isVisible {
                     guard argument.isEmpty || window.title.contains(argument) else {
                         continue
                     }
 
-                    log.add("WINDOW \(window.title)")
+                    lines.append("WINDOW \(window.title)")
 
                     if let frameView = window.contentView?.superview {
-                        dumpViews(frameView)
+                        dumpViews(frameView, lines: &lines)
                     }
                 }
-            case "window-layout":
-                guard let window = MainWindow.shared?.window else {
-                    break
-                }
-                func splitViews(_ view: NSView) -> [NSSplitView] {
-                    ((view as? NSSplitView).map { [$0] } ?? []) + view.subviews.flatMap(splitViews)
-                }
-                log.add("WINDOW frame \(window.frame.size) min \(window.minSize) contentMin \(window.contentMinSize) screen \(window.screen?.visibleFrame.size ?? .zero)")
-                for splitView in splitViews(window.contentView!) {
-                    let lengths = splitView.arrangedSubviews.map {
-                        Int(splitView.isVertical ? $0.frame.width : $0.frame.height)
-                    }
-                    log.add("SPLIT \(type(of: splitView)) vertical=\(splitView.isVertical) lengths \(lengths)")
-                }
+
+                writeReport(lines, name: "view-hierarchy.txt", to: folderPath)
             case "window-width":
-                if let window = MainWindow.shared?.window, let width = Double(argument) {
+                if let window = NSApp.windows.first(where: { $0.identifier?.rawValue == AppWindow.main.rawValue }), let width = Double(argument) {
                     var frame = window.frame
                     frame.size.width = width
                     window.setFrame(frame, display: true)
                 }
+            case "close-main":
+                NSApp.windows.first { $0.identifier?.rawValue == AppWindow.main.rawValue }?.performClose(nil)
+            case "present-main":
+                MainWindow.shared?.present()
+            case "close-tab": _ = MainWindow.shared?.closeTab()
             case "ping":
                 let filePath = (folderPath as NSString).appendingPathComponent("ping")
                 try? String(Date().timeIntervalSince1970).write(toFile: filePath, atomically: true, encoding: .utf8)

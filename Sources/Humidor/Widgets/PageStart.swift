@@ -29,7 +29,6 @@ struct PageStart<Entry: View>: View {
             Text(description)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: 420)
 
             entry

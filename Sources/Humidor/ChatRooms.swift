@@ -1035,6 +1035,13 @@ final class RoomListPopover {
         listView.iterators.keys.map(\.string).sorted()
     }
 
+    /// Room names in the default order of the room list: private rooms first, then by user count
+    var popularRoomNames: [String] {
+        listView.iterators
+            .sorted { listView.rowValue($0.value, "users_data").int > listView.rowValue($1.value, "users_data").int }
+            .map(\.key.string)
+    }
+
     private var selectedRoom: String? {
         listView.selectedRows.first.map { listView.rowValue($0, "room").string }
     }

@@ -10,14 +10,13 @@ import SwiftUI
 @Observable
 final class WishList {
 
-    @ObservationIgnored private let application: Application
+    @ObservationIgnored private let application: AppDelegate
     @ObservationIgnored private(set) var listView: TreeView!
-    @ObservationIgnored private var dialog: DialogWindow!
 
     var wishText = ""
     private(set) var wishFocusRequest = 0
 
-    init(application: Application) {
+    init(application: AppDelegate) {
         self.application = application
 
         listView = TreeView(
@@ -44,17 +43,8 @@ final class WishList {
         )
         listView.popupMenu = popupMenu
 
-        dialog = DialogWindow(title: String(localized: "Wishlist"), width: 600, height: 600) { [unowned self] in
-            WishListView(wishList: self)
-        }
-        dialog.showCallback = { [unowned self] in onShow() }
-
         events.connect(.addWish) { [unowned self] in addWish($0) }
         events.connect(.removeWish) { [unowned self] in removeWish($0) }
-    }
-
-    func present() {
-        dialog.present()
     }
 
     var wishes: [String] {
@@ -150,7 +140,7 @@ final class WishList {
         }
     }
 
-    private func onShow() {
+    func onShow() {
         guard let text = application.window.search.notebook.currentPage?.text, !text.isEmpty else {
             listView.unselectAllRows()
             return
@@ -170,11 +160,18 @@ final class WishList {
     }
 }
 
-private struct WishListView: View {
+struct WishListView: View {
 
     @Bindable var wishList: WishList
 
     var body: some View {
+        content
+            .onAppear {
+                wishList.onShow()
+            }
+    }
+
+    @ViewBuilder private var content: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "Wishlist items are auto-searched at regular intervals, for discovering uncommon files."))
                 .fixedSize(horizontal: false, vertical: true)

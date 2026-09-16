@@ -2,9 +2,9 @@
 
 import SwiftUI
 
-/// Dialog listing keyboard shortcuts.
+/// Keyboard shortcuts, listed in their window.
 @MainActor
-final class Shortcuts {
+enum Shortcuts {
 
     private struct Section: Identifiable {
         let title: String
@@ -69,16 +69,12 @@ final class Shortcuts {
         ])
     ]
 
-    private let dialog = DialogWindow(title: String(localized: "Keyboard Shortcuts"), width: 720, height: 560) {
-        ShortcutsView(sections: Shortcuts.sections.map { ($0.title, $0.shortcuts) })
-    }
-
-    func present() {
-        dialog.present()
+    static var content: ShortcutsView {
+        ShortcutsView(sections: sections.map { ($0.title, $0.shortcuts) })
     }
 }
 
-private struct ShortcutsView: View {
+struct ShortcutsView: View {
 
     let sections: [(title: String, shortcuts: [(keys: String, title: String)])]
 

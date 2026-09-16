@@ -971,11 +971,6 @@ final class TreeView: NSObject {
         }
     }
 
-    func selectAllRows() {
-        update()
-        outlineView.selectAll(nil)
-    }
-
     func unselectAllRows() {
         outlineView.deselectAll(nil)
     }
@@ -1460,21 +1455,27 @@ private final class ProgressCellView: NSView {
         progressIndicator.controlSize = .small
         progressIndicator.minValue = 0
         progressIndicator.maxValue = 100
+        progressIndicator.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        progressIndicator.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         progressIndicator.translatesAutoresizingMaskIntoConstraints = false
 
         label.font = .monospacedDigitSystemFont(ofSize: NSFont.smallSystemFontSize, weight: .regular)
-        label.alignment = .center
+        label.alignment = .right
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         label.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(progressIndicator)
         addSubview(label)
 
         NSLayoutConstraint.activate([
-            progressIndicator.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2),
-            progressIndicator.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -2),
+            progressIndicator.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6),
+            progressIndicator.trailingAnchor.constraint(equalTo: label.leadingAnchor, constant: -8),
             progressIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
-            label.centerXAnchor.constraint(equalTo: centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: centerYAnchor)
+            progressIndicator.widthAnchor.constraint(greaterThanOrEqualToConstant: 24),
+            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            label.widthAnchor.constraint(greaterThanOrEqualToConstant: 32)
         ])
     }
 

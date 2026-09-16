@@ -2,41 +2,75 @@
 
 import AppKit
 import HumidorCore
+import Observation
+import SwiftUI
 import UserNotifications
 
-/// Application delegate. Handles application-wide actions, notifications and
+/// Windows of the application, besides the Settings window
+enum AppWindow: String {
+    case main
+    case about
+    case statistics
+    case wishlist
+    case shortcuts
+    case fileProperties = "file-properties"
+    case setupAssistant = "setup-assistant"
+    case pluginSettings = "plugin-settings"
+}
+
+/// AppDelegate delegate. Handles application-wide actions, notifications and
 /// dialogs shown in response to core events.
 @MainActor
-final class Application: NSObject, NSApplicationDelegate {
+@Observable
+final class AppDelegate: NSObject, NSApplicationDelegate {
 
-    static private(set) var shared: Application!
+    static private(set) var shared: AppDelegate!
 
     private(set) var isOnline = false
-    private(set) var enabledLogLevels = Set<LogLevel>()
+    @ObservationIgnored private(set) var enabledLogLevels = Set<LogLevel>()
 
-    private(set) var isolatedMode = false
-    private var startHidden = false
-    private var awayAcceleratorCooldownTime: TimeInterval = 0
-    private var isTerminating = false
-    private var signalSources: [DispatchSourceSignal] = []
+    @ObservationIgnored private(set) var isolatedMode = false
+    @ObservationIgnored private var startHidden = false
+    @ObservationIgnored private var awayAcceleratorCooldownTime: TimeInterval = 0
+    @ObservationIgnored private(set) var isTerminating = false
+    /// The confirmation dialog is shown after the main window was closed
+    @ObservationIgnored private var isConfirmingWindowClose = false
+    @ObservationIgnored private var signalSources: [DispatchSourceSignal] = []
 
-    private(set) var window: MainWindow!
-    private(set) var preferences: Preferences?
-    private var fastConfigure: FastConfigure?
-    private var statistics: StatisticsDialog?
-    private var wishlist: WishList?
-    private var about: About?
-    private var shortcuts: Shortcuts?
+    @ObservationIgnored private(set) var window: MainWindow!
+
+    // Content of the other windows, created when they are first shown
+    @ObservationIgnored private(set) lazy var preferences = Preferences(application: self)
+    @ObservationIgnored private(set) lazy var fastConfigure = FastConfigure(application: self)
+    @ObservationIgnored private(set) lazy var statistics = StatisticsDialog()
+    @ObservationIgnored private(set) lazy var wishlist = WishList(application: self)
+    @ObservationIgnored private(set) lazy var about = About()
+    @ObservationIgnored private(set) lazy var fileProperties = FileProperties()
+
+    // Window actions of SwiftUI, set when the main window appears
+    @ObservationIgnored var openWindowAction: OpenWindowAction?
+    @ObservationIgnored var dismissWindowAction: DismissWindowAction?
+    @ObservationIgnored var openSettingsAction: OpenSettingsAction?
 
     override init() {
         super.init()
         Self.shared = self
         parseArguments()
+        initComponents()
+    }
+
+    func openWindow(_ appWindow: AppWindow) {
+        openWindowAction?(id: appWindow.rawValue)
+        NSApp.activate()
+    }
+
+    func closeWindow(_ appWindow: AppWindow) {
+        dismissWindowAction?(id: appWindow.rawValue)
     }
 
     // MARK: Launching
 
-    func applicationWillFinishLaunching(_ notification: Notification) {
+    private func initComponents() {
         core.initComponents(isolatedMode: isolatedMode)
 
         events.connect(.confirmQuit) { [unowned self] in onConfirmQuit() }
@@ -59,6 +93,8 @@ final class Application: NSObject, NSApplicationDelegate {
         if !config.ui.language.isEmpty {
             Self.setLanguage(config.ui.language)
         }
+
+        window = MainWindow(application: self)
     }
 
     /// Sets the language of the user interface, used from the next start of the
@@ -85,29 +121,29 @@ final class Application: NSObject, NSApplicationDelegate {
         DebugHooks.enableIfRequested()
         #endif
 
-        window = MainWindow(application: self)
         core.start()
 
         if config.server.autoConnectStartup {
             core.connect()
         }
 
-        // Check command line option and config option
-        let shouldStartHidden = startHidden || (config.ui.trayIcon && config.ui.startupHidden)
-
-        if !shouldStartHidden {
-            window.present()
-        }
-
         // Show active page and focus default widget
         window.showCurrentPage()
+
+        if startHidden || (config.ui.trayIcon && config.ui.startupHidden) {
+            NSApp.hide(nil)
+        }
+    }
+
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         if !window.isVisible {
             window.present()
         }
-        return true
+        return false
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -117,12 +153,12 @@ final class Application: NSObject, NSApplicationDelegate {
 
         let eventType = NSApp.currentEvent?.type
 
-        if eventType == .keyDown {
-            // Command+Q
-            onConfirmQuitRequest()
-        } else if eventType == nil || eventType == .appKitDefined || eventType == .systemDefined {
+        if eventType == nil || eventType == .appKitDefined || eventType == .systemDefined {
             // Logging out or shutting down
             core.quit(isTerminating: true)
+        } else if eventType == .keyDown {
+            // Command-Q
+            onConfirmQuitRequest()
         } else {
             onQuitRequest()
         }
@@ -192,7 +228,7 @@ final class Application: NSObject, NSApplicationDelegate {
     // MARK: Notifications
 
     private func showNotification(_ notification: NotificationMessage, action: String? = nil) {
-        let title = (notification.title ?? HumidorCore.Application.name).trimmingCharacters(in: .whitespaces)
+        let title = (notification.title ?? Application.name).trimmingCharacters(in: .whitespaces)
         let message = notification.message.trimmingCharacters(in: .whitespaces)
 
         guard Bundle.main.bundleIdentifier != nil else {
@@ -279,11 +315,13 @@ final class Application: NSObject, NSApplicationDelegate {
     private func onConfirmQuit() {
         let hasActiveUploads = core.uploads.hasActiveUploads
 
-        if !window.isVisible {
+        if !window.isVisible && !isConfirmingWindowClose {
             // Never show confirmation dialog when main window is hidden
             core.quit()
             return
         }
+
+        isConfirmingWindowClose = false
 
         let message: String
         let optionLabel: String?
@@ -297,7 +335,7 @@ final class Application: NSObject, NSApplicationDelegate {
         }
 
         OptionDialog(
-            title: String(localized: "Quit \(HumidorCore.Application.name)"),
+            title: String(localized: "Quit \(Application.name)"),
             message: message,
             buttons: [
                 .init("cancel", String(localized: "No")),
@@ -374,13 +412,8 @@ final class Application: NSObject, NSApplicationDelegate {
     }
 
     func onPreferences(pageID: String = "network") {
-        if preferences == nil {
-            preferences = Preferences(application: self)
-        }
-
-        preferences?.setSettings()
-        preferences?.setActivePage(pageID)
-        preferences?.present()
+        preferences.setActivePage(pageID)
+        openSettingsAction?()
     }
 
     func isLogLevelEnabled(_ level: LogLevel) -> Bool {
@@ -398,52 +431,31 @@ final class Application: NSObject, NSApplicationDelegate {
     }
 
     func onFastConfigure(invalidPassword: Bool = false) {
-        if fastConfigure == nil {
-            fastConfigure = FastConfigure(application: self)
-        }
-
-        if invalidPassword, fastConfigure?.isVisible == true {
-            fastConfigure?.hide()
-        }
-
-        fastConfigure?.invalidPassword = invalidPassword
-        fastConfigure?.present()
+        fastConfigure.present(invalidPassword: invalidPassword)
     }
 
     func onKeyboardShortcuts() {
-        if shortcuts == nil {
-            shortcuts = Shortcuts()
-        }
-        shortcuts?.present()
+        openWindow(.shortcuts)
     }
 
     func onTransferStatistics() {
-        if statistics == nil {
-            statistics = StatisticsDialog()
-        }
-        statistics?.present()
+        openWindow(.statistics)
     }
 
     func onReportBug() {
-        openURI(HumidorCore.Application.issueTrackerURL)
+        openURI(Application.issueTrackerURL)
     }
 
     func onImproveTranslations() {
-        openURI(HumidorCore.Application.translationsURL)
+        openURI(Application.translationsURL)
     }
 
     func onWishlist() {
-        if wishlist == nil {
-            wishlist = WishList(application: self)
-        }
-        wishlist?.present()
+        openWindow(.wishlist)
     }
 
     func onAbout() {
-        if about == nil {
-            about = About()
-        }
-        about?.present()
+        openWindow(.about)
     }
 
     private func onMessageUsersResponse(_ dialog: MessageDialog, target: String) {
@@ -507,12 +519,6 @@ final class Application: NSObject, NSApplicationDelegate {
 
     func onConfigureShares() { onPreferences(pageID: "shares") }
     func onConfigureSearches() { onPreferences(pageID: "searches") }
-    func onConfigureChats() { onPreferences(pageID: "chats") }
-    func onConfigureDownloads() { onPreferences(pageID: "downloads") }
-    func onConfigureUploads() { onPreferences(pageID: "uploads") }
-    func onConfigureIgnoredUsers() { onPreferences(pageID: "ignored-users") }
-    func onConfigureAccount() { onPreferences(pageID: "network") }
-    func onConfigureUserProfile() { onPreferences(pageID: "user-profile") }
 
     /// Shift+Command+A: Away/Online toggle.
     func onAwayAccelerator() {
@@ -543,6 +549,12 @@ final class Application: NSObject, NSApplicationDelegate {
         core.quit()
     }
 
+    /// The main window was closed, with "Show confirmation dialog" chosen for closing the window
+    func onConfirmWindowClose() {
+        isConfirmingWindowClose = true
+        core.confirmQuit()
+    }
+
     func onQuitRequest() {
         if !core.uploads.hasActiveUploads {
             core.quit()
@@ -555,7 +567,7 @@ final class Application: NSObject, NSApplicationDelegate {
 
 // MARK: - Notification Center Delegate
 
-extension Application: UNUserNotificationCenterDelegate {
+extension AppDelegate: UNUserNotificationCenterDelegate {
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
                                             willPresent notification: UNNotification) async

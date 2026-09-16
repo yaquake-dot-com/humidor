@@ -20,7 +20,6 @@ final class SearchesPage: TabbedPage {
     @ObservationIgnored let window: MainWindow
     let notebook: Notebook<SearchTab>
     @ObservationIgnored private(set) var pages: [Int: SearchTab] = [:]
-    @ObservationIgnored var fileProperties: FileProperties?
 
     private(set) var searchMode = SearchMode.global
     var searchText = ""
@@ -1469,12 +1468,9 @@ final class SearchTab: NotebookPage {
             return
         }
 
-        if searches.fileProperties == nil {
-            searches.fileProperties = FileProperties()
-        }
-
-        searches.fileProperties?.updateProperties(data, totalSize: selectedSize, totalLength: selectedLength)
-        searches.fileProperties?.present()
+        let fileProperties = AppDelegate.shared.fileProperties
+        fileProperties.updateProperties(data, totalSize: selectedSize, totalLength: selectedLength)
+        fileProperties.present()
     }
 
     private func onDownloadFiles(downloadFolderPath: String? = nil) {
@@ -1580,7 +1576,7 @@ final class SearchTab: NotebookPage {
         if numResultsFound > numResultsVisible {
             onClearUndoFilters()
         } else {
-            Application.shared.onConfigureSearches()
+            AppDelegate.shared.onConfigureSearches()
         }
     }
 
@@ -1622,7 +1618,7 @@ final class SearchTab: NotebookPage {
 
     private func onEditSearch() {
         if mode == .wishlist {
-            Application.shared.onWishlist()
+            AppDelegate.shared.onWishlist()
             return
         }
 

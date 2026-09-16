@@ -17,7 +17,7 @@ final class PluginSettingsDialog {
         var id: String { name }
     }
 
-    @ObservationIgnored private var dialog: DialogWindow!
+    private(set) var title = ""
     @ObservationIgnored private(set) var listViews: [String: TreeView] = [:]
     @ObservationIgnored private var listRowIDs: [String: Int] = [:]
     @ObservationIgnored private var pluginID: String?
@@ -25,18 +25,12 @@ final class PluginSettingsDialog {
     private(set) var options: [Option] = []
     var values: [String: JSONValue] = [:]
 
-    init() {
-        dialog = DialogWindow(title: "", width: 600, height: 425) { [unowned self] in
-            PluginSettingsView(dialog: self)
-        }
-    }
-
     func present() {
-        dialog.present()
+        AppDelegate.shared.openWindow(.pluginSettings)
     }
 
     func close() {
-        dialog.close()
+        AppDelegate.shared.closeWindow(.pluginSettings)
     }
 
     func updateSettings(pluginID: String, metaSettings: OrderedDictionary<String, PluginSettingMeta>) {
@@ -44,7 +38,7 @@ final class PluginSettingsDialog {
         let storedSettings = config.plugins.settings[pluginID.lowercased()] ?? [:]
 
         self.pluginID = pluginID
-        dialog.window.title = String(localized: "\(pluginName) Settings")
+        title = String(localized: "\(pluginName) Settings")
 
         listViews.removeAll()
         listRowIDs.removeAll()
@@ -192,11 +186,16 @@ final class PluginSettingsDialog {
     }
 }
 
-private struct PluginSettingsView: View {
+struct PluginSettingsView: View {
 
     let dialog: PluginSettingsDialog
 
     var body: some View {
+        content
+            .navigationTitle(dialog.title)
+    }
+
+    @ViewBuilder private var content: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 ForEach(dialog.options) { option in
@@ -296,7 +295,7 @@ private struct PluginSettingsView: View {
             optionRow(meta.description) {
                 FileChooserButton(path: dialog.binding(option.name) as Binding<String>,
                                   chooserType: meta.type == .folder ? .folder : .file,
-                                  showsOpenButton: !Application.shared.isolatedMode)
+                                  showsOpenButton: !AppDelegate.shared.isolatedMode)
             }
         }
     }

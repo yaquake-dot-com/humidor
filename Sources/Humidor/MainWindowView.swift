@@ -8,37 +8,54 @@ struct MainWindowView: View {
 
     @Bindable var mainWindow: MainWindow
 
+    @Environment(\.appearsActive) private var appearsActive
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.openSettings) private var openSettings
+
     var body: some View {
         NavigationSplitView {
             PageList(mainWindow: mainWindow)
                 .navigationSplitViewColumnWidth(min: 160, ideal: 190, max: 260)
         } detail: {
             VStack(spacing: 0) {
-                VSplitView {
-                    HStack(spacing: 0) {
-                        currentPageView
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                        if mainWindow.buddies.position == "always" {
-                            Divider()
-                            mainWindow.buddies.content
-                                .frame(minWidth: 200, idealWidth: 250, maxWidth: 400)
-                        }
-                    }
-                    .frame(minHeight: 200)
-                    .layoutPriority(1)
-
-                    if mainWindow.isLogPaneVisible {
-                        mainWindow.logView.view
-                            .frame(minHeight: 60, idealHeight: 140)
-                    }
+                SplitPane("Log", edge: .bottom, range: 60...600, idealLength: 140,
+                          isPaneVisible: mainWindow.isLogPaneVisible) {
+                    pageArea
+                } pane: {
+                    mainWindow.logView.view
                 }
 
                 Divider()
                 StatusBar(mainWindow: mainWindow)
             }
         }
-        .navigationTitle("")
+        .frame(minWidth: 700, minHeight: 450)
+        // The title stays in the Window menu and Mission Control, but not in the toolbar
+        .navigationTitle(mainWindow.title)
+        .toolbar(removing: .title)
+        .onAppear {
+            let application = mainWindow.application
+            application.openWindowAction = openWindow
+            application.dismissWindowAction = dismissWindow
+            application.openSettingsAction = openSettings
+            mainWindow.onWindowOpenChanged(true)
+        }
+        .onDisappear {
+            mainWindow.onWindowOpenChanged(false)
+        }
+        .onChange(of: appearsActive, initial: true) {
+            mainWindow.onWindowActiveChanged(appearsActive)
+        }
+    }
+
+    private var pageArea: some View {
+        SplitPane("Buddies", edge: .trailing, range: 200...600, idealLength: 250,
+                  isPaneVisible: mainWindow.buddies.position == "always") {
+            currentPageView
+        } pane: {
+            mainWindow.buddies.content
+        }
     }
 
     @ViewBuilder private var currentPageView: some View {
@@ -124,7 +141,7 @@ private struct StatusBar: View {
             }
 
             Button {
-                Application.shared.onTransferStatistics()
+                AppDelegate.shared.onTransferStatistics()
             } label: {
                 Label(mainWindow.connectionsText, systemImage: "network")
             }

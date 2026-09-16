@@ -14,32 +14,24 @@ struct PreferencesView: View {
                 Label(page.title, systemImage: page.systemImage)
                     .tag(page.id)
             }
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 260)
-        } detail: {
-            detailView
-        }
-        .toolbar(removing: .sidebarToggle)
-        .frame(minWidth: 760, minHeight: 500)
-    }
-
-    @ViewBuilder private var detailView: some View {
-        pageView
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .bottomBar {
-                buttonBar
+            .safeAreaInset(edge: .bottom) {
+                Button(String(localized: "Export…")) { preferences.onBackUpConfig() }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(10)
             }
-    }
-
-    private var buttonBar: some View {
-        HStack(spacing: 12) {
-            Spacer()
-
-            Button(String(localized: "Export…")) { preferences.onBackUpConfig() }
-            Button(String(localized: "Cancel")) { preferences.close() }
-                .keyboardShortcut(.cancelAction)
-            Button(String(localized: "Apply")) { preferences.updateSettings() }
-            Button(String(localized: "OK")) { preferences.updateSettings(isClosing: true) }
-                .keyboardShortcut(.defaultAction)
+            .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 260)
+            .toolbar(removing: .sidebarToggle)
+        } detail: {
+            pageView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationTitle(preferences.activePageTitle)
+        }
+        .frame(minWidth: 760, idealWidth: 960, minHeight: 500, idealHeight: 650)
+        .onAppear {
+            preferences.setSettings()
+        }
+        .onDisappear {
+            preferences.onClose()
         }
     }
 
@@ -225,7 +217,7 @@ private struct FolderField: View {
         LabeledContent(title) {
             HStack(spacing: 6) {
                 FileChooserButton(path: $path, chooserType: .folder,
-                                  showsOpenButton: !Application.shared.isolatedMode)
+                                  showsOpenButton: !AppDelegate.shared.isolatedMode)
                     .frame(maxWidth: 320)
                 Button {
                     path = defaultPath
@@ -358,7 +350,7 @@ private struct UserInterfaceSettingsPage: View {
                 }
 
                 Picker(String(localized: "When closing window:"), selection: $preferences.draft.ui.exitDialog) {
-                    Text(String(localized: "Quit \(HumidorCore.Application.name)")).tag(0)
+                    Text(String(localized: "Quit \(Application.name)")).tag(0)
                     Text(String(localized: "Show confirmation dialog")).tag(1)
                     Text(String(localized: "Run in the background")).tag(2)
                 }
@@ -514,7 +506,7 @@ private struct DownloadsSettingsPage: View {
 
     @Bindable var preferences: Preferences
 
-    private var isolatedMode: Bool { Application.shared.isolatedMode }
+    private var isolatedMode: Bool { AppDelegate.shared.isolatedMode }
 
     var body: some View {
         PageForm {
@@ -640,7 +632,7 @@ private struct UploadsSettingsPage: View {
                 Picker(String(localized: "Double-click action for uploads:"),
                        selection: $preferences.draft.transfers.uploadDoubleClick) {
                     Text(String(localized: "Nothing")).tag(0)
-                    if !Application.shared.isolatedMode {
+                    if !AppDelegate.shared.isolatedMode {
                         Text(String(localized: "Open File")).tag(1)
                         Text(String(localized: "Open in File Manager")).tag(2)
                     }
@@ -806,7 +798,7 @@ private struct UserProfileSettingsPage: View {
                 LabeledContent(String(localized: "Picture:")) {
                     HStack(spacing: 6) {
                         FileChooserButton(path: $preferences.draft.userInfo.picture, chooserType: .image,
-                                          showsOpenButton: !Application.shared.isolatedMode)
+                                          showsOpenButton: !AppDelegate.shared.isolatedMode)
                             .frame(maxWidth: 320)
                         Button(String(localized: "Reset Picture")) {
                             preferences.draft.userInfo.picture = ""
