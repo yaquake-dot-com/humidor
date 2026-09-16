@@ -1436,51 +1436,50 @@ private final class ProgressCellView: NSView {
 
     static let identifier = NSUserInterfaceItemIdentifier("ProgressCell")
 
+    private let progressIndicator = NSProgressIndicator()
+    private let label = NSTextField(labelWithString: "")
+
     var value = 0 {
         didSet {
-            if value != oldValue {
-                needsDisplay = true
+            guard value != oldValue else {
+                return
             }
+
+            progressIndicator.doubleValue = Double(min(max(value, 0), 100))
+            label.stringValue = "\(value)%"
         }
     }
 
     init() {
         super.init(frame: .zero)
+
         identifier = Self.identifier
+
+        progressIndicator.style = .bar
+        progressIndicator.isIndeterminate = false
+        progressIndicator.controlSize = .small
+        progressIndicator.minValue = 0
+        progressIndicator.maxValue = 100
+        progressIndicator.translatesAutoresizingMaskIntoConstraints = false
+
+        label.font = .monospacedDigitSystemFont(ofSize: NSFont.smallSystemFontSize, weight: .regular)
+        label.alignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        addSubview(progressIndicator)
+        addSubview(label)
+
+        NSLayoutConstraint.activate([
+            progressIndicator.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2),
+            progressIndicator.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -2),
+            progressIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
+            label.centerXAnchor.constraint(equalTo: centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func draw(_ dirtyRect: NSRect) {
-        let barRect = bounds.insetBy(dx: 2, dy: 3)
-        let path = NSBezierPath(roundedRect: barRect, xRadius: 3, yRadius: 3)
-
-        NSColor.quaternaryLabelColor.setFill()
-        path.fill()
-
-        let fraction = CGFloat(min(max(value, 0), 100)) / 100
-        var fillRect = barRect
-        fillRect.size.width *= fraction
-
-        if fraction > 0 {
-            NSGraphicsContext.saveGraphicsState()
-            path.addClip()
-            NSColor.controlAccentColor.withAlphaComponent(0.75).setFill()
-            fillRect.fill()
-            NSGraphicsContext.restoreGraphicsState()
-        }
-
-        let text = "\(value)%" as NSString
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedDigitSystemFont(ofSize: NSFont.smallSystemFontSize, weight: .regular),
-            .foregroundColor: NSColor.labelColor
-        ]
-        let textSize = text.size(withAttributes: attributes)
-
-        text.draw(at: NSPoint(x: barRect.midX - textSize.width / 2, y: barRect.midY - textSize.height / 2),
-                  withAttributes: attributes)
     }
 }
 
