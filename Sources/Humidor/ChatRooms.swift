@@ -321,8 +321,7 @@ final class ChatRoomTab: NotebookPage {
         activityView = TextView(parseURLs: false, isEditable: false, horizontalMargin: 10, verticalMargin: 5,
                                 paragraphSpacing: 2)
 
-        chatView = ChatView(autoScroll: false, horizontalMargin: 10, verticalMargin: 5, paragraphSpacing: 2,
-                            font: Theme.font(config.ui.chatFont)) { [unowned self] _, username in
+        chatView = ChatView(autoScroll: false, horizontalMargin: 10, verticalMargin: 5, paragraphSpacing: 2) { [unowned self] _, username in
             usernameEvent(username)
         }
         chatView.statusUsers = { core.chatrooms.joinedRooms[room]?.users ?? [] }

@@ -120,9 +120,9 @@ enum Theme {
 
     private static func statusColor(forIconName iconName: String) -> NSColor {
         switch iconName {
-        case "status.online": color(hex: "#16BB5C") ?? .systemGreen
-        case "status.away": color(hex: "#C9AE13") ?? .systemYellow
-        default: color(hex: "#E04F5E") ?? .systemRed
+        case "status.online": .systemGreen
+        case "status.away": .systemYellow
+        default: .systemRed
         }
     }
 
@@ -138,51 +138,17 @@ enum Theme {
 
     // MARK: Colors
 
-    static func color(hex: String) -> NSColor? {
-        var hex = hex.trimmingCharacters(in: .whitespaces)
-
-        guard hex.hasPrefix("#") else {
-            return nil
-        }
-        hex.removeFirst()
-
-        guard hex.count == 6, let value = UInt32(hex, radix: 16) else {
-            return nil
-        }
-
-        return NSColor(
-            srgbRed: CGFloat((value >> 16) & 0xFF) / 255,
-            green: CGFloat((value >> 8) & 0xFF) / 255,
-            blue: CGFloat(value & 0xFF) / 255,
-            alpha: 1
-        )
-    }
-
-    /// Color configured for a text tag (chat message types, usernames, URLs).
+    /// System color of a text tag (chat message types, usernames, URLs) and of tab labels.
     static func color(forID colorID: String) -> NSColor? {
-        let ui = config.ui
-        let isHotspotColor = ["useraway", "useronline", "useroffline"].contains(colorID)
-
-        if isHotspotColor && !ui.usernameHotspots {
-            return nil
+        switch colorID {
+        case "chatme", "chatcommand": .secondaryLabelColor
+        case "chathilite", "tabhilite", "tabchanged": .controlAccentColor
+        case "urlcolor": .linkColor
+        case "useronline": config.ui.usernameHotspots ? .systemGreen : nil
+        case "useraway": config.ui.usernameHotspots ? .systemYellow : nil
+        case "useroffline": config.ui.usernameHotspots ? .systemRed : nil
+        default: nil
         }
-
-        let colorHex: String = switch colorID {
-        case "chatme": ui.chatMe
-        case "chatremote": ui.chatRemote
-        case "chatlocal": ui.chatLocal
-        case "chatcommand": ui.chatCommand
-        case "chathilite": ui.chatHighlight
-        case "urlcolor": ui.urlColor
-        case "useronline": ui.userOnline
-        case "useraway": ui.userAway
-        case "useroffline": ui.userOffline
-        case "tabhilite": ui.tabHighlight
-        case "tabchanged": ui.tabChanged
-        default: ""
-        }
-
-        return color(hex: colorHex)
     }
 
     static func userStatusColorID(_ status: UserStatus) -> String {
@@ -191,29 +157,5 @@ enum Theme {
         case .away: "useraway"
         case .offline: "useroffline"
         }
-    }
-
-    // MARK: Fonts
-
-    /// Font configured for a group of widgets, e.g. "chatfont" or "listfont".
-    static func font(_ fontDescription: String, default defaultFont: NSFont = .systemFont(ofSize: NSFont.systemFontSize))
-        -> NSFont {
-        guard !fontDescription.isEmpty else {
-            return defaultFont
-        }
-
-        // Font descriptions consist of a family name, followed by the size
-        var components = fontDescription.split(separator: " ").map(String.init)
-        var size = defaultFont.pointSize
-
-        if let lastComponent = components.last, let parsedSize = Double(lastComponent) {
-            size = CGFloat(parsedSize)
-            components.removeLast()
-        }
-
-        return NSFont(name: components.joined(separator: " "), size: size)
-            ?? NSFontManager.shared.font(withFamily: components.joined(separator: " "), traits: [], weight: 5,
-                                         size: size)
-            ?? defaultFont.withSize(size)
     }
 }

@@ -232,8 +232,7 @@ final class PrivateChatTab: NotebookPage {
         self.user = user
         self.isLogEnabled = config.logging.privateChats.contains(user)
 
-        chatView = ChatView(autoScroll: false, horizontalMargin: 10, verticalMargin: 5, paragraphSpacing: 2,
-                            font: Theme.font(config.ui.chatFont)) { [unowned self] point, username in
+        chatView = ChatView(autoScroll: false, horizontalMargin: 10, verticalMargin: 5, paragraphSpacing: 2) { [unowned self] point, username in
             usernameEvent(username)
         }
         chatView.pageDownCallback = { [unowned chats] in

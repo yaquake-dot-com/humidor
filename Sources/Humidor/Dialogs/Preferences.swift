@@ -16,29 +16,6 @@ final class Preferences {
         let systemImage: String
     }
 
-    static let languages: [(code: String, name: String)] = [
-        ("ca", "Català"),
-        ("cs", "Čeština"),
-        ("de", "Deutsch"),
-        ("en", "English"),
-        ("es_CL", "Español (Chile)"),
-        ("es_ES", "Español (España)"),
-        ("et", "Eesti"),
-        ("fr", "Français"),
-        ("hu", "Magyar"),
-        ("it", "Italiano"),
-        ("lv", "Latviešu"),
-        ("nl", "Nederlands"),
-        ("pl", "Polski"),
-        ("pt_BR", "Português (Brasil)"),
-        ("pt_PT", "Português (Portugal)"),
-        ("ru", "Русский"),
-        ("ta", "தமிழ்"),
-        ("tr", "Türkçe"),
-        ("uk", "Українська"),
-        ("zh_CN", "汉语")
-    ]
-
     static let formatCodesURL = "https://docs.python.org/3/library/datetime.html#format-codes"
 
     static let defaultNowPlayingFormats = [
@@ -499,7 +476,6 @@ final class Preferences {
         let isCompletionRequired = Self.completionOptions(settings.words) != Self.completionOptions(current.words)
         let isPrivateRoomRequired = settings.server.privateChatrooms != current.server.privateChatrooms
         let isSearchHistoryRequired = settings.searches.enableHistory != current.searches.enableHistory
-        let isLanguageChanged = settings.ui.language != current.ui.language
         needsRescanAfterClose = needsRescanAfterClose || isRescanRequired
 
         config.settings = settings
@@ -538,13 +514,6 @@ final class Preferences {
         if isRecompressSharesRequired && !isRescanRequired {
             core.shares.rescanShares(initializing: true, rescan: false)
         }
-
-        if isLanguageChanged {
-            AppDelegate.setLanguage(settings.ui.language)
-        }
-
-        // Dark mode
-        NSApp.appearance = settings.ui.darkMode ? NSAppearance(named: .darkAqua) : nil
 
         // Chats
         application.window.chatrooms.updateWidgets()

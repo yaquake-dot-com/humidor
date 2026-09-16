@@ -88,23 +88,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         enabledLogLevels = Set(config.logging.debugModes)
 
-        if !config.ui.language.isEmpty {
-            Self.setLanguage(config.ui.language)
-        }
-
         window = MainWindow(application: self)
-    }
-
-    /// Sets the language of the user interface, used from the next start of the
-    /// application. An empty language code uses the system language.
-    static func setLanguage(_ language: String) {
-        guard !language.isEmpty else {
-            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
-            return
-        }
-
-        let languageCode = (language == "zh_CN") ? "zh-Hans" : language.replacingOccurrences(of: "_", with: "-")
-        UserDefaults.standard.set([languageCode], forKey: "AppleLanguages")
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {

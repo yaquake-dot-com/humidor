@@ -138,74 +138,6 @@ extension RadioRow where Accessory == EmptyView {
     }
 }
 
-/// Color entry, with a text field for the hexadecimal value and a color well
-private struct ColorField: View {
-
-    let title: String
-    @Binding var hex: String
-
-    var body: some View {
-        LabeledContent(title) {
-            HStack(spacing: 6) {
-                TextField("", text: $hex)
-                    .labelsHidden()
-                    .frame(width: 90)
-                ColorPicker("", selection: Binding(
-                    get: { Color(nsColor: Theme.color(hex: hex) ?? .textColor) },
-                    set: { hex = Self.hexString(NSColor($0)) }
-                ), supportsOpacity: false)
-                .labelsHidden()
-                Button {
-                    hex = ""
-                } label: {
-                    Image(systemName: "xmark.circle")
-                }
-                .buttonStyle(.borderless)
-                .help(String(localized: "Clear"))
-                .disabled(hex.isEmpty)
-            }
-        }
-    }
-
-    private static func hexString(_ color: NSColor) -> String {
-        guard let color = color.usingColorSpace(.sRGB) else {
-            return ""
-        }
-
-        let red = Int((color.redComponent * 255).rounded())
-        let green = Int((color.greenComponent * 255).rounded())
-        let blue = Int((color.blueComponent * 255).rounded())
-        return "#" + [red, green, blue].map { String(format: "%02X", $0) }.joined()
-    }
-}
-
-/// Font selection button, using the system font panel
-private struct FontField: View {
-
-    let title: String
-    @Binding var fontDescription: String
-
-    var body: some View {
-        LabeledContent(title) {
-            HStack(spacing: 6) {
-                Button(fontDescription.isEmpty ? String(localized: "Default") : fontDescription) {
-                    FontChooser.shared.choose(initialFont: Theme.font(fontDescription)) { font in
-                        fontDescription = "\(font.familyName ?? font.fontName) \(String(Int(font.pointSize)))"
-                    }
-                }
-                Button {
-                    fontDescription = ""
-                } label: {
-                    Image(systemName: "xmark.circle")
-                }
-                .buttonStyle(.borderless)
-                .help(String(localized: "Clear"))
-                .disabled(fontDescription.isEmpty)
-            }
-        }
-    }
-}
-
 /// Folder selection with a button for restoring the default folder
 private struct FolderField: View {
 
@@ -339,17 +271,6 @@ private struct UserInterfaceSettingsPage: View {
 
     var body: some View {
         PageForm {
-            Section(String(localized: "User Interface")) {
-                Toggle(String(localized: "Prefer dark mode"), isOn: $preferences.draft.ui.darkMode)
-
-                Picker(String(localized: "Language (requires a restart):"), selection: $preferences.draft.ui.language) {
-                    Text(String(localized: "System default")).tag("")
-                    ForEach(Preferences.languages, id: \.code) { language in
-                        Text(language.name).tag(language.code)
-                    }
-                }
-            }
-
             Section(String(localized: "Notifications")) {
                 Toggle(String(localized: "Enable sound for notifications"),
                        isOn: $preferences.draft.notifications.popupSound)
@@ -376,11 +297,6 @@ private struct UserInterfaceSettingsPage: View {
                 Toggle(String(localized: "Restore the previously active main tab at startup"),
                        isOn: $preferences.draft.ui.tabSelectPrevious)
                 Toggle(String(localized: "Close-buttons on secondary tabs"), isOn: $preferences.draft.ui.tabClosers)
-
-                ColorField(title: String(localized: "Regular tab label color:"), hex: $preferences.draft.ui.tabDefault)
-                ColorField(title: String(localized: "Changed tab label color:"), hex: $preferences.draft.ui.tabChanged)
-                ColorField(title: String(localized: "Highlighted tab label color:"),
-                           hex: $preferences.draft.ui.tabHighlight)
 
                 Picker(String(localized: "Buddy list position:"),
                        selection: $preferences.draft.ui.buddyListInChatrooms) {
@@ -409,7 +325,6 @@ private struct UserInterfaceSettingsPage: View {
                     get: { preferences.draft.ui.fileSizeUnit == FileSizeUnit.bytes.rawValue },
                     set: { preferences.draft.ui.fileSizeUnit = $0 ? FileSizeUnit.bytes.rawValue : "" }
                 ))
-                ColorField(title: String(localized: "List text color:"), hex: $preferences.draft.ui.search)
             }
 
             Section(String(localized: "Chats")) {
@@ -421,39 +336,10 @@ private struct UserInterfaceSettingsPage: View {
                     Text(String(localized: "underline")).tag("underline")
                     Text(String(localized: "normal")).tag("normal")
                 }
-
-                ColorField(title: String(localized: "Remote text color:"), hex: $preferences.draft.ui.chatRemote)
-                ColorField(title: String(localized: "Local text color:"), hex: $preferences.draft.ui.chatLocal)
-                ColorField(title: String(localized: "Command output text color:"),
-                           hex: $preferences.draft.ui.chatCommand)
-                ColorField(title: String(localized: "/me action text color:"), hex: $preferences.draft.ui.chatMe)
-                ColorField(title: String(localized: "Highlighted text color:"), hex: $preferences.draft.ui.chatHighlight)
-                ColorField(title: String(localized: "URL link text color:"), hex: $preferences.draft.ui.urlColor)
             }
 
-            Section(String(localized: "User Statuses")) {
-                ColorField(title: String(localized: "Online color:"), hex: $preferences.draft.ui.userOnline)
-                ColorField(title: String(localized: "Away color:"), hex: $preferences.draft.ui.userAway)
-                ColorField(title: String(localized: "Offline color:"), hex: $preferences.draft.ui.userOffline)
-            }
 
-            Section(String(localized: "Text Entries")) {
-                ColorField(title: String(localized: "Text entry background color:"),
-                           hex: $preferences.draft.ui.textBackground)
-                ColorField(title: String(localized: "Text entry text color:"), hex: $preferences.draft.ui.inputColor)
-            }
 
-            Section(String(localized: "Fonts")) {
-                FontField(title: String(localized: "Global font:"), fontDescription: $preferences.draft.ui.globalFont)
-                FontField(title: String(localized: "List font:"), fontDescription: $preferences.draft.ui.listFont)
-                FontField(title: String(localized: "Text view font:"),
-                          fontDescription: $preferences.draft.ui.textViewFont)
-                FontField(title: String(localized: "Chat font:"), fontDescription: $preferences.draft.ui.chatFont)
-                FontField(title: String(localized: "Transfers font:"),
-                          fontDescription: $preferences.draft.ui.transfersFont)
-                FontField(title: String(localized: "Search font:"), fontDescription: $preferences.draft.ui.searchFont)
-                FontField(title: String(localized: "Browse font:"), fontDescription: $preferences.draft.ui.browserFont)
-            }
         }
     }
 }
@@ -1130,41 +1016,5 @@ private struct PluginsSettingsPage: View {
                     .frame(height: 150)
             }
         }
-    }
-}
-
-// MARK: - Font Chooser
-
-/// Shows the system font panel, and reports the selected font.
-@MainActor
-private final class FontChooser: NSObject, NSFontChanging {
-
-    static let shared = FontChooser()
-
-    private var currentFont = NSFont.systemFont(ofSize: NSFont.systemFontSize)
-    private var completion: (@MainActor (NSFont) -> Void)?
-
-    func choose(initialFont: NSFont, completion: @escaping @MainActor (NSFont) -> Void) {
-        let fontManager = NSFontManager.shared
-
-        currentFont = initialFont
-        self.completion = completion
-
-        fontManager.target = self
-        fontManager.setSelectedFont(initialFont, isMultiple: false)
-        fontManager.orderFrontFontPanel(nil)
-    }
-
-    func changeFont(_ sender: NSFontManager?) {
-        guard let sender else {
-            return
-        }
-
-        currentFont = sender.convert(currentFont)
-        completion?(currentFont)
-    }
-
-    func validModesForFontPanel(_ fontPanel: NSFontPanel) -> NSFontPanel.ModeMask {
-        [.face, .size, .collection]
     }
 }
