@@ -63,8 +63,9 @@ struct TransfersView: View {
         VStack(spacing: 0) {
             if page.hasTransfers {
                 page.treeView.view
-                Divider()
-                actionBar
+                    .bottomBar(horizontalPadding: 10, verticalPadding: 6) {
+                        actionBar
+                    }
             } else if isDownloads {
                 PageDescription(
                     systemImage: "arrow.down.circle",
@@ -170,8 +171,6 @@ struct TransfersView: View {
             .help(isDownloads ? String(localized: "Clear Specific Downloads") : String(localized: "Clear Specific Uploads"))
         }
         .buttonStyle(.borderless)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
     }
 }
 

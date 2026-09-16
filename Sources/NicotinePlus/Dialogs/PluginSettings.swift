@@ -197,29 +197,26 @@ private struct PluginSettingsView: View {
     let dialog: PluginSettingsDialog
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
-                    ForEach(dialog.options) { option in
-                        optionView(option)
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(dialog.options) { option in
+                    optionView(option)
                 }
-                .padding(.vertical, 14)
-                .padding(.horizontal, 18)
             }
-
-            Divider()
-
+            .padding(.vertical, 14)
+            .padding(.horizontal, 18)
+        }
+        .frame(minWidth: 400, minHeight: 300)
+        .bottomBar {
             HStack {
+                Spacer()
+
                 Button(String(localized: "Cancel")) { dialog.close() }
                     .keyboardShortcut(.cancelAction)
-                Spacer()
                 Button(String(localized: "Apply")) { dialog.onOK() }
                     .keyboardShortcut(.defaultAction)
             }
-            .padding(12)
         }
-        .frame(minWidth: 400, minHeight: 300)
     }
 
     @ViewBuilder private func optionView(_ option: PluginSettingsDialog.Option) -> some View {
@@ -278,26 +275,20 @@ private struct PluginSettingsView: View {
                 TextEditor(text: dialog.binding(option.name) as Binding<String>)
                     .font(.body)
                     .frame(minHeight: 125)
-                    .border(Color(nsColor: .separatorColor))
+                    .clipShape(.rect(cornerRadius: 6))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(Color(nsColor: .separatorColor))
+                    }
             }
 
         case .listString:
             if let listView = dialog.listViews[option.name] {
-                VStack(alignment: .leading, spacing: 0) {
-                    listView.view
-                        .frame(minHeight: 125)
-
-                    Divider()
-
-                    HStack(spacing: 6) {
-                        Button(String(localized: "Add…"), systemImage: "plus") { dialog.onAdd(option) }
-                        Button(String(localized: "Edit…"), systemImage: "pencil") { dialog.onEdit(option) }
-                        Button(String(localized: "Remove"), systemImage: "minus") { dialog.onRemove(option) }
-                    }
-                    .buttonStyle(.borderless)
-                    .padding(6)
-                }
-                .border(Color(nsColor: .separatorColor))
+                ListBox(listView: listView, height: 125, buttons: [
+                    .add { dialog.onAdd(option) },
+                    .edit { dialog.onEdit(option) },
+                    .remove { dialog.onRemove(option) }
+                ])
                 .padding(.top, 6)
             }
 

@@ -178,8 +178,7 @@ struct RoomListView: View {
                 .help(String(localized: "Refresh Rooms"))
             }
 
-            roomList.listView.view
-                .border(Color(nsColor: .separatorColor))
+            ListBox(listView: roomList.listView)
 
             Toggle(String(localized: "Show feed of public chat room messages"), isOn: $roomList.isPublicFeedEnabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -215,7 +214,7 @@ struct RoomWallView: View {
             }
 
             roomWall.messageView.view
-                .border(Color(nsColor: .separatorColor))
+                .roundedFrame()
         }
         .padding()
         .frame(width: 650, height: 500)

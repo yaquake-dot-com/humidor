@@ -23,23 +23,11 @@ struct PreferencesView: View {
     }
 
     @ViewBuilder private var detailView: some View {
-        let page = pageView
+        pageView
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-        if #available(macOS 26, *) {
-            // Bar that fades out the page content scrolling underneath it
-            page.safeAreaBar(edge: .bottom) {
+            .bottomBar {
                 buttonBar
             }
-        } else {
-            page.safeAreaInset(edge: .bottom, spacing: 0) {
-                buttonBar
-                    .background(.bar)
-                    .overlay(alignment: .top) {
-                        Divider()
-                    }
-            }
-        }
     }
 
     private var buttonBar: some View {
@@ -53,8 +41,6 @@ struct PreferencesView: View {
             Button(String(localized: "OK")) { preferences.updateSettings(isClosing: true) }
                 .keyboardShortcut(.defaultAction)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
     }
 
     @ViewBuilder private var pageView: some View {
@@ -249,51 +235,6 @@ private struct FolderField: View {
                 .buttonStyle(.borderless)
                 .help(String(localized: "Default"))
             }
-        }
-    }
-}
-
-/// List view with buttons below it, as in system windows: icons for adding,
-/// editing and removing rows, and labelled buttons for other actions
-private struct ListBox: View {
-
-    let listView: TreeView
-    var height: CGFloat = 200
-    var buttons: [(title: String, systemImage: String, action: @MainActor () -> Void)]
-
-    /// Buttons acting on rows, shown without a label
-    private static let rowActionImages = ["plus", "pencil", "minus"]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            listView.view
-                .frame(height: height)
-
-            Divider()
-
-            HStack(spacing: 8) {
-                ForEach(Array(buttons.enumerated()), id: \.offset) { _, button in
-                    if Self.rowActionImages.contains(button.systemImage) {
-                        Button(action: button.action) {
-                            Image(systemName: button.systemImage)
-                                .frame(width: 16)
-                        }
-                        .help(button.title)
-                    } else {
-                        Button(button.title, action: button.action)
-                    }
-                }
-            }
-            .buttonStyle(.borderless)
-            .controlSize(.small)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-        }
-        .background(Color(nsColor: .textBackgroundColor))
-        .clipShape(.rect(cornerRadius: 6))
-        .overlay {
-            RoundedRectangle(cornerRadius: 6)
-                .strokeBorder(Color(nsColor: .separatorColor))
         }
     }
 }
@@ -558,9 +499,9 @@ private struct SharesSettingsPage: View {
 
             Section {
                 ListBox(listView: preferences.sharesListView, height: 260, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddSharedFolder() }),
-                    (String(localized: "Edit…"), "pencil", { preferences.onEditSharedFolder() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveSharedFolder() })
+                    .add { preferences.onAddSharedFolder() },
+                    .edit { preferences.onEditSharedFolder() },
+                    .remove { preferences.onRemoveSharedFolder() }
                 ])
             }
         }
@@ -647,10 +588,10 @@ private struct DownloadsSettingsPage: View {
                 Toggle(String(localized: "Enable download filters"), isOn: $preferences.draft.transfers.enableFilters)
 
                 ListBox(listView: preferences.downloadFilterListView, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddFilter() }),
-                    (String(localized: "Edit…"), "pencil", { preferences.onEditFilter() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveFilter() }),
-                    (String(localized: "Load Defaults"), "arrow.uturn.backward", { preferences.onDefaultFilters() })
+                    .add { preferences.onAddFilter() },
+                    .edit { preferences.onEditFilter() },
+                    .remove { preferences.onRemoveFilter() },
+                    ListBoxButton(title: String(localized: "Load Defaults"), systemImage: "arrow.uturn.backward") { preferences.onDefaultFilters() }
                 ])
 
                 HStack {
@@ -939,9 +880,9 @@ private struct ChatsSettingsPage: View {
                        isOn: $preferences.draft.words.censorWords)
 
                 ListBox(listView: preferences.censorListView, height: 150, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddCensored() }),
-                    (String(localized: "Edit…"), "pencil", { preferences.onEditCensored() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveCensored() })
+                    .add { preferences.onAddCensored() },
+                    .edit { preferences.onEditCensored() },
+                    .remove { preferences.onRemoveCensored() }
                 ])
             }
 
@@ -950,9 +891,9 @@ private struct ChatsSettingsPage: View {
                        isOn: $preferences.draft.words.replaceWords)
 
                 ListBox(listView: preferences.replacementListView, height: 150, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddReplacement() }),
-                    (String(localized: "Edit…"), "pencil", { preferences.onEditReplacement() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveReplacement() })
+                    .add { preferences.onAddReplacement() },
+                    .edit { preferences.onEditReplacement() },
+                    .remove { preferences.onRemoveReplacement() }
                 ])
             }
         }
@@ -1094,15 +1035,15 @@ private struct BannedUsersSettingsPage: View {
 
             Section(String(localized: "Users")) {
                 ListBox(listView: preferences.bannedUsersListView, height: 150, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddBannedUser() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveBannedUser() })
+                    .add { preferences.onAddBannedUser() },
+                    .remove { preferences.onRemoveBannedUser() }
                 ])
             }
 
             Section(String(localized: "IP Addresses")) {
                 ListBox(listView: preferences.bannedIPsListView, height: 150, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddBannedIP() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveBannedIP() })
+                    .add { preferences.onAddBannedIP() },
+                    .remove { preferences.onRemoveBannedIP() }
                 ])
             }
         }
@@ -1121,15 +1062,15 @@ private struct IgnoredUsersSettingsPage: View {
 
             Section(String(localized: "Users")) {
                 ListBox(listView: preferences.ignoredUsersListView, height: 150, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddIgnoredUser() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveIgnoredUser() })
+                    .add { preferences.onAddIgnoredUser() },
+                    .remove { preferences.onRemoveIgnoredUser() }
                 ])
             }
 
             Section(String(localized: "IP Addresses")) {
                 ListBox(listView: preferences.ignoredIPsListView, height: 150, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddIgnoredIP() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveIgnoredIP() })
+                    .add { preferences.onAddIgnoredIP() },
+                    .remove { preferences.onRemoveIgnoredIP() }
                 ])
             }
         }
@@ -1156,9 +1097,9 @@ private struct URLHandlersSettingsPage: View {
 
             Section {
                 ListBox(listView: preferences.protocolListView, height: 260, buttons: [
-                    (String(localized: "Add…"), "plus", { preferences.onAddHandler() }),
-                    (String(localized: "Edit…"), "pencil", { preferences.onEditHandler() }),
-                    (String(localized: "Remove"), "minus", { preferences.onRemoveHandler() })
+                    .add { preferences.onAddHandler() },
+                    .edit { preferences.onEditHandler() },
+                    .remove { preferences.onRemoveHandler() }
                 ])
             }
         }

@@ -490,10 +490,8 @@ private struct NotebookTab<Page: NotebookPage>: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(isSelected ? Color.accentColor.opacity(0.18) : (isHovering ? Color.primary.opacity(0.06) : .clear))
-        )
+        .background(in: .capsule)
+        .backgroundStyle(tabBackground(isSelected: isSelected))
         .contentShape(Rectangle())
         .onTapGesture {
             notebook.setCurrentPage(page)
@@ -510,6 +508,16 @@ private struct NotebookTab<Page: NotebookPage>: View {
             }
         }
         .overlay(MiddleClickView { notebook.closePage(page) })
+    }
+
+    private func tabBackground(isSelected: Bool) -> AnyShapeStyle {
+        if isSelected {
+            AnyShapeStyle(.selection)
+        } else if isHovering {
+            AnyShapeStyle(.quaternary)
+        } else {
+            AnyShapeStyle(.clear)
+        }
     }
 
     private func tabColor(_ label: TabLabel?) -> Color {

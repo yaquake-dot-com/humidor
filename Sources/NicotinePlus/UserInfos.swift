@@ -673,7 +673,7 @@ struct UserInfoTabView: View {
             }
 
             tab.descriptionView.view
-                .border(Color(nsColor: .separatorColor))
+                .roundedFrame()
         }
         .padding(12)
     }

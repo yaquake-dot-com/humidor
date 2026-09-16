@@ -561,8 +561,7 @@ struct InterestsView: View {
                 .buttonStyle(.borderless)
             }
 
-            listView.view
-                .border(Color(nsColor: .separatorColor))
+            ListBox(listView: listView)
         }
         .padding(10)
         .frame(minHeight: 150)

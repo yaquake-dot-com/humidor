@@ -190,17 +190,18 @@ private struct WishListView: View {
                 }
             }
 
-            wishList.listView.view
-                .border(Color(nsColor: .separatorColor))
-
+            ListBox(listView: wishList.listView, buttons: [
+                .edit { wishList.onEditWish() },
+                .remove { wishList.onRemoveWish() }
+            ])
+        }
+        .padding(16)
+        .frame(minWidth: 400, minHeight: 300)
+        .bottomBar {
             HStack {
-                Button(String(localized: "Edit…")) { wishList.onEditWish() }
-                Button(String(localized: "Remove")) { wishList.onRemoveWish() }
                 Spacer()
                 Button(String(localized: "Clear All…")) { wishList.onClearWishlist() }
             }
         }
-        .padding(16)
-        .frame(minWidth: 400, minHeight: 300)
     }
 }

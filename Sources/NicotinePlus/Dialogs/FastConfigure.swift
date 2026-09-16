@@ -273,9 +273,10 @@ private struct FastConfigureView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(24)
 
+        }
+        .frame(minWidth: 600, minHeight: 400)
+        .bottomBar {
             if assistant.page != .welcome {
-                Divider()
-
                 HStack {
                     Button(assistant.previousLabel) {
                         assistant.onPrevious()
@@ -289,10 +290,8 @@ private struct FastConfigureView: View {
                     .keyboardShortcut(.defaultAction)
                     .disabled(!assistant.isPageComplete)
                 }
-                .padding(12)
             }
         }
-        .frame(minWidth: 600, minHeight: 400)
     }
 
     private var welcomePage: some View {
@@ -383,14 +382,11 @@ private struct FastConfigureView: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            assistant.sharesListView.view
-                .border(Color(nsColor: .separatorColor))
-
-            HStack {
-                Button(String(localized: "Add…")) { assistant.onAddSharedFolder() }
-                Button(String(localized: "Edit…")) { assistant.onEditSharedFolder() }
-                Button(String(localized: "Remove")) { assistant.onRemoveSharedFolder() }
-            }
+            ListBox(listView: assistant.sharesListView, buttons: [
+                .add { assistant.onAddSharedFolder() },
+                .edit { assistant.onEditSharedFolder() },
+                .remove { assistant.onRemoveSharedFolder() }
+            ])
         }
     }
 
