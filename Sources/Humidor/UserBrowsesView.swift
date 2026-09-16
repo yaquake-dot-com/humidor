@@ -12,18 +12,25 @@ struct UserBrowsesView: View {
 
     private var entryBar: some View {
         HStack(spacing: 6) {
-            SearchField(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                        recentTitle: String(localized: "Buddies"), recentItems: page.window.buddyUsernames, completions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
-                page.onGetShares()
-            }
-
-            Button {
-                page.onGetShares()
-            } label: {
-                Image(systemName: "folder.badge.person.crop")
-            }
-            .help(String(localized: "Browse Shares"))
+            entryField
+            entryButton
         }
+    }
+
+    private var entryField: some View {
+        SearchField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                    recentTitle: String(localized: "Buddies"), recentItems: page.window.buddyUsernames, completions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
+            page.onGetShares()
+        }
+    }
+
+    private var entryButton: some View {
+        Button {
+            page.onGetShares()
+        } label: {
+            Image(systemName: "folder.badge.person.crop")
+        }
+        .help(String(localized: "Browse Shares"))
     }
 
     var body: some View {
@@ -49,8 +56,13 @@ struct UserBrowsesView: View {
         .toolbar {
             if hasTabs {
                 ToolbarItem(placement: .navigation) {
-                    entryBar
+                    entryField
+                        .environment(\.searchFieldHasBackground, false)
                         .frame(minWidth: 220, idealWidth: 300, maxWidth: 400)
+                }
+
+                ToolbarItem(placement: .navigation) {
+                    entryButton
                 }
             }
 

@@ -20,6 +20,7 @@ struct SearchField: View {
     /// Called when Return is pressed, or an item is chosen from the menu
     var onSubmit: @MainActor () -> Void
 
+    @Environment(\.searchFieldHasBackground) private var hasBackground
     @FocusState private var isFocused: Bool
     @State private var handledFocusRequest = 0
 
@@ -64,7 +65,7 @@ struct SearchField: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 5)
-        .background(.fill.tertiary, in: .capsule)
+        .background(hasBackground ? AnyShapeStyle(.fill.tertiary) : AnyShapeStyle(.clear), in: .capsule)
         .help(tooltip ?? "")
         .onAppear { handleFocusRequest(focusRequest) }
         .onChange(of: focusRequest) { _, request in handleFocusRequest(request) }
@@ -107,4 +108,9 @@ struct SearchField: View {
         handledFocusRequest = request
         isFocused = true
     }
+}
+
+extension EnvironmentValues {
+    /// Whether search fields draw their own background, which the toolbar provides for its items
+    @Entry var searchFieldHasBackground = true
 }

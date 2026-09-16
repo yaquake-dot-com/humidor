@@ -646,21 +646,28 @@ struct PrivateChatsView: View {
 
     private var entryBar: some View {
         HStack(spacing: 6) {
-            SearchField(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                        recentTitle: String(localized: "Chat History"), recentItems: page.history.usernames, completions: page.history.usernames, focusRequest: page.usernameFocusRequest) {
-                page.onGetPrivateChat()
-            }
+            entryField
+            entryButton
+        }
+    }
 
-            Button {
-                page.isHistoryShown.toggle()
-            } label: {
-                Label(String(localized: "Chat History"), systemImage: "clock.arrow.circlepath")
-                    .labelStyle(.titleAndIcon)
-            }
-            .popover(isPresented: $page.isHistoryShown) {
-                page.history.listView.view
-                    .frame(width: 700, height: 500)
-            }
+    private var entryField: some View {
+        SearchField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                    recentTitle: String(localized: "Chat History"), recentItems: page.history.usernames, completions: page.history.usernames, focusRequest: page.usernameFocusRequest) {
+            page.onGetPrivateChat()
+        }
+    }
+
+    private var entryButton: some View {
+        Button {
+            page.isHistoryShown.toggle()
+        } label: {
+            Label(String(localized: "Chat History"), systemImage: "clock.arrow.circlepath")
+                .labelStyle(.titleAndIcon)
+        }
+        .popover(isPresented: $page.isHistoryShown) {
+            page.history.listView.view
+                .frame(width: 700, height: 500)
         }
     }
 
@@ -687,8 +694,13 @@ struct PrivateChatsView: View {
         .toolbar {
             if hasTabs {
                 ToolbarItem(placement: .navigation) {
-                    entryBar
+                    entryField
+                        .environment(\.searchFieldHasBackground, false)
                         .frame(minWidth: 220, idealWidth: 300, maxWidth: 400)
+                }
+
+                ToolbarItem(placement: .navigation) {
+                    entryButton
                 }
             }
 

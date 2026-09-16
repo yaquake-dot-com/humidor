@@ -28,21 +28,28 @@ struct ChatRoomsView: View {
 
     private var entryBar: some View {
         HStack(spacing: 6) {
-            SearchField(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
-                        recentTitle: String(localized: "Rooms"), recentItems: page.roomList.roomNames, completions: page.roomList.roomNames, focusRequest: page.roomFocusRequest) {
-                page.onCreateRoom()
-            }
-            .disabled(!page.isRoomEntryEnabled)
+            entryField
+            entryButton
+        }
+    }
 
-            Button {
-                page.isRoomListShown.toggle()
-            } label: {
-                Label(String(localized: "Rooms"), systemImage: "list.bullet")
-                    .labelStyle(.titleAndIcon)
-            }
-            .popover(isPresented: $page.isRoomListShown) {
-                RoomListView(roomList: page.roomList)
-            }
+    private var entryField: some View {
+        SearchField(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
+                    recentTitle: String(localized: "Rooms"), recentItems: page.roomList.roomNames, completions: page.roomList.roomNames, focusRequest: page.roomFocusRequest) {
+            page.onCreateRoom()
+        }
+        .disabled(!page.isRoomEntryEnabled)
+    }
+
+    private var entryButton: some View {
+        Button {
+            page.isRoomListShown.toggle()
+        } label: {
+            Label(String(localized: "Rooms"), systemImage: "list.bullet")
+                .labelStyle(.titleAndIcon)
+        }
+        .popover(isPresented: $page.isRoomListShown) {
+            RoomListView(roomList: page.roomList)
         }
     }
 
@@ -83,8 +90,13 @@ struct ChatRoomsView: View {
         .toolbar {
             if hasTabs {
                 ToolbarItem(placement: .navigation) {
-                    entryBar
+                    entryField
+                        .environment(\.searchFieldHasBackground, false)
                         .frame(minWidth: 220, idealWidth: 300, maxWidth: 400)
+                }
+
+                ToolbarItem(placement: .navigation) {
+                    entryButton
                 }
             }
 

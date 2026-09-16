@@ -33,6 +33,7 @@ struct SearchesView: View {
             if hasSearches {
                 ToolbarItem(placement: .navigation) {
                     searchBar
+                        .environment(\.searchFieldHasBackground, false)
                         .frame(minWidth: 240, idealWidth: 320, maxWidth: 420)
                 }
             }

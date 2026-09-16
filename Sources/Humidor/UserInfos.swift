@@ -546,18 +546,25 @@ struct UserInfosView: View {
 
     private var entryBar: some View {
         HStack(spacing: 6) {
-            SearchField(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                        recentTitle: String(localized: "Buddies"), recentItems: page.window.buddyUsernames, completions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
-                page.onShowUserProfile()
-            }
-
-            Button {
-                page.onShowUserProfile()
-            } label: {
-                Image(systemName: "person.crop.circle.badge.questionmark")
-            }
-            .help(String(localized: "Show User Profile"))
+            entryField
+            entryButton
         }
+    }
+
+    private var entryField: some View {
+        SearchField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                    recentTitle: String(localized: "Buddies"), recentItems: page.window.buddyUsernames, completions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
+            page.onShowUserProfile()
+        }
+    }
+
+    private var entryButton: some View {
+        Button {
+            page.onShowUserProfile()
+        } label: {
+            Image(systemName: "person.crop.circle.badge.questionmark")
+        }
+        .help(String(localized: "Show User Profile"))
     }
 
     var body: some View {
@@ -583,8 +590,13 @@ struct UserInfosView: View {
         .toolbar {
             if hasTabs {
                 ToolbarItem(placement: .navigation) {
-                    entryBar
+                    entryField
+                        .environment(\.searchFieldHasBackground, false)
                         .frame(minWidth: 220, idealWidth: 300, maxWidth: 400)
+                }
+
+                ToolbarItem(placement: .navigation) {
+                    entryButton
                 }
             }
 
