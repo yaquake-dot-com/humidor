@@ -358,7 +358,7 @@ private struct UserInterfaceSettingsPage: View {
                 }
 
                 Picker(String(localized: "When closing window:"), selection: $preferences.draft.ui.exitDialog) {
-                    Text(String(localized: "Quit Nicotine+")).tag(0)
+                    Text(String(localized: "Quit \(NicotineCore.Application.name)")).tag(0)
                     Text(String(localized: "Show confirmation dialog")).tag(1)
                     Text(String(localized: "Run in the background")).tag(2)
                 }

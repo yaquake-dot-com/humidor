@@ -81,7 +81,12 @@ private struct AboutView: View {
                     versionStatusView(status)
                 }
 
-                Link(String(localized: "Website"), destination: URL(string: NicotineCore.Application.websiteURL)!)
+                Text(String(localized: "Based on \(NicotineCore.Application.originalName), a graphical client for the Soulseek network"))
+                    .font(.callout)
+                    .multilineTextAlignment(.center)
+
+                Link(NicotineCore.Application.originalName,
+                     destination: URL(string: NicotineCore.Application.originalWebsiteURL)!)
 
                 Text(NicotineCore.Application.copyright)
                     .font(.caption)

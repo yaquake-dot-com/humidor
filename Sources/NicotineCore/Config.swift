@@ -417,7 +417,7 @@ public final class Config {
         let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Library/Application Support")
 
-        return applicationSupport.appendingPathComponent("Nicotine+").path
+        return applicationSupport.appendingPathComponent(Application.name).path
     }
 
     public func setConfigFile(_ filePath: String) {

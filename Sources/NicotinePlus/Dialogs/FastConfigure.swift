@@ -300,7 +300,7 @@ private struct FastConfigureView: View {
                 .resizable()
                 .frame(width: 128, height: 128)
 
-            Text(String(localized: "Welcome to Nicotine+"))
+            Text(String(localized: "Welcome to \(NicotineCore.Application.name)"))
                 .font(.largeTitle.bold())
 
             Text(String(localized: "Graphical client for the Soulseek peer-to-peer network"))
@@ -392,7 +392,7 @@ private struct FastConfigureView: View {
 
     private var summaryPage: some View {
         VStack(spacing: 24) {
-            Text(String(localized: "You are ready to use Nicotine+!"))
+            Text(String(localized: "You are ready to use \(NicotineCore.Application.name)!"))
                 .font(.largeTitle.bold())
                 .multilineTextAlignment(.center)
 

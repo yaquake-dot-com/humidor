@@ -2,10 +2,14 @@
 
 /// Application metadata.
 public enum Application {
-    public static let name = "Nicotine+"
-    public static let identifier = "org.nicotine_plus.Nicotine"
+    public static let name = "Humidor"
+    public static let identifier = "org.humidor.Humidor"
     public static let version = "3.3.10"
-    public static let author = "Nicotine+ Team"
+
+    /// The application this one is derived from
+    public static let originalName = "Nicotine+"
+    public static let originalWebsiteURL = "https://nicotine-plus.org"
+
     public static let copyright = """
         © 2004–2025 Nicotine+ Contributors
         © 2003–2004 Nicotine Contributors

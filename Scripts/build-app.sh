@@ -1,7 +1,7 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
-# Builds Nicotine+.app from the NicotinePlus executable.
+# Builds Humidor.app from the NicotinePlus executable.
 #
 # Usage: Scripts/build-app.sh [debug|release] [output folder]
 #
@@ -16,7 +16,7 @@ output_path="${2:-$package_path/dist}"
 build_path="${BUILD_PATH:-/tmp/nicotine-swift-build}"
 
 version="$(sed -n 's/.*static let version = "\(.*\)".*/\1/p' "$package_path/Sources/NicotineCore/Application.swift")"
-app_path="$output_path/Nicotine+.app"
+app_path="$output_path/Humidor.app"
 
 swift build --package-path "$package_path" --scratch-path "$build_path" \
     --configuration "$configuration" --product NicotinePlus
@@ -27,12 +27,12 @@ bin_path="$(swift build --package-path "$package_path" --scratch-path "$build_pa
 rm -rf "$app_path"
 mkdir -p "$app_path/Contents/MacOS" "$app_path/Contents/Resources"
 
-cp "$bin_path/NicotinePlus" "$app_path/Contents/MacOS/Nicotine+"
+cp "$bin_path/NicotinePlus" "$app_path/Contents/MacOS/Humidor"
 
 # SwiftPM links without reading the SDK version, which records the deployment
 # target as the SDK version. macOS then shows the legacy appearance instead of
 # the current design, so record the SDK the executable was built with.
-executable="$app_path/Contents/MacOS/Nicotine+"
+executable="$app_path/Contents/MacOS/Humidor"
 deployment_target="$(otool -l "$executable" | awk '/LC_BUILD_VERSION/ { found = 1 } found && $1 == "minos" { print $2; exit }')"
 vtool -set-build-version macos "$deployment_target" "$(xcrun --show-sdk-version)" -replace \
     -output "$executable.tmp" "$executable" 2>/dev/null

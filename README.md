@@ -1,11 +1,12 @@
-# Nicotine+ for Swift
+# Humidor
 
-A Swift port of [Nicotine+](https://nicotine-plus.org), the graphical client for the
-[Soulseek](https://www.slsknet.org) peer-to-peer network.
+A client for the [Soulseek](https://www.slsknet.org) peer-to-peer network, for macOS.
 
-The goal is a faithful port of Nicotine+ 3.3.10: the same protocol implementation, networking,
-transfer queues, shares, search, chat rooms and plugin behavior, written as idiomatic Swift for
-macOS.
+Humidor is a modified version of [Nicotine+](https://nicotine-plus.org) 3.3.10, ported from
+Python to Swift: the same protocol implementation, networking, transfer queues, shares, search,
+chat rooms and plugin behavior, with an interface built with SwiftUI and AppKit.
+
+Humidor is not affiliated with the Nicotine+ project, and is not endorsed by it.
 
 ## Status
 
@@ -35,7 +36,7 @@ swift build
 swift test
 ```
 
-Build the application bundle (`dist/Nicotine+.app`):
+Build the application bundle (`dist/Humidor.app`):
 
 ```sh
 Scripts/build-app.sh
@@ -61,7 +62,7 @@ swift run nicotine --help
 - `Sources/NicotinePlus` – macOS application
   - `Widgets/` – list views (`NSOutlineView`), text views, menus, dialogs, tab bar
   - `Dialogs/` – preferences, setup assistant and other dialogs
-- `Packaging/` – `Info.plist` and application icon (from the Nicotine+ icon)
+- `Packaging/` – `Info.plist` and application icon
 - `Scripts/build-app.sh` – builds the application bundle
 - `Tests/NicotineCoreTests` – tests, with expected values produced by the upstream implementation
 
@@ -71,8 +72,13 @@ This program is free software: you can redistribute it and/or modify it under th
 GNU General Public License as published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version. See [LICENSE](LICENSE).
 
-This is a derivative work of Nicotine+ © 2004–2025 Nicotine+ Contributors, © 2003–2004 Nicotine
-Contributors, © 2001–2003 PySoulSeek Contributors. See [NICOTINE_AUTHORS.md](NICOTINE_AUTHORS.md).
+Humidor is a derivative work of Nicotine+ © 2004–2025 Nicotine+ Contributors, © 2003–2004 Nicotine
+Contributors, © 2001–2003 PySoulSeek Contributors. See [NICOTINE_AUTHORS.md](NICOTINE_AUTHORS.md)
+for the authors of the original work, whose translations this program also uses.
+
+Changes made in this work: the program was rewritten in Swift, the GTK interface was replaced with
+one written in SwiftUI and AppKit for macOS, and the program was renamed. The application icon is
+original to this work.
 
 - TinyTag is licensed under the MIT license.
 - IP2Location LITE data is licensed under CC BY-SA 4.0.

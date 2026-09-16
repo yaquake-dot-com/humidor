@@ -120,6 +120,7 @@ enum DebugHooks {
                 case "shortcuts": Application.shared.onKeyboardShortcuts()
                 case "preferences": Application.shared.onPreferences()
                 case "setup": Application.shared.onFastConfigure()
+                case "about": Application.shared.onAbout()
                 default: break
                 }
             case "preferences": Application.shared.onPreferences(pageID: argument)

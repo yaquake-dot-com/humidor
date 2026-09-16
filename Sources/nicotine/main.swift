@@ -182,7 +182,7 @@ MainActor.assumeIsolated {
 
         if core.shares.rescanShares(useThread: false) != true {
             log.add("--------------------------------------------------")
-            log.add(String(localized: "Failed to scan shares. Please close other Nicotine+ instances and try again."))
+            log.add(String(localized: "Failed to scan shares. Please close other \(NicotineCore.Application.name) instances and try again."))
             exitCode = 1
         }
 

@@ -66,7 +66,7 @@ enum MainMenu {
     private static func appMenu(_ application: Application) -> NSMenu {
         let menu = NSMenu(title: NicotineCore.Application.name)
 
-        menu.addItem(ActionMenuItem(String(localized: "About Nicotine+")) { application.onAbout() })
+        menu.addItem(ActionMenuItem(String(localized: "About \(NicotineCore.Application.name)")) { application.onAbout() })
         menu.addItem(.separator())
         menu.addItem(ActionMenuItem(String(localized: "Preferences…"), key: ",") { application.onPreferences() })
         menu.addItem(.separator())
@@ -78,7 +78,7 @@ enum MainMenu {
         menu.addItem(servicesItem)
         menu.addItem(.separator())
 
-        menu.addItem(NSMenuItem(title: String(localized: "Hide Nicotine+"), action: #selector(NSApplication.hide(_:)),
+        menu.addItem(NSMenuItem(title: String(localized: "Hide \(NicotineCore.Application.name)"), action: #selector(NSApplication.hide(_:)),
                                 keyEquivalent: "h"))
 
         let hideOthersItem = NSMenuItem(title: String(localized: "Hide Others"),
@@ -93,7 +93,7 @@ enum MainMenu {
         menu.addItem(ActionMenuItem(String(localized: "Force Quit"), key: "q", modifiers: [.command, .option]) {
             application.onForceQuitRequest()
         })
-        menu.addItem(ActionMenuItem(String(localized: "Quit Nicotine+"), key: "q") {
+        menu.addItem(ActionMenuItem(String(localized: "Quit \(NicotineCore.Application.name)"), key: "q") {
             application.onConfirmQuitRequest()
         })
 

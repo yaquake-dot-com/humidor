@@ -297,7 +297,7 @@ final class Application: NSObject, NSApplicationDelegate {
         }
 
         OptionDialog(
-            title: String(localized: "Quit Nicotine+"),
+            title: String(localized: "Quit \(NicotineCore.Application.name)"),
             message: message,
             buttons: [
                 .init("cancel", String(localized: "No")),
