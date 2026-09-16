@@ -131,7 +131,7 @@ public final class Core {
             statisticsComponent = Statistics()
         }
 
-        if enabledComponents.contains(.updateChecker) {
+        if enabledComponents.contains(.updateChecker), Application.latestVersionURL != nil {
             updateChecker = UpdateChecker()
         }
 
@@ -311,7 +311,10 @@ public final class UpdateChecker {
     }
 
     private nonisolated static func retrieveLatestVersion() async throws -> (String, Int) {
-        let url = URL(string: "https://pypi.org/pypi/nicotine-plus/json")!
+        guard let address = Application.latestVersionURL, let url = URL(string: address) else {
+            throw URLError(.badURL)
+        }
+
         var request = URLRequest(url: url, timeoutInterval: 5)
         request.httpMethod = "GET"
 
@@ -321,11 +324,25 @@ public final class UpdateChecker {
             struct Info: Decodable {
                 let version: String
             }
-            let info: Info
+
+            /// Name of a release tag, e.g. "1.2.0" or "v1.2.0"
+            let tagName: String?
+            let info: Info?
+
+            enum CodingKeys: String, CodingKey {
+                case tagName = "tag_name"
+                case info
+            }
         }
 
-        let latestVersion = try JSONDecoder().decode(Response.self, from: data).info.version
-        return (latestVersion, createIntegerVersion(latestVersion))
+        let response = try JSONDecoder().decode(Response.self, from: data)
+
+        guard let latestVersion = response.tagName ?? response.info?.version else {
+            throw URLError(.cannotParseResponse)
+        }
+
+        let version = latestVersion.hasPrefix("v") ? String(latestVersion.dropFirst()) : latestVersion
+        return (version, createIntegerVersion(version))
     }
 }
 

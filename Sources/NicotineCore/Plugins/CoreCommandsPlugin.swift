@@ -5,7 +5,7 @@ import Foundation
 /// Built-in chat and command line commands.
 final class CoreCommandsPlugin: BasePlugin {
 
-    static let info = PluginInfo(name: String(localized: "Nicotine+ Commands", bundle: .module),
+    static let info = PluginInfo(name: String(localized: "\(Application.name) Commands", bundle: .module),
                                  version: "2023-01-23r00")
 
     private enum CommandGroup {
@@ -53,7 +53,7 @@ final class CoreCommandsPlugin: BasePlugin {
                 callback: { [unowned self] args, _ in pluginHandlerCommand(args) }
             ),
             "quit": PluginCommand(
-                aliases: ["q", "exit"], description: text("Quit Nicotine+"), parameters: ["[force]"],
+                aliases: ["q", "exit"], description: text("Quit \(Application.name)"), parameters: ["[force]"],
                 callback: { args, _ in
                     let force = ["force", "f"].contains(String(args.drop(while: { $0 == "-" })))
 
