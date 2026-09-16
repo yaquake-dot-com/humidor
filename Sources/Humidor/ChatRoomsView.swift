@@ -10,6 +10,21 @@ struct ChatRoomsView: View {
 
     private var hasTabs: Bool { !page.notebook.pages.isEmpty }
 
+    /// Current room, if it has a list of users
+    private var currentRoom: ChatRoomTab? {
+        guard let tab = page.notebook.currentPage, !tab.isGlobal else {
+            return nil
+        }
+        return tab
+    }
+
+    private var usersInspectorBinding: Binding<Bool> {
+        Binding(
+            get: { page.isUsersListShown && currentRoom != nil },
+            set: { page.isUsersListShown = $0 }
+        )
+    }
+
     private var entryBar: some View {
         HStack(spacing: 6) {
             SearchField(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
@@ -75,6 +90,21 @@ struct ChatRoomsView: View {
                 }
                 .help(String(localized: "Configure Chats"))
             }
+
+            if currentRoom != nil {
+                ToolbarItem {
+                    Toggle(isOn: $page.isUsersListShown) {
+                        Label(String(localized: "Users"), systemImage: "sidebar.trailing")
+                    }
+                    .help(String(localized: "Users"))
+                }
+            }
+        }
+        .inspector(isPresented: usersInspectorBinding) {
+            if let room = currentRoom {
+                RoomUsersView(tab: room)
+                    .inspectorColumnWidth(min: 220, ideal: 320, max: 700)
+            }
         }
     }
 }
@@ -85,31 +115,22 @@ struct ChatRoomTabView: View {
     @Bindable var tab: ChatRoomTab
 
     var body: some View {
-        HSplitView {
-            VStack(spacing: 0) {
-                if tab.isGlobal {
+        VStack(spacing: 0) {
+            if tab.isGlobal {
+                tab.chatView.view
+            } else {
+                VSplitView {
+                    tab.activityView.view
+                        .frame(minHeight: 48, idealHeight: 80)
+
                     tab.chatView.view
-                } else {
-                    VSplitView {
-                        tab.activityView.view
-                            .frame(minHeight: 48, idealHeight: 80)
-
-                        tab.chatView.view
-                            .frame(minHeight: 100)
-                            .layoutPriority(1)
-                    }
+                        .frame(minHeight: 100)
+                        .layoutPriority(1)
                 }
-
-                Divider()
-                chatEntryRow
             }
-            .frame(minWidth: 300)
-            .layoutPriority(1)
 
-            if !tab.isGlobal {
-                usersList
-                    .frame(minWidth: 180, idealWidth: 230, maxWidth: 400)
-            }
+            Divider()
+            chatEntryRow
         }
     }
 
@@ -147,7 +168,14 @@ struct ChatRoomTabView: View {
         }
     }
 
-    private var usersList: some View {
+}
+
+/// Users of a chat room, shown in the inspector of the chat rooms page.
+struct RoomUsersView: View {
+
+    @Bindable var tab: ChatRoomTab
+
+    var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Label(tab.userCountText, systemImage: "person.2")
@@ -166,8 +194,8 @@ struct ChatRoomTabView: View {
                     RoomWallView(roomWall: tab.roomWall)
                 }
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
 
             Divider()
             tab.usersListView.view

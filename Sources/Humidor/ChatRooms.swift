@@ -22,6 +22,8 @@ final class ChatRoomsPage: TabbedPage {
     private(set) var roomFocusRequest = 0
     private(set) var isRoomEntryEnabled = false
     var isRoomListShown = false
+    /// Whether the users of the current room are shown next to the chat
+    var isUsersListShown = true
 
     init(window: MainWindow) {
         self.window = window
