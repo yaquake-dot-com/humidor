@@ -17,6 +17,7 @@ public enum Application {
     public static let originalWebsiteURL = "https://nicotine-plus.org"
 
     public static let copyright = """
+        © 2026 Ivan Eresko
         © 2004–2025 Nicotine+ Contributors
         © 2003–2004 Nicotine Contributors
         © 2001–2003 PySoulSeek Contributors

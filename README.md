@@ -72,6 +72,8 @@ This program is free software: you can redistribute it and/or modify it under th
 GNU General Public License as published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version. See [LICENSE](LICENSE).
 
+Humidor © 2026 Ivan Eresko.
+
 Humidor is a derivative work of Nicotine+ © 2004–2025 Nicotine+ Contributors, © 2003–2004 Nicotine
 Contributors, © 2001–2003 PySoulSeek Contributors. See [NICOTINE_AUTHORS.md](NICOTINE_AUTHORS.md)
 for the authors of the original work, whose translations this program also uses.

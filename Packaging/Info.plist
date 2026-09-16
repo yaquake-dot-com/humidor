@@ -29,7 +29,7 @@
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>Based on Nicotine+. © 2004–2025 Nicotine+ Contributors</string>
+	<string>© 2026 Ivan Eresko. Based on Nicotine+, © 2004–2025 Nicotine+ Contributors</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticTermination</key>

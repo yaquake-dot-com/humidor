@@ -5,7 +5,8 @@
 extension About {
 
     static let authors: [String] = [
-        "**Nicotine+ Team**",
+        "**Ivan Eresko**\n •  Swift port\n •  macOS interface",
+        "\n**Nicotine+ Team**",
         "**Mat (mathiascode)**\n •  Maintainer (2020–present)\n •  Developer",
         "**Adam Cécile (eLvErDe)**\n •  Maintainer (2013–2016)\n •  Domain name administrator\n •  Source code migration from SVN to GitHub\n •  Developer",
         "**Han Boetes**\n •  Tester\n •  Documentation\n •  Bug hunting\n •  Translation management",
