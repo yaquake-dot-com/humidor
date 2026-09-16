@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+//
 // tinytag - an audio meta info reader
 // Copyright (c) 2014-2023 Tom Wallroth
 // Copyright (c) 2021-2023 Mat (mathiascode)
