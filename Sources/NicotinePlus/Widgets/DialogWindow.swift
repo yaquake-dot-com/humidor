@@ -30,7 +30,11 @@ class DialogWindow: NSObject, NSWindowDelegate {
 
         if hasSidebar {
             window.styleMask.insert(.fullSizeContentView)
-            window.toolbarStyle = .unified
+            window.toolbarStyle = .unifiedCompact
+
+            // Give the window a toolbar, so the title is shown next to the sidebar
+            // and content fades out where it scrolls underneath
+            window.toolbar = NSToolbar()
         }
 
         window.isReleasedWhenClosed = false

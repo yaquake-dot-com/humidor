@@ -16,14 +16,30 @@ struct PreferencesView: View {
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 260)
         } detail: {
-            pageView
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    buttonBar
-                }
+            detailView
         }
         .toolbar(removing: .sidebarToggle)
         .frame(minWidth: 760, minHeight: 500)
+    }
+
+    @ViewBuilder private var detailView: some View {
+        let page = pageView
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+        if #available(macOS 26, *) {
+            // Bar that fades out the page content scrolling underneath it
+            page.safeAreaBar(edge: .bottom) {
+                buttonBar
+            }
+        } else {
+            page.safeAreaInset(edge: .bottom, spacing: 0) {
+                buttonBar
+                    .background(.bar)
+                    .overlay(alignment: .top) {
+                        Divider()
+                    }
+            }
+        }
     }
 
     private var buttonBar: some View {
@@ -39,10 +55,6 @@ struct PreferencesView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .background(.bar)
-        .overlay(alignment: .top) {
-            Divider()
-        }
     }
 
     @ViewBuilder private var pageView: some View {
@@ -241,12 +253,16 @@ private struct FolderField: View {
     }
 }
 
-/// List view with buttons below it
+/// List view with buttons below it, as in system windows: icons for adding,
+/// editing and removing rows, and labelled buttons for other actions
 private struct ListBox: View {
 
     let listView: TreeView
     var height: CGFloat = 200
     var buttons: [(title: String, systemImage: String, action: @MainActor () -> Void)]
+
+    /// Buttons acting on rows, shown without a label
+    private static let rowActionImages = ["plus", "pencil", "minus"]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -255,13 +271,29 @@ private struct ListBox: View {
 
             Divider()
 
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 ForEach(Array(buttons.enumerated()), id: \.offset) { _, button in
-                    Button(button.title, systemImage: button.systemImage, action: button.action)
+                    if Self.rowActionImages.contains(button.systemImage) {
+                        Button(action: button.action) {
+                            Image(systemName: button.systemImage)
+                                .frame(width: 16)
+                        }
+                        .help(button.title)
+                    } else {
+                        Button(button.title, action: button.action)
+                    }
                 }
             }
             .buttonStyle(.borderless)
-            .padding(6)
+            .controlSize(.small)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+        }
+        .background(Color(nsColor: .textBackgroundColor))
+        .clipShape(.rect(cornerRadius: 6))
+        .overlay {
+            RoundedRectangle(cornerRadius: 6)
+                .strokeBorder(Color(nsColor: .separatorColor))
         }
     }
 }
