@@ -8,32 +8,49 @@ struct UserBrowsesView: View {
 
     @Bindable var page: UserBrowsesPage
 
+    private var hasTabs: Bool { !page.notebook.pages.isEmpty }
+
+    private var entryBar: some View {
+        HStack(spacing: 6) {
+            ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                             suggestions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
+                page.onGetShares()
+            }
+
+            Button {
+                page.onGetShares()
+            } label: {
+                Image(systemName: "folder.badge.person.crop")
+            }
+            .help(String(localized: "Browse Shares"))
+        }
+    }
+
     var body: some View {
         Group {
-            if page.notebook.pages.isEmpty {
-                PageDescription(
+            if hasTabs {
+                NotebookView(notebook: page.notebook)
+            } else {
+                PageStart(
                     systemImage: "folder",
                     title: String(localized: "Browse Shares"),
-                    description: String(localized: "Enter the name of a user, whose shared files you'd like to browse. You can also save the list to disk, and inspect it later on.")
-                )
-            } else {
-                NotebookView(notebook: page.notebook)
+                    description: String(localized: "Enter the name of a user, whose shared files you'd like to browse. You can also save the list to disk, and inspect it later on."),
+                    recentTitle: String(localized: "Buddies"),
+                    recentItems: page.window.buddyUsernames,
+                    onSelectItem: { username in
+                        page.usernameText = username
+                        page.onGetShares()
+                    }
+                ) {
+                    entryBar
+                }
             }
         }
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                HStack(spacing: 6) {
-                    ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                                     suggestions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
-                        page.onGetShares()
-                    }
-                    .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
-
-                    Button {
-                        page.onGetShares()
-                    } label: {
-                        Image(systemName: "folder.badge.person.crop")
-                    }
+            if hasTabs {
+                ToolbarItem(placement: .navigation) {
+                    entryBar
+                        .frame(minWidth: 220, idealWidth: 300, maxWidth: 400)
                 }
             }
 

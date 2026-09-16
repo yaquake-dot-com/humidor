@@ -547,32 +547,49 @@ struct UserInfosView: View {
 
     @Bindable var page: UserInfosPage
 
+    private var hasTabs: Bool { !page.notebook.pages.isEmpty }
+
+    private var entryBar: some View {
+        HStack(spacing: 6) {
+            ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                             suggestions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
+                page.onShowUserProfile()
+            }
+
+            Button {
+                page.onShowUserProfile()
+            } label: {
+                Image(systemName: "person.crop.circle.badge.questionmark")
+            }
+            .help(String(localized: "Show User Profile"))
+        }
+    }
+
     var body: some View {
         Group {
-            if page.notebook.pages.isEmpty {
-                PageDescription(
+            if hasTabs {
+                NotebookView(notebook: page.notebook)
+            } else {
+                PageStart(
                     systemImage: "person.crop.circle",
                     title: String(localized: "User Profiles"),
-                    description: String(localized: "Enter the name of a user to view their user description, information and personal picture")
-                )
-            } else {
-                NotebookView(notebook: page.notebook)
+                    description: String(localized: "Enter the name of a user to view their user description, information and personal picture"),
+                    recentTitle: String(localized: "Buddies"),
+                    recentItems: page.window.buddyUsernames,
+                    onSelectItem: { username in
+                        page.usernameText = username
+                        page.onShowUserProfile()
+                    }
+                ) {
+                    entryBar
+                }
             }
         }
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                HStack(spacing: 6) {
-                    ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                                     suggestions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
-                        page.onShowUserProfile()
-                    }
-                    .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
-
-                    Button {
-                        page.onShowUserProfile()
-                    } label: {
-                        Image(systemName: "person.crop.circle.badge.questionmark")
-                    }
+            if hasTabs {
+                ToolbarItem(placement: .navigation) {
+                    entryBar
+                        .frame(minWidth: 220, idealWidth: 300, maxWidth: 400)
                 }
             }
 

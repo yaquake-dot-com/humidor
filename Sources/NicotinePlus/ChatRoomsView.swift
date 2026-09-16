@@ -8,17 +8,47 @@ struct ChatRoomsView: View {
 
     @Bindable var page: ChatRoomsPage
 
+    private var hasTabs: Bool { !page.notebook.pages.isEmpty }
+
+    private var entryBar: some View {
+        HStack(spacing: 6) {
+            ToolbarTextField(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
+                             suggestions: page.roomList.roomNames, focusRequest: page.roomFocusRequest) {
+                page.onCreateRoom()
+            }
+            .disabled(!page.isRoomEntryEnabled)
+
+            Button {
+                page.isRoomListShown.toggle()
+            } label: {
+                Label(String(localized: "Rooms"), systemImage: "list.bullet")
+                    .labelStyle(.titleAndIcon)
+            }
+            .popover(isPresented: $page.isRoomListShown) {
+                RoomListView(roomList: page.roomList)
+            }
+        }
+    }
+
     var body: some View {
         HSplitView {
             Group {
-                if page.notebook.pages.isEmpty {
-                    PageDescription(
+                if hasTabs {
+                    NotebookView(notebook: page.notebook)
+                } else {
+                    PageStart(
                         systemImage: "bubble.left.and.bubble.right",
                         title: String(localized: "Chat Rooms"),
-                        description: String(localized: "Join an existing chat room, or create a new room to chat with other users on the Soulseek network")
-                    )
-                } else {
-                    NotebookView(notebook: page.notebook)
+                        description: String(localized: "Join an existing chat room, or create a new room to chat with other users on the Soulseek network"),
+                        recentTitle: String(localized: "Rooms"),
+                        recentItems: page.roomList.roomNames,
+                        onSelectItem: { room in
+                            page.roomText = room
+                            page.onCreateRoom()
+                        }
+                    ) {
+                        entryBar
+                    }
                 }
             }
             .frame(minWidth: 400)
@@ -30,24 +60,10 @@ struct ChatRoomsView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                HStack(spacing: 6) {
-                    ToolbarTextField(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
-                                     suggestions: page.roomList.roomNames, focusRequest: page.roomFocusRequest) {
-                        page.onCreateRoom()
-                    }
-                    .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
-                    .disabled(!page.isRoomEntryEnabled)
-
-                    Button {
-                        page.isRoomListShown.toggle()
-                    } label: {
-                        Label(String(localized: "Rooms"), systemImage: "list.bullet")
-                            .labelStyle(.titleAndIcon)
-                    }
-                    .popover(isPresented: $page.isRoomListShown) {
-                        RoomListView(roomList: page.roomList)
-                    }
+            if hasTabs {
+                ToolbarItem(placement: .navigation) {
+                    entryBar
+                        .frame(minWidth: 220, idealWidth: 300, maxWidth: 400)
                 }
             }
 

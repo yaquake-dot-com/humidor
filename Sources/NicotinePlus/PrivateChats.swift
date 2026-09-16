@@ -642,37 +642,53 @@ struct PrivateChatsView: View {
 
     @Bindable var page: PrivateChatsPage
 
+    private var hasTabs: Bool { !page.notebook.pages.isEmpty }
+
+    private var entryBar: some View {
+        HStack(spacing: 6) {
+            ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                             suggestions: page.history.usernames, focusRequest: page.usernameFocusRequest) {
+                page.onGetPrivateChat()
+            }
+
+            Button {
+                page.isHistoryShown.toggle()
+            } label: {
+                Label(String(localized: "Chat History"), systemImage: "clock.arrow.circlepath")
+                    .labelStyle(.titleAndIcon)
+            }
+            .popover(isPresented: $page.isHistoryShown) {
+                page.history.listView.view
+                    .frame(width: 700, height: 500)
+            }
+        }
+    }
+
     var body: some View {
         Group {
-            if page.notebook.pages.isEmpty {
-                PageDescription(
+            if hasTabs {
+                NotebookView(notebook: page.notebook)
+            } else {
+                PageStart(
                     systemImage: "envelope",
                     title: String(localized: "Private Chat"),
-                    description: String(localized: "Enter the name of a user to start a text conversation with them in private")
-                )
-            } else {
-                NotebookView(notebook: page.notebook)
+                    description: String(localized: "Enter the name of a user to start a text conversation with them in private"),
+                    recentTitle: String(localized: "Chat History"),
+                    recentItems: page.history.usernames,
+                    onSelectItem: { username in
+                        page.usernameText = username
+                        page.onGetPrivateChat()
+                    }
+                ) {
+                    entryBar
+                }
             }
         }
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                HStack(spacing: 6) {
-                    ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                                     suggestions: page.history.usernames, focusRequest: page.usernameFocusRequest) {
-                        page.onGetPrivateChat()
-                    }
-                    .frame(minWidth: 200, idealWidth: 300, maxWidth: 400)
-
-                    Button {
-                        page.isHistoryShown.toggle()
-                    } label: {
-                        Label(String(localized: "Chat History"), systemImage: "clock.arrow.circlepath")
-                            .labelStyle(.titleAndIcon)
-                    }
-                    .popover(isPresented: $page.isHistoryShown) {
-                        page.history.listView.view
-                            .frame(width: 700, height: 500)
-                    }
+            if hasTabs {
+                ToolbarItem(placement: .navigation) {
+                    entryBar
+                        .frame(minWidth: 220, idealWidth: 300, maxWidth: 400)
                 }
             }
 

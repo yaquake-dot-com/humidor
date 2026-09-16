@@ -7,24 +7,34 @@ import SwiftUI
 struct SearchesView: View {
 
     @Bindable var page: SearchesPage
-    @FocusState private var isSearchFocused: Bool
+
+    private var hasSearches: Bool { !page.notebook.pages.isEmpty }
 
     var body: some View {
         Group {
-            if page.notebook.pages.isEmpty {
-                PageDescription(
+            if hasSearches {
+                NotebookView(notebook: page.notebook)
+            } else {
+                PageStart(
                     systemImage: "magnifyingglass",
                     title: String(localized: "Search Files"),
-                    description: String(localized: "Enter a search term to search for files shared by other users on the Soulseek network")
-                )
-            } else {
-                NotebookView(notebook: page.notebook)
+                    description: String(localized: "Enter a search term to search for files shared by other users on the Soulseek network"),
+                    recentItems: page.searchHistory,
+                    onSelectItem: { term in
+                        page.searchText = term
+                        page.onSearch()
+                    }
+                ) {
+                    searchBar
+                }
             }
         }
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                scopeBar
-                    .disabled(!page.isSearchEnabled)
+            if hasSearches {
+                ToolbarItem(placement: .navigation) {
+                    searchBar
+                        .frame(minWidth: 240, idealWidth: 320, maxWidth: 420)
+                }
             }
 
             ToolbarItemGroup {
@@ -43,25 +53,26 @@ struct SearchesView: View {
                 .help(String(localized: "Configure Searches"))
             }
         }
-        .searchable(text: $page.searchText, placement: .toolbar, prompt: String(localized: "Search term…"))
-        .searchSuggestions {
-            ForEach(page.searchHistory.filter { !$0.isEmpty }, id: \.self) { term in
-                Text(term)
-                    .searchCompletion(term)
-            }
-        }
-        .searchFocused($isSearchFocused)
-        .onSubmit(of: .search) {
-            if page.isSearchEnabled {
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: 6) {
+            scopeMenu
+
+            SearchField(
+                placeholder: String(localized: "Search term…"),
+                text: $page.searchText,
+                recentItems: page.searchHistory,
+                tooltip: String(localized: "Search patterns: with a word = term, without a word = -term, partial word = *erm"),
+                focusRequest: page.searchEntryFocusRequest
+            ) {
                 page.onSearch()
             }
         }
-        .onChange(of: page.searchEntryFocusRequest) {
-            isSearchFocused = true
-        }
+        .disabled(!page.isSearchEnabled)
     }
 
-    private var scopeBar: some View {
+    private var scopeMenu: some View {
         HStack(spacing: 6) {
             Menu(page.searchModeLabel) {
                 Picker(String(localized: "Search Scope"),
