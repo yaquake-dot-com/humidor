@@ -45,35 +45,35 @@ struct ChatRoomsView: View {
         }
     }
 
-    var body: some View {
-        HSplitView {
-            Group {
-                if hasTabs {
-                    NotebookView(notebook: page.notebook)
-                } else {
-                    PageStart(
-                        systemImage: "bubble.left.and.bubble.right",
-                        title: String(localized: "Chat Rooms"),
-                        description: String(localized: "Join an existing chat room, or create a new room to chat with other users on the Soulseek network"),
-                        recentTitle: String(localized: "Rooms"),
-                        recentItems: page.roomList.roomNames,
-                        onSelectItem: { room in
-                            page.roomText = room
-                            page.onCreateRoom()
-                        }
-                    ) {
-                        entryBar
-                    }
+    @ViewBuilder private var roomsContent: some View {
+        if hasTabs {
+            NotebookView(notebook: page.notebook)
+        } else {
+            PageStart(
+                systemImage: "bubble.left.and.bubble.right",
+                title: String(localized: "Chat Rooms"),
+                description: String(localized: "Join an existing chat room, or create a new room to chat with other users on the Soulseek network"),
+                recentTitle: String(localized: "Rooms"),
+                recentItems: page.roomList.roomNames,
+                onSelectItem: { room in
+                    page.roomText = room
+                    page.onCreateRoom()
                 }
-            }
-            .frame(minWidth: 400)
-            .layoutPriority(1)
-
-            if page.window.buddies.position == "chatrooms" {
-                page.window.buddies.content
-                    .frame(minWidth: 200, idealWidth: 250, maxWidth: 400)
+            ) {
+                entryBar
             }
         }
+    }
+
+    var body: some View {
+        SplitView(.horizontal, panes: [
+            SplitPane(minLength: 300) {
+                roomsContent
+            },
+            SplitPane(minLength: 200, idealLength: 250, isVisible: page.window.buddies.position == "chatrooms") {
+                page.window.buddies.content
+            }
+        ])
         .toolbar {
             if hasTabs {
                 ToolbarItem(placement: .navigation) {
@@ -119,14 +119,14 @@ struct ChatRoomTabView: View {
             if tab.isGlobal {
                 tab.chatView.view
             } else {
-                VSplitView {
-                    tab.activityView.view
-                        .frame(minHeight: 48, idealHeight: 80)
-
-                    tab.chatView.view
-                        .frame(minHeight: 100)
-                        .layoutPriority(1)
-                }
+                SplitView(.vertical, resizingPane: 1, panes: [
+                    SplitPane(minLength: 48, idealLength: 80) {
+                        tab.activityView.view
+                    },
+                    SplitPane(minLength: 100) {
+                        tab.chatView.view
+                    }
+                ])
             }
 
             Divider()

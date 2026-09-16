@@ -617,6 +617,10 @@ struct UserInfoTabView: View {
 
     @Bindable var tab: UserInfoTab
 
+    private var isPictureShown: Bool {
+        tab.isPictureVisible && tab.picture != nil
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             if let errorMessage = tab.errorMessage {
@@ -625,21 +629,23 @@ struct UserInfoTabView: View {
                 }
             }
 
-            HSplitView {
-                userInfo
-                    .frame(minWidth: 260, idealWidth: 320)
-
-                interests
-                    .frame(minWidth: 200, idealWidth: 250)
-
-                if tab.isPictureVisible, let picture = tab.picture {
-                    Image(nsImage: picture)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(minWidth: 150, maxWidth: .infinity, maxHeight: .infinity)
-                        .overlay(PictureMenuView(menu: tab.picturePopupMenu))
+            SplitView(.horizontal, resizingPane: isPictureShown ? 2 : 0, panes: [
+                SplitPane(minLength: 260, idealLength: 320) {
+                    userInfo
+                },
+                SplitPane(minLength: 200, idealLength: isPictureShown ? 250 : nil) {
+                    interests
+                },
+                SplitPane(minLength: 150, isVisible: isPictureShown) {
+                    if let picture = tab.picture {
+                        Image(nsImage: picture)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .overlay(PictureMenuView(menu: tab.picturePopupMenu))
+                    }
                 }
-            }
+            ])
 
             Divider()
             actionBar
@@ -722,12 +728,14 @@ struct UserInfoTabView: View {
                 }
             }
 
-            VSplitView {
-                tab.likesListView.view
-                    .frame(minHeight: 80)
-                tab.dislikesListView.view
-                    .frame(minHeight: 80)
-            }
+            SplitView(.vertical, panes: [
+                SplitPane(minLength: 80) {
+                    tab.likesListView.view
+                },
+                SplitPane(minLength: 80) {
+                    tab.dislikesListView.view
+                }
+            ])
         }
         .padding(12)
     }

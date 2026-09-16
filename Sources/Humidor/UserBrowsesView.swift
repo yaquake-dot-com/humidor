@@ -96,18 +96,18 @@ struct UserBrowseTabView: View {
 
             Divider()
 
-            HSplitView {
-                tab.folderTreeView.view
-                    .frame(minWidth: 240, idealWidth: 300)
-
-                VStack(spacing: 0) {
-                    pathBar
-                    Divider()
-                    tab.fileListView.view
+            SplitView(.horizontal, resizingPane: 1, panes: [
+                SplitPane(minLength: 240, idealLength: 300) {
+                    tab.folderTreeView.view
+                },
+                SplitPane(minLength: 250) {
+                    VStack(spacing: 0) {
+                        pathBar
+                        Divider()
+                        tab.fileListView.view
+                    }
                 }
-                .frame(minWidth: 250)
-                .layoutPriority(1)
-            }
+            ])
         }
     }
 

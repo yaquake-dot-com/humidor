@@ -33,15 +33,14 @@ struct AppKitView: NSViewRepresentable {
 
     private func embed(in container: NSView) {
         view.removeFromSuperview()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(view)
 
-        NSLayoutConstraint.activate([
-            view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            view.topAnchor.constraint(equalTo: container.topAnchor),
-            view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-        ])
+        // Resize with the container, without layout constraints. Constraints make the
+        // container keep its current size when SwiftUI asks for its minimum size, which
+        // makes the minimum size of the window follow its width.
+        view.translatesAutoresizingMaskIntoConstraints = true
+        view.autoresizingMask = [.width, .height]
+        view.frame = container.bounds
+        container.addSubview(view)
     }
 }
 

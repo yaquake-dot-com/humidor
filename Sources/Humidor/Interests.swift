@@ -484,24 +484,26 @@ struct InterestsView: View {
     @Bindable var page: InterestsPage
 
     var body: some View {
-        HSplitView {
-            VStack(spacing: 0) {
-                VSplitView {
-                    interestList(title: String(localized: "Personal Interests"),
-                                 placeholder: String(localized: "Add something you like…"),
-                                 text: $page.likeText, listView: page.likesListView) {
-                        page.onAddThingILike()
+        SplitView(.horizontal, resizingPane: 1, panes: [
+            SplitPane(minLength: 200, idealLength: 260) {
+                SplitView(.vertical, panes: [
+                    SplitPane(minLength: 120) {
+                        interestList(title: String(localized: "Personal Interests"),
+                                     placeholder: String(localized: "Add something you like…"),
+                                     text: $page.likeText, listView: page.likesListView) {
+                            page.onAddThingILike()
+                        }
+                    },
+                    SplitPane(minLength: 120) {
+                        interestList(title: String(localized: "Personal Dislikes"),
+                                     placeholder: String(localized: "Add something you dislike…"),
+                                     text: $page.dislikeText, listView: page.dislikesListView) {
+                            page.onAddThingIDislike()
+                        }
                     }
-
-                    interestList(title: String(localized: "Personal Dislikes"),
-                                 placeholder: String(localized: "Add something you dislike…"),
-                                 text: $page.dislikeText, listView: page.dislikesListView) {
-                        page.onAddThingIDislike()
-                    }
-                }
-            }
-            .frame(minWidth: 200, idealWidth: 260)
-
+                ])
+            },
+            SplitPane(minLength: 200) {
             VStack(spacing: 0) {
                 HStack {
                     Text(page.recommendationsLabel)
@@ -521,19 +523,19 @@ struct InterestsView: View {
 
                 page.recommendationsListView.view
             }
-            .frame(minWidth: 200)
+            },
+            SplitPane(minLength: 250, idealLength: 300) {
+                VStack(spacing: 0) {
+                    Text(page.similarUsersLabel)
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
 
-            VStack(spacing: 0) {
-                Text(page.similarUsersLabel)
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-
-                page.similarUsersListView.view
+                    page.similarUsersListView.view
+                }
             }
-            .frame(minWidth: 250)
-        }
+        ])
         .toolbar {
             ToolbarItem {
                 Button {

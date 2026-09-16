@@ -33,7 +33,7 @@ struct PageStart<Entry: View>: View {
                 .frame(maxWidth: 420)
 
             entry
-                .frame(width: 420)
+                .frame(maxWidth: 420)
 
             if !visibleItems.isEmpty, let onSelectItem {
                 VStack(alignment: .leading, spacing: 2) {
@@ -54,7 +54,7 @@ struct PageStart<Entry: View>: View {
                         .buttonStyle(.accessoryBar)
                     }
                 }
-                .frame(width: 420)
+                .frame(maxWidth: 420)
                 .padding(.top, 8)
             }
         }

@@ -3,7 +3,8 @@
 // Development aids, only available in debug builds when NICOTINE_DEBUG_DIR is set:
 // - SIGUSR1 saves an image of each visible window to that folder
 // - SIGUSR2 runs the actions listed in the "actions" file in that folder, one per line
-//   ("ping" writes the current time to the "ping" file, to measure main thread delays)
+//   ("ping" writes the current time to the "ping" file, to measure main thread delays;
+//   "window-layout" logs the minimum size of the main window and the lengths of its panes)
 
 #if DEBUG
 
@@ -72,7 +73,7 @@ enum DebugHooks {
 
     /// Logs the view hierarchy of a window, used to check the appearance of system views
     private static func dumpViews(_ view: NSView, depth: Int = 0) {
-        guard depth < 7 else {
+        guard depth < 14 else {
             return
         }
 
@@ -140,6 +141,26 @@ enum DebugHooks {
                     if let frameView = window.contentView?.superview {
                         dumpViews(frameView)
                     }
+                }
+            case "window-layout":
+                guard let window = MainWindow.shared?.window else {
+                    break
+                }
+                func splitViews(_ view: NSView) -> [NSSplitView] {
+                    ((view as? NSSplitView).map { [$0] } ?? []) + view.subviews.flatMap(splitViews)
+                }
+                log.add("WINDOW frame \(window.frame.size) min \(window.minSize) contentMin \(window.contentMinSize) screen \(window.screen?.visibleFrame.size ?? .zero)")
+                for splitView in splitViews(window.contentView!) {
+                    let lengths = splitView.arrangedSubviews.map {
+                        Int(splitView.isVertical ? $0.frame.width : $0.frame.height)
+                    }
+                    log.add("SPLIT \(type(of: splitView)) vertical=\(splitView.isVertical) lengths \(lengths)")
+                }
+            case "window-width":
+                if let window = MainWindow.shared?.window, let width = Double(argument) {
+                    var frame = window.frame
+                    frame.size.width = width
+                    window.setFrame(frame, display: true)
                 }
             case "ping":
                 let filePath = (folderPath as NSString).appendingPathComponent("ping")
