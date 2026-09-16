@@ -217,6 +217,8 @@ final class TreeView: NSObject {
     private var needsReload = false
     private var changedRows: [TreeRow] = []
     private var isApplyingColumnConfig = false
+    /// Rows to expand once pending changes have been applied
+    private var rowsToExpand: [TreeRow] = []
     private var isFillingWidth = false
     private weak var fillColumn: NSTableColumn?
     private var fillExtraWidth: CGFloat = 0
@@ -742,8 +744,11 @@ final class TreeView: NSObject {
             })
             outlineView.selectRowIndexes(indexes, byExtendingSelection: false)
             isSelectingProgrammatically = false
+            expandPendingRows()
             return
         }
+
+        expandPendingRows()
 
         guard !changedRows.isEmpty else {
             return
@@ -768,7 +773,23 @@ final class TreeView: NSObject {
         }
     }
 
-    // MARK: Rows
+    /// Expands the rows that were added since the last update, in a single pass.
+    private func expandPendingRows() {
+        guard !rowsToExpand.isEmpty else {
+            return
+        }
+
+        let rows = rowsToExpand
+        rowsToExpand.removeAll(keepingCapacity: true)
+
+        outlineView.beginUpdates()
+
+        for row in rows where !row.isRemoved && row.hasChildren {
+            outlineView.expandItem(row)
+        }
+
+        outlineView.endUpdates()
+    }
 
     @discardableResult
     func addRow(_ values: [TreeValue], selectRow: Bool = true, parent: TreeRow? = nil) -> TreeRow? {
@@ -859,6 +880,7 @@ final class TreeView: NSObject {
     func clear() {
         root.children.removeAll()
         iterators.removeAll()
+        rowsToExpand.removeAll()
         changedRows.removeAll()
         needsReload = false
         isUpdateScheduled = false
@@ -967,10 +989,15 @@ final class TreeView: NSObject {
 
     @discardableResult
     func expandRow(_ row: TreeRow) -> Bool {
-        update()
-
         guard row.hasChildren else {
             return false
+        }
+
+        guard !isUpdateScheduled else {
+            // The row isn't in the view yet, expand it once the pending changes are applied.
+            // Expanding rows one by one while adding them is slow, since the view is rebuilt every time.
+            rowsToExpand.append(row)
+            return true
         }
 
         outlineView.expandItem(row)

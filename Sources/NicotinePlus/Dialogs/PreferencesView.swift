@@ -10,21 +10,17 @@ struct PreferencesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                List(selection: $preferences.activePageID) {
-                    ForEach(preferences.pages) { page in
-                        Label(page.title, systemImage: page.systemImage)
-                            .tag(page.id)
-                    }
+            NavigationSplitView {
+                List(preferences.pages, selection: $preferences.activePageID) { page in
+                    Label(page.title, systemImage: page.systemImage)
+                        .tag(page.id)
                 }
-                .listStyle(.sidebar)
-                .frame(width: 200)
-
-                Divider()
-
+                .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 260)
+            } detail: {
                 pageView
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .toolbar(removing: .sidebarToggle)
 
             Divider()
 

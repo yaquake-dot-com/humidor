@@ -3,6 +3,7 @@
 // Development aids, only available in debug builds when NICOTINE_DEBUG_DIR is set:
 // - SIGUSR1 saves an image of each visible window to that folder
 // - SIGUSR2 runs the actions listed in the "actions" file in that folder, one per line
+//   ("ping" writes the current time to the "ping" file, to measure main thread delays)
 
 #if DEBUG
 
@@ -69,6 +70,19 @@ enum DebugHooks {
         }
     }
 
+    /// Logs the view hierarchy of a window, used to check the appearance of system views
+    private static func dumpViews(_ view: NSView, depth: Int = 0) {
+        guard depth < 7 else {
+            return
+        }
+
+        log.add("VIEW " + String(repeating: "  ", count: depth) + String(describing: type(of: view)) + " \(view.frame)")
+
+        for subview in view.subviews {
+            dumpViews(subview, depth: depth + 1)
+        }
+    }
+
     private static func runActions(from folderPath: String) {
         let filePath = (folderPath as NSString).appendingPathComponent("actions")
 
@@ -115,8 +129,12 @@ enum DebugHooks {
                 _ = core.pluginHandler?.enablePlugin(argument)
                 Application.shared.preferences?.showPluginSettings(argument)
             case "dump-views":
-                func dump(_ view: NSView, _ depth: Int) { if depth < 7 { log.add("VIEW " + String(repeating: "  ", count: depth) + String(describing: type(of: view)) + " \(view.frame)"); view.subviews.forEach { dump($0, depth + 1) } } }
-                if let frameView = MainWindow.shared?.window.contentView?.superview { dump(frameView, 0) }
+                if let frameView = MainWindow.shared?.window.contentView?.superview {
+                    dumpViews(frameView)
+                }
+            case "ping":
+                let filePath = (folderPath as NSString).appendingPathComponent("ping")
+                try? String(Date().timeIntervalSince1970).write(toFile: filePath, atomically: true, encoding: .utf8)
             case "select-all": (NSApp.keyWindow?.firstResponder as? NSTableView)?.selectAll(nil)
             default: break
             }

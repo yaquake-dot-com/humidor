@@ -41,6 +41,14 @@ public final class Events: @unchecked Sendable {
     private var nextScheduledEventID = 0
     private var isActive = false
 
+    /// Events emitted from other threads, waiting to run on the main thread
+    private var threadEvents: [@MainActor @Sendable () -> Void] = []
+    private let threadEventsLock = NSLock()
+    private var threadEventTimer: DispatchSourceTimer?
+
+    /// Interval at which events from other threads are emitted on the main thread
+    private static let threadEventInterval = 0.1
+
     // MARK: Connecting
 
     @MainActor
@@ -51,6 +59,19 @@ public final class Events: @unchecked Sendable {
 
         isActive = true
         connect(.quit, quit)
+
+        // Emit events from other threads 10 times per second
+        let timer = DispatchSource.makeTimerSource(queue: .main)
+
+        timer.schedule(deadline: .now() + Self.threadEventInterval, repeating: Self.threadEventInterval,
+                       leeway: .milliseconds(10))
+        timer.setEventHandler { [weak self] in
+            MainActor.assumeIsolated {
+                self?.processThreadEvents()
+            }
+        }
+        timer.resume()
+        threadEventTimer = timer
     }
 
     @MainActor
@@ -113,11 +134,26 @@ public final class Events: @unchecked Sendable {
     }
 
     /// Runs a function on the main thread. Safe to call from any thread.
+    ///
+    /// Functions are queued, and run in batches on the main thread. Emitting
+    /// each event separately floods the main thread when many messages arrive,
+    /// e.g. while searching.
     public func invokeMainThread(_ function: @escaping @MainActor @Sendable () -> Void) {
-        DispatchQueue.main.async {
-            MainActor.assumeIsolated {
-                function()
-            }
+        threadEventsLock.lock()
+        threadEvents.append(function)
+        threadEventsLock.unlock()
+    }
+
+    /// Emits the events other threads have queued.
+    @MainActor
+    public func processThreadEvents() {
+        threadEventsLock.lock()
+        let pendingEvents = threadEvents
+        threadEvents.removeAll(keepingCapacity: true)
+        threadEventsLock.unlock()
+
+        for function in pendingEvents {
+            function()
         }
     }
 
@@ -169,6 +205,10 @@ public final class Events: @unchecked Sendable {
     @MainActor
     private func quit() {
         isActive = false
+
+        threadEventTimer?.cancel()
+        threadEventTimer = nil
+
         callbacks.removeAll()
 
         for timer in scheduledTimers.values {
