@@ -45,26 +45,26 @@ Scripts/build-app.sh
 Run the headless client:
 
 ```sh
-swift run nicotine --help
+swift run humidor-cli --help
 ```
 
 > If the project lives in an iCloud-synced folder, `swift test` may fail to code sign the test
-> bundle. Use a build folder outside iCloud: `swift test --scratch-path /tmp/nicotine-swift-build`.
+> bundle. Use a build folder outside iCloud: `swift test --scratch-path /tmp/humidor-build`.
 
 ## Layout
 
-- `Sources/NicotineCore` – protocol, networking and application logic (no UI)
+- `Sources/HumidorCore` – protocol, networking and application logic (no UI)
   - `Protocol/` – message classes and binary encoding
   - `Network/` – networking thread, sockets, port mapping
   - `Plugins/` – built-in plugins
   - `External/` – TinyTag audio metadata reader (MIT)
-- `Sources/nicotine` – headless command line client
-- `Sources/NicotinePlus` – macOS application
+- `Sources/humidor-cli` – headless command line client
+- `Sources/Humidor` – macOS application
   - `Widgets/` – list views (`NSOutlineView`), text views, menus, dialogs, tab bar
   - `Dialogs/` – preferences, setup assistant and other dialogs
 - `Packaging/` – `Info.plist` and application icon
 - `Scripts/build-app.sh` – builds the application bundle
-- `Tests/NicotineCoreTests` – tests, with expected values produced by the upstream implementation
+- `Tests/HumidorCoreTests` – tests, with expected values produced by the upstream implementation
 
 ## License
 
