@@ -14,22 +14,25 @@ struct MainWindowView: View {
                 .navigationSplitViewColumnWidth(min: 160, ideal: 190, max: 260)
         } detail: {
             VStack(spacing: 0) {
-                SplitView(.vertical, panes: [
-                    SplitPane(minLength: 200) {
-                        SplitView(.horizontal, panes: [
-                            SplitPane(minLength: 300) {
-                                currentPageView
-                            },
-                            SplitPane(minLength: 200, idealLength: 250,
-                                      isVisible: mainWindow.buddies.position == "always") {
-                                mainWindow.buddies.content
-                            }
-                        ])
-                    },
-                    SplitPane(minLength: 60, idealLength: 140, isVisible: mainWindow.isLogPaneVisible) {
-                        mainWindow.logView.view
+                VSplitView {
+                    HStack(spacing: 0) {
+                        currentPageView
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                        if mainWindow.buddies.position == "always" {
+                            Divider()
+                            mainWindow.buddies.content
+                                .frame(minWidth: 200, idealWidth: 250, maxWidth: 400)
+                        }
                     }
-                ])
+                    .frame(minHeight: 200)
+                    .layoutPriority(1)
+
+                    if mainWindow.isLogPaneVisible {
+                        mainWindow.logView.view
+                            .frame(minHeight: 60, idealHeight: 140)
+                    }
+                }
 
                 Divider()
                 StatusBar(mainWindow: mainWindow)

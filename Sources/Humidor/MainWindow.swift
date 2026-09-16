@@ -163,6 +163,8 @@ final class MainWindow: NSObject {
 
         let window = NSWindow(contentViewController: hostingController)
         window.title = HumidorCore.Application.name
+        // The title stays in the Window menu and Mission Control, but not in the toolbar
+        window.titleVisibility = .hidden
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
         window.toolbarStyle = .unified
         window.isReleasedWhenClosed = false

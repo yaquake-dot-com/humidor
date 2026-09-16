@@ -59,8 +59,10 @@ struct SplitView: NSViewRepresentable {
 
         context.coordinator.hostingViews = panes.map { pane in
             let hostingView = NSHostingView(rootView: pane.content)
-            // The split view decides the size of its panes
+            // The split view decides the size of its panes, and is already placed within the
+            // safe area of the window: a pane doesn't make room for the toolbar a second time
             hostingView.sizingOptions = []
+            hostingView.safeAreaRegions = []
             hostingView.translatesAutoresizingMaskIntoConstraints = true
             return hostingView
         }
