@@ -11,11 +11,14 @@ class DialogWindow: NSObject, NSWindowDelegate {
     var showCallback: (@MainActor () -> Void)?
     var closeCallback: (@MainActor () -> Void)?
 
+    /// - Parameter hasSidebar: whether the content starts with a sidebar, which
+    ///   is then shown next to the window controls instead of below them
     init<Content: View>(title: String, width: CGFloat = 0, height: CGFloat = 0, isResizable: Bool = true,
-                        @ViewBuilder content: () -> Content) {
+                        hasSidebar: Bool = false, @ViewBuilder content: () -> Content) {
 
         let hostingController = NSHostingController(rootView: content())
         hostingController.sizingOptions = (width > 0 || height > 0) ? [] : [.preferredContentSize]
+        hostingController.sceneBridgingOptions = [.toolbars]
 
         window = NSWindow(contentViewController: hostingController)
         window.title = title
@@ -23,6 +26,11 @@ class DialogWindow: NSObject, NSWindowDelegate {
 
         if isResizable {
             window.styleMask.insert(.resizable)
+        }
+
+        if hasSidebar {
+            window.styleMask.insert(.fullSizeContentView)
+            window.toolbarStyle = .unified
         }
 
         window.isReleasedWhenClosed = false

@@ -167,7 +167,8 @@ final class Preferences {
 
         createListViews()
 
-        dialog = DialogWindow(title: String(localized: "Preferences"), width: 960, height: 650) { [unowned self] in
+        dialog = DialogWindow(title: String(localized: "Preferences"), width: 960, height: 650,
+                              hasSidebar: true) { [unowned self] in
             PreferencesView(preferences: self)
         }
 

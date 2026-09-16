@@ -9,33 +9,40 @@ struct PreferencesView: View {
     @Bindable var preferences: Preferences
 
     var body: some View {
-        VStack(spacing: 0) {
-            NavigationSplitView {
-                List(preferences.pages, selection: $preferences.activePageID) { page in
-                    Label(page.title, systemImage: page.systemImage)
-                        .tag(page.id)
+        NavigationSplitView {
+            List(preferences.pages, selection: $preferences.activePageID) { page in
+                Label(page.title, systemImage: page.systemImage)
+                    .tag(page.id)
+            }
+            .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 260)
+        } detail: {
+            pageView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    buttonBar
                 }
-                .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 260)
-            } detail: {
-                pageView
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .toolbar(removing: .sidebarToggle)
-
-            Divider()
-
-            HStack {
-                Button(String(localized: "Cancel")) { preferences.close() }
-                    .keyboardShortcut(.cancelAction)
-                Button(String(localized: "Export…")) { preferences.onBackUpConfig() }
-                Spacer()
-                Button(String(localized: "Apply")) { preferences.updateSettings() }
-                Button(String(localized: "OK")) { preferences.updateSettings(isClosing: true) }
-                    .keyboardShortcut(.defaultAction)
-            }
-            .padding(12)
         }
+        .toolbar(removing: .sidebarToggle)
         .frame(minWidth: 760, minHeight: 500)
+    }
+
+    private var buttonBar: some View {
+        HStack(spacing: 12) {
+            Spacer()
+
+            Button(String(localized: "Export…")) { preferences.onBackUpConfig() }
+            Button(String(localized: "Cancel")) { preferences.close() }
+                .keyboardShortcut(.cancelAction)
+            Button(String(localized: "Apply")) { preferences.updateSettings() }
+            Button(String(localized: "OK")) { preferences.updateSettings(isClosing: true) }
+                .keyboardShortcut(.defaultAction)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(.bar)
+        .overlay(alignment: .top) {
+            Divider()
+        }
     }
 
     @ViewBuilder private var pageView: some View {

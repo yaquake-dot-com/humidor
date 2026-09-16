@@ -129,8 +129,16 @@ enum DebugHooks {
                 _ = core.pluginHandler?.enablePlugin(argument)
                 Application.shared.preferences?.showPluginSettings(argument)
             case "dump-views":
-                if let frameView = MainWindow.shared?.window.contentView?.superview {
-                    dumpViews(frameView)
+                for window in NSApp.windows where window.isVisible {
+                    guard argument.isEmpty || window.title.contains(argument) else {
+                        continue
+                    }
+
+                    log.add("WINDOW \(window.title)")
+
+                    if let frameView = window.contentView?.superview {
+                        dumpViews(frameView)
+                    }
                 }
             case "ping":
                 let filePath = (folderPath as NSString).appendingPathComponent("ping")
