@@ -3,14 +3,18 @@
 import AppKit
 import SwiftUI
 
-/// Search entry, shown in the middle of an empty page and in the toolbar of a
-/// page with content.
+/// Entry for searching something, shown in the middle of an empty page and in
+/// the toolbar of a page with content.
 struct SearchField: NSViewRepresentable {
 
     let placeholder: String
     @Binding var text: String
+    /// Title of the menu listing previous entries
+    var recentTitle = String(localized: "Recent Searches")
     /// Previous entries, listed in the menu of the entry
     var recentItems: [String] = []
+    /// Entries completed while typing
+    var completions: [String] = []
     var tooltip: String?
     /// Changes of this value move keyboard focus to the entry
     var focusRequest = 0
@@ -49,7 +53,7 @@ struct SearchField: NSViewRepresentable {
 
         if coordinator.recentItems != items {
             coordinator.recentItems = items
-            searchField.searchMenuTemplate = items.isEmpty ? nil : Self.menuTemplate()
+            searchField.searchMenuTemplate = items.isEmpty ? nil : Self.menuTemplate(title: recentTitle)
             searchField.recentSearches = items
         }
 
@@ -63,10 +67,10 @@ struct SearchField: NSViewRepresentable {
     }
 
     /// Menu listing previous entries, filled in by the search field
-    private static func menuTemplate() -> NSMenu {
+    private static func menuTemplate(title: String) -> NSMenu {
         let menu = NSMenu()
 
-        let titleItem = NSMenuItem(title: String(localized: "Recent Searches"), action: nil, keyEquivalent: "")
+        let titleItem = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         titleItem.tag = Int(NSSearchField.recentsTitleMenuItemTag)
         menu.addItem(titleItem)
 
@@ -89,6 +93,7 @@ struct SearchField: NSViewRepresentable {
         var parent: SearchField
         var recentItems: [String] = []
         var focusRequest: Int
+        private var isCompleting = false
 
         init(_ parent: SearchField) {
             self.parent = parent
@@ -99,7 +104,29 @@ struct SearchField: NSViewRepresentable {
             guard let searchField = notification.object as? NSSearchField else {
                 return
             }
+
             parent.text = searchField.stringValue
+
+            guard !isCompleting, !searchField.stringValue.isEmpty,
+                  let editor = searchField.currentEditor() as? NSTextView else {
+                return
+            }
+
+            isCompleting = true
+            editor.complete(nil)
+            isCompleting = false
+        }
+
+        func control(_ control: NSControl, textView: NSTextView, completions words: [String],
+                     forPartialWordRange charRange: NSRange, indexOfSelectedItem index: UnsafeMutablePointer<Int>)
+            -> [String] {
+            let query = (textView.string as NSString).substring(with: charRange)
+
+            guard !query.isEmpty else {
+                return []
+            }
+
+            return parent.completions.filter { $0 != query && $0.localizedCaseInsensitiveContains(query) }
         }
 
         @objc func onAction(_ sender: NSSearchField) {

@@ -12,8 +12,8 @@ struct ChatRoomsView: View {
 
     private var entryBar: some View {
         HStack(spacing: 6) {
-            ToolbarTextField(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
-                             suggestions: page.roomList.roomNames, focusRequest: page.roomFocusRequest) {
+            SearchField(placeholder: String(localized: "Join or create room…"), text: $page.roomText,
+                        recentTitle: String(localized: "Rooms"), recentItems: page.roomList.roomNames, completions: page.roomList.roomNames, focusRequest: page.roomFocusRequest) {
                 page.onCreateRoom()
             }
             .disabled(!page.isRoomEntryEnabled)

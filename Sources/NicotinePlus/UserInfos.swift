@@ -551,8 +551,8 @@ struct UserInfosView: View {
 
     private var entryBar: some View {
         HStack(spacing: 6) {
-            ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.usernameText,
-                             suggestions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
+            SearchField(placeholder: String(localized: "Username…"), text: $page.usernameText,
+                        recentTitle: String(localized: "Buddies"), recentItems: page.window.buddyUsernames, completions: page.window.buddyUsernames, focusRequest: page.usernameFocusRequest) {
                 page.onShowUserProfile()
             }
 

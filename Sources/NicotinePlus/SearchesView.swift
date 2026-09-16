@@ -88,16 +88,16 @@ struct SearchesView: View {
             .help(String(localized: "Search Scope"))
 
             if page.searchMode == .rooms {
-                ToolbarTextField(placeholder: String(localized: "Room…"), text: $page.roomSearchText,
-                                 suggestions: page.roomSearchItems) {
+                SearchField(placeholder: String(localized: "Room…"), text: $page.roomSearchText,
+                            recentItems: page.roomSearchItems, completions: page.roomSearchItems) {
                     page.onSearch()
                 }
                 .frame(width: 140)
             }
 
             if page.searchMode == .user {
-                ToolbarTextField(placeholder: String(localized: "Username…"), text: $page.userSearchText,
-                                 suggestions: page.window.buddyUsernames) {
+                SearchField(placeholder: String(localized: "Username…"), text: $page.userSearchText,
+                            recentItems: page.window.buddyUsernames, completions: page.window.buddyUsernames) {
                     page.onSearch()
                 }
                 .frame(width: 140)
