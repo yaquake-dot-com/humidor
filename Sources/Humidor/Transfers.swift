@@ -140,13 +140,11 @@ class TransfersPage: MainPage {
                 TreeColumn(id: "user", title: String(localized: "User"), width: 200,
                            sensitiveColumn: "is_sensitive_data"),
                 TreeColumn(id: "path", title: pathLabel, width: 200, expandsColumn: true,
-                           sensitiveColumn: "is_sensitive_data",
-                           tooltipCallback: { [unowned self] in onFilePathTooltip($0, $1) }),
+                           sensitiveColumn: "is_sensitive_data"),
                 TreeColumn(id: "file_type", title: String(localized: "File Type"), kind: .icon, width: 40,
                            hidesHeader: true, sensitiveColumn: "is_sensitive_data"),
                 TreeColumn(id: "filename", title: String(localized: "Filename"), width: 200, expandsColumn: true,
-                           sensitiveColumn: "is_sensitive_data",
-                           tooltipCallback: { [unowned self] in onFilePathTooltip($0, $1) }),
+                           sensitiveColumn: "is_sensitive_data"),
                 TreeColumn(id: "status", title: String(localized: "Status"), width: 140,
                            sensitiveColumn: "is_sensitive_data"),
                 TreeColumn(id: "queue_position", title: String(localized: "Queue"), kind: .number, width: 90,
@@ -174,6 +172,7 @@ class TransfersPage: MainPage {
                 .data("id_data", isIteratorKey: true, sortOrder: .ascending)
             ],
             hasTree: true, multiSelect: true, persistentSort: true, name: type == .download ? "download" : "upload",
+            rowPresentation: TransferRows.presentation,
             activateRow: { [unowned self] _, row, _ in onRowActivated(row) },
             deleteAccelerator: { [unowned self] _ in onRemoveTransfersAccelerator() }
         )
@@ -221,6 +220,41 @@ class TransfersPage: MainPage {
         treeView.popupMenu = popupMenu
 
         onToggleTree((type == .download) ? config.transfers.groupDownloads : config.transfers.groupUploads)
+        updateSorting()
+    }
+
+    // MARK: Sorting
+
+    /// Column the transfers are sorted by, nil for the order they were added in
+    private(set) var sortColumnID = ""
+    private(set) var isSortAscending = true
+
+    func updateSorting() {
+        let sorting = treeView.sorting
+        sortColumnID = sorting?.columnID ?? ""
+        isSortAscending = sorting?.order != .descending
+    }
+
+    /// Sorts by a column, or reverses the order when already sorted by it. Text columns are sorted
+    /// in ascending order first, numbers in descending order.
+    func sortTransfers(by columnID: String) {
+        guard !columnID.isEmpty else {
+            treeView.sort(by: nil, order: .ascending)
+            updateSorting()
+            return
+        }
+
+        let isTextColumn = ["user", "path", "filename", "status"].contains(columnID)
+        let order: TreeColumn.SortOrder
+
+        if sortColumnID == columnID {
+            order = isSortAscending ? .descending : .ascending
+        } else {
+            order = isTextColumn ? .ascending : .descending
+        }
+
+        treeView.sort(by: columnID, order: order)
+        updateSorting()
     }
 
     func setUpClearMenu() {
@@ -980,13 +1014,6 @@ class TransfersPage: MainPage {
         selectTransfers()
         (menu as? FilePopupMenu)?.setNumSelectedFiles(selectedTransfers.count)
         populatePopupMenuUsers()
-    }
-
-    private func onFilePathTooltip(_ treeView: TreeView, _ row: TreeRow) -> String? {
-        guard let transfer = treeView.rowValue(row, "transfer_data").object(as: Transfer.self) else {
-            return nil
-        }
-        return transfer.virtualPath.isEmpty ? transferFolderPath(transfer) : transfer.virtualPath
     }
 
     private func onRowActivated(_ row: TreeRow) {

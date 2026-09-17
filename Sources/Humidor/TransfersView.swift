@@ -97,6 +97,8 @@ struct TransfersView: View {
                 }
                 .help(String(localized: "Files"))
 
+                sortMenu
+
                 if page.groupingMode != .ungrouped {
                     Button {
                         page.isExpanded.toggle()
@@ -114,6 +116,40 @@ struct TransfersView: View {
 
             }
         }
+    }
+
+    private static let sortColumns: [(id: String, title: String)] = [
+        ("", String(localized: "Default")),
+        ("filename", String(localized: "Filename")),
+        ("path", String(localized: "Folder")),
+        ("user", String(localized: "User")),
+        ("status", String(localized: "Status")),
+        ("queue_position", String(localized: "Queue")),
+        ("percent", String(localized: "Percent")),
+        ("size", String(localized: "Size")),
+        ("speed", String(localized: "Speed")),
+        ("time_left", String(localized: "Time Left"))
+    ]
+
+    private var sortMenu: some View {
+        Menu {
+            ForEach(Self.sortColumns, id: \.id) { column in
+                Button {
+                    page.sortTransfers(by: column.id)
+                } label: {
+                    if page.sortColumnID == column.id {
+                        Label(column.title, systemImage: column.id.isEmpty
+                              ? "checkmark" : (page.isSortAscending ? "chevron.up" : "chevron.down"))
+                    } else {
+                        Text(column.title)
+                    }
+                }
+            }
+        } label: {
+            Label(String(localized: "Sort"), systemImage: "arrow.up.arrow.down")
+                .labelStyle(.iconOnly)
+        }
+        .help(String(localized: "Sort"))
     }
 
     @ViewBuilder private var actionBar: some View {

@@ -523,13 +523,11 @@ final class SearchTab: NotebookPage {
                 TreeColumn(id: "in_queue", title: String(localized: "In Queue"), kind: .number, width: 110,
                            sortColumn: "in_queue_data", sensitiveColumn: "free_slot_data"),
                 TreeColumn(id: "folder", title: String(localized: "Folder"), width: 200, expandsColumn: true,
-                           sensitiveColumn: "free_slot_data",
-                           tooltipCallback: { [unowned self] in onFilePathTooltip($0, $1) }),
+                           sensitiveColumn: "free_slot_data"),
                 TreeColumn(id: "file_type", title: String(localized: "File Type"), kind: .icon, width: 40,
                            hidesHeader: true, sensitiveColumn: "free_slot_data"),
                 TreeColumn(id: "filename", title: String(localized: "Filename"), width: 200, expandsColumn: true,
-                           sensitiveColumn: "free_slot_data",
-                           tooltipCallback: { [unowned self] in onFilePathTooltip($0, $1) }),
+                           sensitiveColumn: "free_slot_data"),
                 TreeColumn(id: "size", title: String(localized: "Size"), kind: .number, width: 180,
                            sortColumn: "size_data", sensitiveColumn: "free_slot_data"),
                 TreeColumn(id: "quality", title: String(localized: "Quality"), kind: .number, width: 150,
@@ -1369,11 +1367,6 @@ final class SearchTab: NotebookPage {
     }
 
     // MARK: Events
-
-    private func onFilePathTooltip(_ treeView: TreeView, _ row: TreeRow) -> String? {
-        let path = treeView.rowValue(row, "file_data").object(as: ResultFile.self)?.path ?? ""
-        return path.isEmpty ? nil : path
-    }
 
     private func onRowActivated(_ treeView: TreeView, _ row: TreeRow) {
         selectResults()
