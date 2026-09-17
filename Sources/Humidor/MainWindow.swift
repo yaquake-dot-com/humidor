@@ -292,6 +292,54 @@ final class MainWindow {
         }
     }
 
+    /// Groups of pages in the sidebar
+    enum Section: CaseIterable, Identifiable {
+        case search
+        case transfers
+        case chats
+        case users
+
+        var id: Self { self }
+
+        /// Title of the section, nil for pages shown at the top of the sidebar
+        var title: String? {
+            switch self {
+            case .search: nil
+            case .transfers: String(localized: "Transfers")
+            case .chats: String(localized: "Chats")
+            case .users: String(localized: "Users")
+            }
+        }
+
+        var pages: [Page] {
+            switch self {
+            case .search: [.search]
+            case .transfers: [.downloads, .uploads]
+            case .chats: [.private, .chatrooms]
+            case .users: [.userlist, .userbrowse, .userinfo, .interests]
+            }
+        }
+    }
+
+    func visiblePages(in section: Section) -> [Page] {
+        orderedVisiblePages.filter { section.pages.contains($0) }
+    }
+
+    /// Reorders the visible pages of a section, keeping the other pages in place
+    func movePages(in section: Section, fromOffsets source: IndexSet, toOffset destination: Int) {
+        let sectionPages = visiblePages(in: section)
+        var movedPages = sectionPages
+        movedPages.move(fromOffsets: source, toOffset: destination)
+
+        var remainingPages = movedPages[...]
+        let newOrder = pageOrder.map { page in
+            sectionPages.contains(page) ? remainingPages.popFirst() ?? page : page
+        }
+
+        pageOrder = newOrder
+        config.ui.modesOrder = newOrder.map(\.rawValue)
+    }
+
     func movePages(fromOffsets source: IndexSet, toOffset destination: Int) {
         var visibleOrder = orderedVisiblePages
         visibleOrder.move(fromOffsets: source, toOffset: destination)

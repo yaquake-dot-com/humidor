@@ -23,7 +23,7 @@ struct MainWindowView: View {
     var body: some View {
         NavigationSplitView {
             PageList(mainWindow: mainWindow)
-                .navigationSplitViewColumnWidth(min: 160, ideal: 190, max: 260)
+                .navigationSplitViewColumnWidth(min: 190, ideal: 220, max: 300)
         } detail: {
             VStack(spacing: 0) {
                 SplitPane("Log", edge: .bottom, range: 60...600, idealLength: 140,
@@ -33,8 +33,6 @@ struct MainWindowView: View {
                     mainWindow.logView.view
                 }
 
-                Divider()
-                StatusBar(mainWindow: mainWindow)
             }
         }
         .frame(minWidth: 700, minHeight: 450)
@@ -101,106 +99,143 @@ private struct PageList: View {
         )
 
         List(selection: selection) {
-            ForEach(mainWindow.orderedVisiblePages) { page in
-                Label(page.title, systemImage: page.systemImage)
-                    .badge(badge(for: page))
-                    .tag(page)
-            }
-            .onMove { source, destination in
-                mainWindow.movePages(fromOffsets: source, toOffset: destination)
+            ForEach(MainWindow.Section.allCases) { section in
+                let pages = mainWindow.visiblePages(in: section)
+
+                if !pages.isEmpty {
+                    Section {
+                        ForEach(pages) { page in
+                            Label(page.title, systemImage: page.systemImage)
+                                .badge(badge(for: page))
+                                .tag(page)
+                        }
+                        .onMove { source, destination in
+                            mainWindow.movePages(in: section, fromOffsets: source, toOffset: destination)
+                        }
+                    } header: {
+                        if let title = section.title {
+                            Text(title)
+                        }
+                    }
+                }
             }
         }
         .listStyle(.sidebar)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            SidebarStatus(mainWindow: mainWindow)
+        }
     }
 
+    /// Number of unread conversations or mentions, or a dot for other changes
     private func badge(for page: MainWindow.Page) -> Text? {
         guard let isImportant = mainWindow.highlightedPages[page] else {
             return nil
         }
 
-        let colorID = isImportant ? "tabhilite" : "tabchanged"
-        let color = Color(nsColor: Theme.color(forID: colorID) ?? .controlAccentColor)
+        let count = switch page {
+        case .private: mainWindow.privateChat.highlightedUsers.count
+        case .chatrooms: mainWindow.chatrooms.highlightedRooms.count
+        default: 0
+        }
+
+        if count > 0 {
+            return Text(humanize(count))
+        }
+
+        let color = Color(nsColor: Theme.color(forID: isImportant ? "tabhilite" : "tabchanged") ?? .controlAccentColor)
 
         return Text(Image(systemName: isImportant ? "exclamationmark.circle.fill" : "circle.fill"))
             .foregroundStyle(color)
     }
 }
 
-// MARK: - Status Bar
+// MARK: - Status
 
-private struct StatusBar: View {
+/// Connection status and transfer speeds, at the bottom of the sidebar.
+private struct SidebarStatus: View {
 
     @Bindable var mainWindow: MainWindow
     @State private var isDownloadSpeedsShown = false
     @State private var isUploadSpeedsShown = false
 
-    var body: some View {
-        HStack(spacing: 12) {
-            Text(mainWindow.statusText)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .help(mainWindow.statusText)
-                .frame(maxWidth: .infinity, alignment: .leading)
+    private var statusColor: Color {
+        switch mainWindow.userStatus {
+        case .online: .green
+        case .away: .yellow
+        case .offline: .secondary
+        }
+    }
 
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
             if let scanProgressText = mainWindow.scanProgressText {
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     ProgressView()
-                        .controlSize(.small)
+                        .controlSize(.mini)
                     Text(scanProgressText)
+                        .lineLimit(1)
                 }
                 .help(scanProgressText)
             }
 
-            Button {
-                AppDelegate.shared.onTransferStatistics()
-            } label: {
-                Label(mainWindow.connectionsText, systemImage: "network")
-            }
-            .help(String(localized: "Connections"))
+            HStack(spacing: 8) {
+                Button {
+                    mainWindow.onToggleStatus()
+                } label: {
+                    HStack(spacing: 5) {
+                        Circle()
+                            .fill(statusColor)
+                            .frame(width: 8, height: 8)
+                        Text(mainWindow.userStatusText)
+                            .lineLimit(1)
+                    }
+                }
+                .help(mainWindow.userStatusUsername ?? "")
 
-            Button {
-                isDownloadSpeedsShown.toggle()
-            } label: {
-                Label(mainWindow.downloadStatusText, systemImage: "arrow.down")
-            }
-            .help(String(localized: "Downloading (Speed / Active Users)"))
-            .popover(isPresented: $isDownloadSpeedsShown) {
-                TransferSpeedsView(direction: .download)
+                Spacer(minLength: 0)
+
+                Button {
+                    AppDelegate.shared.onTransferStatistics()
+                } label: {
+                    Label(mainWindow.connectionsText, systemImage: "network")
+                }
+                .help(String(localized: "Connections"))
+
+                Toggle(isOn: $mainWindow.isLogPaneVisible) {
+                    Image(systemName: "text.alignleft")
+                }
+                .toggleStyle(.button)
+                .help(String(localized: "Show Log Pane"))
             }
 
-            Button {
-                isUploadSpeedsShown.toggle()
-            } label: {
-                Label(mainWindow.uploadStatusText, systemImage: "arrow.up")
-            }
-            .help(String(localized: "Uploading (Speed / Active Users)"))
-            .popover(isPresented: $isUploadSpeedsShown) {
-                TransferSpeedsView(direction: .upload)
-            }
+            HStack(spacing: 10) {
+                Button {
+                    isDownloadSpeedsShown.toggle()
+                } label: {
+                    Label(mainWindow.downloadStatusText, systemImage: "arrow.down")
+                }
+                .help(String(localized: "Downloading (Speed / Active Users)"))
+                .popover(isPresented: $isDownloadSpeedsShown) {
+                    TransferSpeedsView(direction: .download)
+                }
 
-            Button {
-                mainWindow.onToggleStatus()
-            } label: {
-                HStack(spacing: 4) {
-                    Circle()
-                        .fill(Color(nsColor: Theme.color(forID: Theme.userStatusColorID(mainWindow.userStatus))
-                                    ?? .secondaryLabelColor))
-                        .frame(width: 8, height: 8)
-                    Text(mainWindow.userStatusText)
+                Button {
+                    isUploadSpeedsShown.toggle()
+                } label: {
+                    Label(mainWindow.uploadStatusText, systemImage: "arrow.up")
+                }
+                .help(String(localized: "Uploading (Speed / Active Users)"))
+                .popover(isPresented: $isUploadSpeedsShown) {
+                    TransferSpeedsView(direction: .upload)
                 }
             }
-            .help(mainWindow.userStatusUsername ?? "")
-
-            Toggle(isOn: $mainWindow.isLogPaneVisible) {
-                Image(systemName: "text.alignleft")
-            }
-            .toggleStyle(.button)
-            .help(String(localized: "Show Log Pane"))
+            .lineLimit(1)
         }
         .buttonStyle(.borderless)
         .labelStyle(.titleAndIcon)
         .font(.callout)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 4)
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
     }
 }
