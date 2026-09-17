@@ -198,7 +198,7 @@ class TransfersPage: MainPage {
         if !window.application.isolatedMode {
             popupMenu.addItems(
                 .action(String(localized: "Open File")) { [unowned self] in onOpenFile() },
-                .action(String(localized: "Open in File Manager")) { [unowned self] in onOpenFileManager() }
+                .action(String(localized: "Show in Finder")) { [unowned self] in onOpenFileManager() }
             )
         }
 
@@ -1274,11 +1274,10 @@ final class DownloadsPage: TransfersPage {
     }
 
     override func onOpenFileManager() {
-        var folderPath: String?
+        var filePath: String?
 
         for transfer in selectedTransfers {
-            let filePath = core.downloads.currentDownloadFilePath(transfer)
-            folderPath = (filePath as NSString).deletingLastPathComponent
+            filePath = core.downloads.currentDownloadFilePath(transfer)
 
             if transfer.status == .finished {
                 // Prioritize finished downloads
@@ -1286,8 +1285,8 @@ final class DownloadsPage: TransfersPage {
             }
         }
 
-        if let folderPath {
-            _ = openFolderPath(folderPath)
+        if let filePath {
+            showInFinder(filePath)
         }
     }
 

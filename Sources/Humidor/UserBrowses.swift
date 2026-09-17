@@ -226,7 +226,7 @@ final class UserBrowseTab: NotebookPage {
 
             if !window.application.isolatedMode {
                 folderPopupMenu.addItems(
-                    .action(String(localized: "Open in File Manager")) { [unowned self] in onFileManager() }
+                    .action(String(localized: "Show in Finder")) { [unowned self] in onFileManager() }
                 )
             }
         } else {
@@ -289,7 +289,7 @@ final class UserBrowseTab: NotebookPage {
             if !window.application.isolatedMode {
                 filePopupMenu.addItems(
                     .action(String(localized: "Open File")) { [unowned self] in onOpenFile() },
-                    .action(String(localized: "Open in File Manager")) { [unowned self] in onFileManager() }
+                    .action(String(localized: "Show in Finder")) { [unowned self] in onFileManager() }
                 )
             }
         } else {

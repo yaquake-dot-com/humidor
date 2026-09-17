@@ -50,6 +50,18 @@ public func openFolderPath(_ folderPath: String, createFolder: Bool = false) -> 
     openPath(folderPath, createFolder: createFolder)
 }
 
+/// Selects a file in a Finder window, or opens its folder if the file doesn't exist.
+@MainActor
+@discardableResult
+public func showInFinder(_ filePath: String) -> Bool {
+    guard FileManager.default.fileExists(atPath: filePath) else {
+        return openFolderPath((filePath as NSString).deletingLastPathComponent)
+    }
+
+    NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: filePath)])
+    return true
+}
+
 /// Opens a URI in an external (web) browser. The URI has to be properly
 /// formed, including the scheme.
 @MainActor

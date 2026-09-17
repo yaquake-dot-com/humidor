@@ -398,7 +398,7 @@ private struct DownloadsSettingsPage: View {
                     Text(String(localized: "Nothing")).tag(0)
                     if !isolatedMode {
                         Text(String(localized: "Open File")).tag(1)
-                        Text(String(localized: "Open in File Manager")).tag(2)
+                        Text(String(localized: "Show in Finder")).tag(2)
                     }
                     Text(String(localized: "Search")).tag(3)
                     Text(String(localized: "Pause")).tag(4)
@@ -511,7 +511,7 @@ private struct UploadsSettingsPage: View {
                     Text(String(localized: "Nothing")).tag(0)
                     if !AppDelegate.shared.isolatedMode {
                         Text(String(localized: "Open File")).tag(1)
-                        Text(String(localized: "Open in File Manager")).tag(2)
+                        Text(String(localized: "Show in Finder")).tag(2)
                     }
                     Text(String(localized: "Search")).tag(3)
                     Text(String(localized: "Abort")).tag(4)

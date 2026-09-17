@@ -118,7 +118,7 @@ struct FileChooserButton: View {
                 } label: {
                     Image(systemName: "arrow.up.forward.app")
                 }
-                .help(String(localized: "Open in File Manager"))
+                .help(String(localized: "Show in Finder"))
             }
         }
     }
