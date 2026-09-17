@@ -105,8 +105,8 @@ private struct PageList: View {
                 if !pages.isEmpty {
                     Section {
                         ForEach(pages) { page in
-                            Label(page.title, systemImage: page.systemImage)
-                                .badge(badge(for: page))
+                            row(for: page)
+                                .listRowBackground(selectionBackground(for: page))
                                 .tag(page)
                         }
                         .onMove { source, destination in
@@ -123,6 +123,34 @@ private struct PageList: View {
         .listStyle(.sidebar)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             SidebarStatus(mainWindow: mainWindow)
+        }
+    }
+
+    /// The list dims its selection when the keyboard focus moves to another view, but the page
+    /// stays open, so the current page keeps the colors of a selected row
+    @ViewBuilder private func row(for page: MainWindow.Page) -> some View {
+        let isCurrent = page == mainWindow.currentPage
+        let label = Label {
+            Text(page.title)
+        } icon: {
+            Image(systemName: page.systemImage)
+                .foregroundStyle(isCurrent ? AnyShapeStyle(.white) : AnyShapeStyle(.primary))
+        }
+        .badge(badge(for: page))
+
+        if isCurrent {
+            label.foregroundStyle(.white)
+        } else {
+            label
+        }
+    }
+
+    /// The highlight of a selected row, drawn above the one of the list
+    @ViewBuilder private func selectionBackground(for page: MainWindow.Page) -> some View {
+        if page == mainWindow.currentPage {
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(Color.accentColor)
+                .padding(.horizontal, 10)
         }
     }
 
