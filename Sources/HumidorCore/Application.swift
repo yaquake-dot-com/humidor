@@ -20,7 +20,7 @@ public enum Application {
         © 2003–2004 Nicotine Contributors
         © 2001–2003 PySoulSeek Contributors
         """
-    public static let websiteURL = "https://nicotine-plus.org"
+    public static let websiteURL = "https://github.com/yaquake-dot-com/humidor"
     public static func privilegesURL(username: String) -> String {
         "https://www.slsknet.org/qtlogin.php?username=\(username)"
     }
