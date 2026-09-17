@@ -6,11 +6,9 @@ public enum Application {
     public static let identifier = "org.humidor.Humidor"
     public static let version = "1.0.0"
 
-    /// Address returning the latest released version, as the "tag_name" of a
-    /// GitHub release ("https://api.github.com/repos/<owner>/<name>/releases/latest")
-    /// or the "info.version" of a Python package. No version check is made
-    /// while this is empty.
-    public static let latestVersionURL: String? = nil
+    /// Address returning the latest released version, as the "tag_name" of a GitHub release.
+    /// No version check is made while this is empty.
+    public static let latestVersionURL: String? = "https://api.github.com/repos/yaquake-dot-com/humidor/releases/latest"
 
     /// The application this one is derived from
     public static let originalName = "Nicotine+"
