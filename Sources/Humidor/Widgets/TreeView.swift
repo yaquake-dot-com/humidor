@@ -1502,7 +1502,7 @@ final class TreeOutlineView: NSOutlineView {
 
 // MARK: - Row Views
 
-/// Row heading a group: a separator above it, and a bar background while it stays at the top
+/// Row heading a group, on a band of background color like group headers in Finder
 private final class GroupRowView: NSTableRowView {
 
     static let identifier = NSUserInterfaceItemIdentifier("GroupRow")
@@ -1523,18 +1523,14 @@ private final class GroupRowView: NSTableRowView {
     }
 
     override func drawBackground(in dirtyRect: NSRect) {
+        // Opaque while the group stays at the top, so the rows scrolling underneath don't show through
         if isFloating {
-            NSColor.windowBackgroundColor.withAlphaComponent(0.95).setFill()
+            NSColor.windowBackgroundColor.setFill()
             bounds.fill()
         }
 
-        // Separator between groups, above each group but the first one
-        guard frame.minY > 0, !isFloating else {
-            return
-        }
-
-        NSColor.separatorColor.setFill()
-        NSRect(x: 10, y: 0, width: bounds.width - 20, height: 1 / (window?.backingScaleFactor ?? 2)).fill()
+        NSColor.quaternarySystemFill.setFill()
+        bounds.fill()
     }
 
     override func drawSeparator(in dirtyRect: NSRect) {
