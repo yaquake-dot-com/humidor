@@ -548,9 +548,12 @@ final class SearchTab: NotebookPage {
                 .data("id_data", isIteratorKey: true, sortOrder: .ascending)
             ],
             hasTree: true, multiSelect: true, persistentSort: true, name: "file_search",
+            rowPresentation: SearchResultRows.presentation,
             activateRow: { [unowned self] treeView, row, _ in onRowActivated(treeView, row) },
             focusIn: { [unowned self] _ in onRefilter() }
         )
+
+        updateSorting()
 
         // Popup menus
         popupMenuUsers = UserPopupMenu()
@@ -843,7 +846,10 @@ final class SearchTab: NotebookPage {
 
         if groupingMode != .ungrouped {
             // Group by folder or user
-            if users[user] == nil {
+            if users[user] == nil, groupingMode == .folderGrouping {
+                // Folders are shown at the top level, with their user
+                users[user] = (nil, [])
+            } else if users[user] == nil {
                 let row = treeView.addRow([
                     .string(user), .string(result.flag), .string(result.humanSpeed), .string(result.humanQueue),
                     "", "", "", "", "", "", .int(result.speed), .int(result.queue), 0, 0, 0,
@@ -851,7 +857,7 @@ final class SearchTab: NotebookPage {
                 ], selectRow: false)
 
                 if isExpandAllowed {
-                    shouldExpandUser = (groupingMode == .folderGrouping) || isExpanded
+                    shouldExpandUser = isExpanded
                 }
 
                 rowID += 1
@@ -1227,10 +1233,6 @@ final class SearchTab: NotebookPage {
                 treeView.expandAllRows()
             } else {
                 treeView.collapseAllRows()
-
-                if groupingMode == .folderGrouping {
-                    treeView.expandRootRows()
-                }
             }
         }
 
@@ -1596,10 +1598,6 @@ final class SearchTab: NotebookPage {
             treeView.expandAllRows()
         } else {
             treeView.collapseAllRows()
-
-            if groupingMode == .folderGrouping {
-                treeView.expandRootRows()
-            }
         }
 
         config.searches.expandSearches = isExpanded
@@ -1769,6 +1767,85 @@ final class SearchTab: NotebookPage {
     }
 
     /// Called when the text of a filter entry changes.
+    // MARK: Quick Filters
+
+    /// File types of lossless audio
+    static let losslessFileTypes = ["flac", "wav", "aiff", "ape", "wv"]
+
+    private var fileTypeFilterTokens: [String] {
+        filterValues.fileType.lowercased().split(whereSeparator: \.isWhitespace).map(String.init)
+    }
+
+    /// Whether the file type filter includes all of these file types
+    func hasFileTypeFilter(_ fileTypes: [String]) -> Bool {
+        let tokens = Set(fileTypeFilterTokens)
+        return fileTypes.allSatisfy { tokens.contains($0) }
+    }
+
+    func toggleFileTypeFilter(_ fileTypes: [String]) {
+        var tokens = fileTypeFilterTokens
+
+        if hasFileTypeFilter(fileTypes) {
+            tokens.removeAll { fileTypes.contains($0) }
+        } else {
+            tokens += fileTypes.filter { !tokens.contains($0) }
+        }
+
+        filterValues.fileType = tokens.joined(separator: " ")
+        onRefilter()
+    }
+
+    /// Minimum bitrate of the quick bitrate filter, in kbps
+    static let highBitrate = "320"
+
+    var hasHighBitrateFilter: Bool {
+        filterValues.bitrate.trimmingCharacters(in: .whitespaces) == Self.highBitrate
+    }
+
+    func toggleHighBitrateFilter() {
+        filterValues.bitrate = hasHighBitrateFilter ? "" : Self.highBitrate
+        onRefilter()
+    }
+
+    func toggleFreeSlotFilter() {
+        filterValues.freeSlot.toggle()
+        onRefilter()
+    }
+
+    // MARK: Sorting
+
+    /// Column the results are sorted by, nil for the order they were received in
+    private(set) var sortColumnID = ""
+    private(set) var isSortAscending = true
+
+    func updateSorting() {
+        let sorting = treeView.sorting
+        sortColumnID = sorting?.columnID ?? ""
+        isSortAscending = sorting?.order != .descending
+    }
+
+    /// Sorts by a column, or reverses the order when already sorted by it. Text columns are sorted
+    /// in ascending order first, numbers in descending order.
+    func sortResults(by columnID: String) {
+        guard !columnID.isEmpty else {
+            treeView.sort(by: nil, order: .ascending)
+            updateSorting()
+            return
+        }
+
+        let isTextColumn = ["user", "folder", "filename", "in_queue"].contains(columnID)
+        let order: TreeColumn.SortOrder
+
+        if sortColumnID == columnID {
+            order = isSortAscending ? .descending : .ascending
+        } else {
+            order = isTextColumn ? .ascending : .descending
+        }
+
+        treeView.sort(by: columnID, order: order)
+        updateSorting()
+    }
+
     func onFilterEntryChanged(_ filterID: FilterID) {
         if !isRefiltering && filterValues.text(filterID).isEmpty {
             onRefilter()

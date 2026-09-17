@@ -168,6 +168,15 @@ struct TreeColumn {
     }
 }
 
+/// Draws each row of a list view as a single view spanning the whole width, instead of one
+/// cell per column. Sorting is then chosen with `sort(by:order:)` instead of column headers.
+struct TreeRowPresentation {
+    /// Height of a row
+    let height: @MainActor (TreeView, TreeRow) -> CGFloat
+    /// View showing a row. Views can be reused with `outlineView.makeView(withIdentifier:owner:)`.
+    let view: @MainActor (TreeView, TreeRow) -> NSView
+}
+
 // MARK: - Tree View
 
 /// A list view with optional tree structure, backed by `NSOutlineView`.
@@ -196,6 +205,7 @@ final class TreeView: NSObject {
     private let widgetName: String?
     private let secondaryName: String?
     private let columns: [TreeColumn]
+    private let rowPresentation: TreeRowPresentation?
     private let persistentSort: Bool
     private let activateRowCallback: (@MainActor (TreeView, TreeRow, String) -> Void)?
     private let selectRowCallback: (@MainActor (TreeView, TreeRow?) -> Void)?
@@ -225,13 +235,14 @@ final class TreeView: NSObject {
     private var isSelectingProgrammatically = false
 
     init(columns: [TreeColumn], hasTree: Bool = false, multiSelect: Bool = false, persistentSort: Bool = false,
-         name: String? = nil, secondaryName: String? = nil,
+         name: String? = nil, secondaryName: String? = nil, rowPresentation: TreeRowPresentation? = nil,
          activateRow: (@MainActor (TreeView, TreeRow, String) -> Void)? = nil,
          selectRow: (@MainActor (TreeView, TreeRow?) -> Void)? = nil,
          deleteAccelerator: (@MainActor (TreeView) -> Void)? = nil,
          focusIn: (@MainActor (TreeView) -> Void)? = nil) {
 
         self.columns = columns
+        self.rowPresentation = rowPresentation
         self.hasTree = hasTree
         self.multiSelect = multiSelect
         self.persistentSort = persistentSort
@@ -347,6 +358,10 @@ final class TreeView: NSObject {
                 sortOrder = (savedSortOrder == "descending") ? .descending : .ascending
             }
 
+            guard rowPresentation == nil else {
+                continue
+            }
+
             let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(column.id))
             tableColumn.title = column.hidesHeader ? "" : title
             tableColumn.minWidth = 24
@@ -385,6 +400,18 @@ final class TreeView: NSObject {
 
             let position = columnProperties["position"]?.intValue ?? index
             visibleColumns.append((position, tableColumn))
+        }
+
+        if rowPresentation != nil {
+            // A single column spanning the whole width, without headers
+            let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("row"))
+            tableColumn.resizingMask = .autoresizingMask
+            outlineView.addTableColumn(tableColumn)
+            outlineView.outlineTableColumn = tableColumn
+            outlineView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
+            outlineView.headerView = nil
+            scrollView.hasHorizontalScroller = false
+            return
         }
 
         isApplyingColumnConfig = true
@@ -439,6 +466,12 @@ final class TreeView: NSObject {
         let previousConfig = columnConfig()
         var savedColumns: [String: JSONValue] = [:]
 
+        if rowPresentation != nil {
+            savedColumns = savedSortOrder(previousConfig)
+            storeColumns(savedColumns, widgetName: widgetName)
+            return
+        }
+
         for (position, tableColumn) in outlineView.tableColumns.enumerated() {
             let columnID = tableColumn.identifier.rawValue
             let width = Int(tableColumn.width - (tableColumn === fillColumn ? fillExtraWidth : 0))
@@ -465,6 +498,30 @@ final class TreeView: NSObject {
             savedColumns[columnID] = .object(properties)
         }
 
+        storeColumns(savedColumns, widgetName: widgetName)
+    }
+
+    /// Column config with the current sort order, keeping the other saved column properties
+    private func savedSortOrder(_ previousConfig: [String: JSONValue]) -> [String: JSONValue] {
+        var savedColumns = previousConfig.mapValues { value -> JSONValue in
+            var properties = value.objectValue ?? [:]
+            properties["sort"] = nil
+            return .object(properties)
+        }
+
+        guard persistentSort, let sortColumn, sortColumn != defaultSortColumn, let sortOrder,
+              let column = columns.first(where: { $0.title != nil && columnIndices[$0.sortColumn ?? $0.id] == sortColumn })
+        else {
+            return savedColumns
+        }
+
+        var properties = savedColumns[column.id]?.objectValue ?? [:]
+        properties["sort"] = .string(sortOrder == .descending ? "descending" : "ascending")
+        savedColumns[column.id] = .object(properties)
+        return savedColumns
+    }
+
+    private func storeColumns(_ savedColumns: [String: JSONValue], widgetName: String) {
         if let secondaryName {
             var widgetConfig = config.columns[widgetName]?.objectValue ?? [:]
             widgetConfig[secondaryName] = .object(savedColumns)
@@ -497,7 +554,7 @@ final class TreeView: NSObject {
 
     /// Widens the last visible expanding column to fill the available width.
     private func fillAvailableWidth() {
-        guard !isFillingWidth else {
+        guard !isFillingWidth, rowPresentation == nil else {
             return
         }
 
@@ -679,6 +736,32 @@ final class TreeView: NSObject {
 
         } else {
             sortOrder = firstSortOrder
+        }
+
+        updateSortIndicator()
+        markAllNeedSort(root)
+        scheduleUpdate(needsReload: true)
+        saveColumns()
+    }
+
+    /// Column the rows are sorted by, and the sort order
+    var sorting: (columnID: String, order: TreeColumn.SortOrder)? {
+        guard let sortColumn, let sortOrder,
+              let column = columns.first(where: { $0.title != nil && columnIndices[$0.sortColumn ?? $0.id] == sortColumn })
+        else {
+            return nil
+        }
+        return (column.id, sortOrder)
+    }
+
+    /// Sorts rows by a column, or in the default order when the column is nil
+    func sort(by columnID: String?, order: TreeColumn.SortOrder) {
+        if let columnID, let column = columns.first(where: { $0.id == columnID }) {
+            sortColumn = columnIndices[column.sortColumn ?? column.id]
+            sortOrder = order
+        } else {
+            sortColumn = defaultSortColumn
+            sortOrder = defaultSortOrder
         }
 
         updateSortIndicator()
@@ -1246,7 +1329,27 @@ extension TreeView: NSOutlineViewDataSource, NSOutlineViewDelegate, NSMenuDelega
         hasTree && ((item as? TreeRow)?.hasChildren ?? false)
     }
 
+    // Rows of equal height are faster to lay out, so the outline view only asks for row heights
+    // when rows are presented as single views
+    override func responds(to selector: Selector!) -> Bool {
+        if selector == #selector(NSOutlineViewDelegate.outlineView(_:heightOfRowByItem:)) {
+            return rowPresentation != nil
+        }
+        return super.responds(to: selector)
+    }
+
+    func outlineView(_ outlineView: NSOutlineView, heightOfRowByItem item: Any) -> CGFloat {
+        guard let rowPresentation, let row = item as? TreeRow else {
+            return outlineView.rowHeight
+        }
+        return rowPresentation.height(self, row)
+    }
+
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
+        if let rowPresentation, let row = item as? TreeRow {
+            return rowPresentation.view(self, row)
+        }
+
         guard let row = item as? TreeRow, let column = column(for: tableColumn),
               let columnIndex = columnIndices[column.id] else {
             return nil

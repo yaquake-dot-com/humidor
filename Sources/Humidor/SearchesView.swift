@@ -121,13 +121,40 @@ struct SearchTabView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
+            quickFilter("FLAC", isOn: tab.hasFileTypeFilter(["flac"])) {
+                tab.toggleFileTypeFilter(["flac"])
+            }
+            quickFilter("MP3", isOn: tab.hasFileTypeFilter(["mp3"])) {
+                tab.toggleFileTypeFilter(["mp3"])
+            }
+            quickFilter(String(localized: "Lossless"), isOn: tab.hasFileTypeFilter(SearchTab.losslessFileTypes)) {
+                tab.toggleFileTypeFilter(SearchTab.losslessFileTypes)
+            }
+            quickFilter("\(SearchTab.highBitrate)+", isOn: tab.hasHighBitrateFilter) {
+                tab.toggleHighBitrateFilter()
+            }
+            quickFilter(String(localized: "Free Slot"), isOn: tab.filterValues.freeSlot) {
+                tab.toggleFreeSlotFilter()
+            }
+
+            Toggle(isOn: $tab.isFiltersVisible) {
+                Label(tab.filtersLabel, systemImage: "line.3.horizontal.decrease")
+            }
+            .toggleStyle(.button)
+            .buttonBorderShape(.capsule)
+            .help(String(localized: "\(tab.activeFilterCount) active filter(s)"))
+
+            Spacer(minLength: 12)
+
             Button {
                 tab.onCounterButton()
             } label: {
                 Label(tab.resultsText, systemImage: "doc.text.magnifyingglass")
                     .labelStyle(.titleAndIcon)
+                    .monospacedDigit()
             }
+            .buttonStyle(.borderless)
             .help(tab.resultsTooltip)
 
             if tab.isWishButtonVisible {
@@ -135,17 +162,20 @@ struct SearchTabView: View {
                     tab.onAddWish()
                 } label: {
                     Label(tab.isWish ? String(localized: "Remove Wish") : String(localized: "Add Wish"),
-                          systemImage: tab.isWish ? "minus" : "plus")
+                          systemImage: tab.isWish ? "star.fill" : "star")
+                        .labelStyle(.iconOnly)
                 }
+                .buttonStyle(.borderless)
+                .help(tab.isWish ? String(localized: "Remove Wish") : String(localized: "Add Wish"))
             }
 
-            Spacer()
+            sortMenu
 
-            Toggle(isOn: $tab.isFiltersVisible) {
-                Label(tab.filtersLabel, systemImage: "line.3.horizontal.decrease.circle")
+            GroupingMenu(mode: tab.groupingMode) { mode in
+                tab.onGroup(mode)
             }
-            .toggleStyle(.button)
-            .help(String(localized: "\(tab.activeFilterCount) active filter(s)"))
+            .menuStyle(.borderlessButton)
+            .fixedSize()
 
             if tab.groupingMode != .ungrouped {
                 Toggle(isOn: $tab.isExpanded) {
@@ -153,17 +183,54 @@ struct SearchTabView: View {
                           ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
                 }
                 .toggleStyle(.button)
+                .buttonStyle(.borderless)
                 .help(String(localized: "Expand / Collapse All"))
             }
-
-            GroupingMenu(mode: tab.groupingMode) { mode in
-                tab.onGroup(mode)
-            }
-            .fixedSize()
         }
-        .buttonStyle(.borderless)
+        .controlSize(.small)
         .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .padding(.vertical, 7)
+    }
+
+    private func quickFilter(_ title: String, isOn: Bool, action: @escaping () -> Void) -> some View {
+        Toggle(title, isOn: Binding(get: { isOn }, set: { _ in action() }))
+            .toggleStyle(.button)
+            .buttonBorderShape(.capsule)
+    }
+
+    private static let sortColumns: [(id: String, title: String)] = [
+        ("", String(localized: "Default")),
+        ("filename", String(localized: "Filename")),
+        ("folder", String(localized: "Folder")),
+        ("user", String(localized: "User")),
+        ("size", String(localized: "Size")),
+        ("quality", String(localized: "Quality")),
+        ("length", String(localized: "Duration")),
+        ("speed", String(localized: "Speed")),
+        ("in_queue", String(localized: "In Queue"))
+    ]
+
+    private var sortMenu: some View {
+        Menu {
+            ForEach(Self.sortColumns, id: \.id) { column in
+                Button {
+                    tab.sortResults(by: column.id)
+                } label: {
+                    if tab.sortColumnID == column.id {
+                        Label(column.title, systemImage: column.id.isEmpty
+                              ? "checkmark" : (tab.isSortAscending ? "chevron.up" : "chevron.down"))
+                    } else {
+                        Text(column.title)
+                    }
+                }
+            }
+        } label: {
+            Image(systemName: "arrow.up.arrow.down")
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .help(String(localized: "Sort"))
     }
 
     private var filterBar: some View {
@@ -183,15 +250,6 @@ struct SearchTabView: View {
                         String(localized: "Duration, e.g. >6:00 <12:00 !6:54"))
             filterEntry(.country, \.country, String(localized: "Country code…"),
                         String(localized: "Country code, e.g. US ES or !DE !GB"))
-
-            Toggle(isOn: Binding(
-                get: { tab.filterValues.freeSlot },
-                set: { tab.filterValues.freeSlot = $0; tab.onRefilter() }
-            )) {
-                Image(systemName: "checkmark.circle")
-            }
-            .toggleStyle(.button)
-            .help(String(localized: "Free Slot"))
 
             Button {
                 tab.onClearUndoFilters()
