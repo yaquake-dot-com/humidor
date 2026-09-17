@@ -1,6 +1,124 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@ Commands": {
+      "localizations": {
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comandes de %@"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Příkazy %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nikotin+ Befehle"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comandos para %@"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comandos para %@"
+          }
+        },
+        "et": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ käsud"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commandes %@"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ parancsok"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comandi di %@"
+          }
+        },
+        "lv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ komandas"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ commando's"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polecenia %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comandos do %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comandos do %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Команда %@"
+          }
+        },
+        "ta": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "நிகோடின்+ கட்டளைகள்"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Komutları"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Команди %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 指令"
+          }
+        }
+      }
+    },
     "%@ downloaded from %@": {
       "localizations": {
         "ca": {
@@ -139,6 +257,12 @@
             "value": "%@ ist abwesend"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está ausente"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -217,6 +341,12 @@
             "value": "%@ kullanıcısı uzakta"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ відсутній"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -243,6 +373,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ ist offline"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está desconectado"
           }
         },
         "es-ES": {
@@ -323,6 +459,12 @@
             "value": "%@ kullanıcısı çevrim dışı"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ поза мережею"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -349,6 +491,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ ist online"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está conectado"
           }
         },
         "es-ES": {
@@ -429,6 +577,12 @@
             "value": "%@ kullanıcısı çevrim içi"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ в мережі"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -455,6 +609,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@: Externer Port %2$@ erfolgreich an lokale IP-Adresse %3$@ Port %4$@ weitergeleitet"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: Puerto externo %2$@ reenviado con éxito a la dirección IP local %3$@ puerto %4$@"
           }
         },
         "es-ES": {
@@ -535,6 +695,12 @@
             "value": "%1$@: %2$@ dış bağlantı noktası, %3$@ yerel IP adresi %4$@ bağlantı noktasına başarıyla iletildi"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: зовнішній порт %@ успішно перенаправлено на локальну IP-адресу %@, порт %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -561,6 +727,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@: Weiterleitung des externen Ports fehlgeschlagen %2$@: %3$@"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: Error al reenviar el puerto externo %2$@ : %3$@"
           }
         },
         "es-ES": {
@@ -641,6 +813,12 @@
             "value": "%1$@: %2$@ dış bağlantı noktası iletilemedi: %3$@"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: не вдалося перенаправити зовнішній порт %@: %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -667,6 +845,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld Tage, %2$lld Stunden, %3$lld Minuten, %4$lld Sekunden Soulseek-Privilegien verbleibend"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quedan %1$lld días, %2$lld horas, %3$lld minutos y %4$lld segundos de privilegios de Soulseek"
           }
         },
         "es-ES": {
@@ -747,6 +931,12 @@
             "value": "%1$lld gün, %2$lld saat, %3$lld dakika, %4$lld saniye Soulseek ayrıcalığı kaldı"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Залишилося привілеїв Soulseek: %lld днів, %lld годин, %lld хвилин, %lld секунд"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -773,6 +963,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld Freigaben aufgelistet (%2$lld konfiguriert)"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld compartidos listados (%2$lld configuradas)"
           }
         },
         "es-ES": {
@@ -853,6 +1049,12 @@
             "value": "%1$lld paylaşım listelendi (%2$lld yapılandırıldı)"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показано спільних каталогів: %lld (налаштовано %lld)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -879,6 +1081,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Freigabe hinzufügen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir una acción"
           }
         },
         "es-ES": {
@@ -959,6 +1167,12 @@
             "value": "Paylaşım ekle"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Додати спільний каталог"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -985,6 +1199,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Benutzer zur Freundesliste hinzufügen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir al usuario a tu lista de amigos"
           }
         },
         "es-ES": {
@@ -1065,6 +1285,12 @@
             "value": "Arkadaş listesine kullanıcı ekle"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Додати користувача до списку друзів"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -1091,6 +1317,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@-Freigabe \"%2$@\" hinzugefügt (Neuscan erforderlich)"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadido %1$@ y compartir \"%2$@\" (es necesario volver a escanear)"
           }
         },
         "es-ES": {
@@ -1169,6 +1401,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ paylaşımı \"%2$@\" eklendi (yenidedn tarama gerekli)"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Додано %@ спільний каталог «%@» (потрібне повторне сканування)"
           }
         },
         "zh-Hans": {
@@ -2025,6 +2263,12 @@
             "value": "Gib den aktuell spielenden Song bekannt"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informa la canción que se está reproduciendo actualmente"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -2101,6 +2345,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Şu anda oynatılan şarkıyı duyur"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повідомити про пісню, що грає"
           }
         },
         "zh-Hans": {
@@ -3547,6 +3797,12 @@
             "value": "Gesperrt (%@)"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baneado %@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -3623,6 +3879,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ yasaklandı"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заблоковано %@"
           }
         },
         "zh-Hans": {
@@ -4479,6 +4741,12 @@
             "value": "Blockiere Verbindungen von Benutzer oder IP-Adresse"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bloquear las conexiones del usuario o la dirección IP"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -4555,6 +4823,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kullanıcıdan veya IP adresinden gelen bağlantıları engelle"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Блокувати з’єднання від користувача або IP-адреси"
           }
         },
         "zh-Hans": {
@@ -5529,6 +5803,12 @@
             "value": "Dateien des Benutzers durchsuchen"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explorar los archivos del usuario"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -5605,6 +5885,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kullanıcının dosyalarına göz at"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переглянути файли користувача"
           }
         },
         "zh-Hans": {
@@ -5751,6 +6037,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Freund Status"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estado de los amigos"
           }
         },
         "es-ES": {
@@ -7045,6 +7337,12 @@
             "value": "Verbinden nicht möglich"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se puede conectar"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -7157,6 +7455,12 @@
             "value": "Kann auf Logdatei %1$@ nicht zugreifen: %2$@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se ha podido acceder al archivo de registro %1$@: %2$@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -7233,6 +7537,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ günlük dosyasına erişilemiyor: %2$@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Немає доступу до файлу журналу %@: %@"
           }
         },
         "zh-Hans": {
@@ -7381,6 +7691,12 @@
             "value": "Kann nicht auf Port %1$@ lauschen. Stelle sicher, dass keine andere Anwendung ihn verwendet, oder wähle einen anderen Port. Fehler: %2$@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se puede escuchar en el puerto %1$@. Asegúrate de que ningún otro programa esté utilizando ese puerto o elige un puerto diferente. Error: %2$@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -7459,6 +7775,12 @@
             "value": "%1$@ bağlantı noktasında dinlenemiyor. Başka bir uygulamanın kullanmadığından emin olun veya farklı bir bağlantı noktası seçin. Hata: %2$@"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не вдалося слухати порт %@. Переконайтеся, що його не використовує інша програма, або виберіть інший порт. Помилка: %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -7485,6 +7807,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "URL %1$@ kann nicht geöffnet werden: %2$@"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se ha podido abrir la URL %1$@: %2$@"
           }
         },
         "es-ES": {
@@ -7565,6 +7893,12 @@
             "value": "%1$@ URL'si açılamıyor: %2$@"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не вдалося відкрити посилання %@: %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -7591,6 +7925,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kann Dateipfad %1$@ nicht öffnen: %2$@"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se ha podido abrir la ruta del archivo %1$@: %2$@"
           }
         },
         "es-ES": {
@@ -7669,6 +8009,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ dosya yolu açılamıyor: %2$@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не вдалося відкрити шлях %@: %@"
           }
         },
         "zh-Hans": {
@@ -7817,6 +8163,12 @@
             "value": "Datei kann nicht in %1$@ gespeichert werden: %2$@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se puede guardar el fichero en %1$@: %2$@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -7929,6 +8281,12 @@
             "value": "Kann Bild nicht auf %1$@ speichern: %2$@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se ha podido guardar la imagen en %1$@: %2$@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -8007,6 +8365,12 @@
             "value": "Resim %1$@ konumuna kaydedilemiyor: %2$@"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не вдалося зберегти зображення до %@: %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -8033,6 +8397,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kann nicht auf den unzugänglichen Ordner \"%@\" freigeben"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se puede acceder a la carpeta \"%@\" y no se puede compartir"
           }
         },
         "es-ES": {
@@ -8111,6 +8481,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Erişilemeyen \"%@\" klasörü paylaşılamıyor"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не вдалося поділитися недоступним каталогом «%@»"
           }
         },
         "zh-Hans": {
@@ -9203,6 +9579,12 @@
             "value": "Chat-Fenster leeren"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limpiar la ventana del chat"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -9281,6 +9663,12 @@
             "value": "Sohbet penceresini temizle"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистити вікно чату"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -9307,6 +9695,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Privaten Chat schließen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar el chat privado"
           }
         },
         "es-ES": {
@@ -9387,6 +9781,12 @@
             "value": "Özel sohbeti kapat"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрити приватний чат"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -9413,6 +9813,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Geschlossener privater Chat von Benutzer %@"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrado el chat privado con el usuario %@"
           }
         },
         "es-ES": {
@@ -9491,6 +9897,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ kullanıcısının özel sohbeti kapatıldı"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрито приватний чат з користувачем %@"
           }
         },
         "zh-Hans": {
@@ -9993,6 +10405,12 @@
             "value": "Konfliktbefehl %1$@ im Plugin %2$@: %3$@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comando %1$@ conflictivo en el plugin %2$@: %3$@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -10069,6 +10487,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%2$@ eklentisinde çakışan %1$@ komutu: %3$@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Конфліктна команда %@ у плагіні %@: %@"
           }
         },
         "zh-Hans": {
@@ -10217,6 +10641,12 @@
             "value": "Verbinde mit dem Server"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectarse al servidor"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -10293,6 +10723,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sunucuya bağlan"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Під’єднатися до сервера"
           }
         },
         "zh-Hans": {
@@ -11503,6 +11939,12 @@
             "value": "Tschechien"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "República Checa"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -11579,6 +12021,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Çekya"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чехія"
           }
         },
         "zh-Hans": {
@@ -11845,6 +12293,12 @@
             "value": "Vom Server trennen"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desconectarse del servidor"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -11921,6 +12375,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sunucuyla bağlantıyı kes"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Від’єднатися від сервера"
           }
         },
         "zh-Hans": {
@@ -12423,6 +12883,12 @@
             "value": "Fehler beim Herunterladen des Ordners"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error al descargar la carpeta"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -12499,6 +12965,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "İndirme Klasörü Hatası"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Помилка каталогу завантажень"
           }
         },
         "zh-Hans": {
@@ -15479,6 +15951,12 @@
             "value": "Datei heruntergeladen"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fichero descargado"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -15707,6 +16185,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ordner heruntergeladen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carpeta descargada"
           }
         },
         "es-ES": {
@@ -19125,6 +19609,12 @@
             "value": "IP-Adresse des Benutzers %1$@: %2$@, Port %3$@%4$@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La dirección IP del usuario %1$@: %2$@, puerto %3$@%4$@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -19355,6 +19845,12 @@
             "value": "Ignoriert %@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorado %@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -19431,6 +19927,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ yok sayıldı"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проігноровано %@"
           }
         },
         "zh-Hans": {
@@ -19697,6 +20199,12 @@
             "value": "Ungültiges Argument, mögliche Optionen: %@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Argumento no válido, opciones posibles: %@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -19773,6 +20281,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Geçersiz argüman, olası seçenekler: %@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Неправильний аргумент, можливі варіанти: %@"
           }
         },
         "zh-Hans": {
@@ -20983,6 +21497,12 @@
             "value": "Chatroom beitreten"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Únete a la sala del chat"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -21059,6 +21579,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sohbet odasına katıl"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увійти до кімнати"
           }
         },
         "zh-Hans": {
@@ -22387,6 +22913,12 @@
             "value": "Aktuellen Raum verlassen"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandonar la sala del chat"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -22463,6 +22995,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sohbet odasından ayrıl"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Покинути кімнату"
           }
         },
         "zh-Hans": {
@@ -23083,6 +23621,12 @@
             "value": "Verfügbare Befehle auflisten"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lista de comandos disponibles"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -23161,6 +23705,12 @@
             "value": "Kullanılabilir komutları listele"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показати доступні команди"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -23187,6 +23737,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Freigaben auflisten"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lista de compartidos"
           }
         },
         "es-ES": {
@@ -23265,6 +23821,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Paylaşımları listele"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показати спільні каталоги"
           }
         },
         "zh-Hans": {
@@ -23885,6 +24447,12 @@
             "value": "Auflistung %1$lld verfügbarer Befehle, die mit \"%2$@\" übereinstimmen:"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listado de %1$lld comandos disponibles que coinciden con \"%2$@\":"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -23963,6 +24531,12 @@
             "value": "\"%2$@\" ile eşleşen %1$lld kullanılabilir komut listeleniyor:"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показано %lld доступних команд, що відповідають «%@»:"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -23989,6 +24563,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Auflistung %lld verfügbarer Befehle:"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listado de %lld comandos disponibles:"
           }
         },
         "es-ES": {
@@ -24067,6 +24647,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld kullanılabilir komut listeleniyor:"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показано %lld доступних команд:"
           }
         },
         "zh-Hans": {
@@ -25631,6 +26217,12 @@
             "value": "Plugins verwalten"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Administrar complementos"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -25707,6 +26299,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Eklentileri yönet"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Керувати плагінами"
           }
         },
         "zh-Hans": {
@@ -26681,6 +27279,12 @@
             "value": "Fehlendes %@-Argument"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta el argumento %@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -26757,6 +27361,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ argümanı eksik"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відсутній аргумент %@"
           }
         },
         "zh-Hans": {
@@ -28203,6 +28813,12 @@
             "value": "Netzwerkschnittstelle"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtros de la red"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -28279,6 +28895,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ağ Filtreleri"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мережеві фільтри"
           }
         },
         "zh-Hans": {
@@ -28639,112 +29261,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "尼加拉瓜"
-          }
-        }
-      }
-    },
-    "Nicotine+ Commands": {
-      "localizations": {
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Comandes de Nicotine+"
-          }
-        },
-        "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Příkazy Nicotine+"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nikotin+ Befehle"
-          }
-        },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Comandos para Nicotine+"
-          }
-        },
-        "et": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+ käsud"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Commandes Nicotine+"
-          }
-        },
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+ parancsok"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Comandi di Nicotine+"
-          }
-        },
-        "lv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+ komandas"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+ commando's"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Polecenia Nicotine+"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Comandos do Nicotine+"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Comandos do Nicotine+"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Команда Nicotine+"
-          }
-        },
-        "ta": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "நிகோடின்+ கட்டளைகள்"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+ Komutları"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+ 指令"
           }
         }
       }
@@ -29123,6 +29639,12 @@
             "value": "Keine UPnP-Geräte gefunden"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se han encontrado dispositivos UPnP"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -29201,6 +29723,12 @@
             "value": "UPnP aygıtı bulunamadı"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пристроїв UPnP не знайдено"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -29227,6 +29755,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Beschreibung vorhanden"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin descripción"
           }
         },
         "es-ES": {
@@ -29307,6 +29841,12 @@
             "value": "Açıklama yok"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без опису"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -29333,6 +29873,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Freigabe mit dem Namen \"%@\""
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay ninguna acción con el nombre \"%@\""
           }
         },
         "es-ES": {
@@ -29411,6 +29957,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "\"%@\" adında paylaşım yok"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Немає спільного каталогу з назвою «%@»"
           }
         },
         "zh-Hans": {
@@ -30031,6 +30583,12 @@
             "value": "Nicht in Raum %@ beigetreten"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No esta conectado a la sala %@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -30109,6 +30667,12 @@
             "value": "%@ odasına katılmadı"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ви не в кімнаті %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -30135,6 +30699,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nicht mit dem Benutzer %@ chatten"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No enviar ningún mensajes al usuario %@"
           }
         },
         "es-ES": {
@@ -30215,6 +30785,12 @@
             "value": "%@ kullanıcısıyla mesajlaşılmıyor"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Немає переписки з користувачем %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -30241,6 +30817,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Jetzt spielendes Fehler"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de «Reproduciendo ahora»"
           }
         },
         "es-ES": {
@@ -30319,6 +30901,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Şimdi Oynatılıyor Hatası"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Помилка «Зараз грає»"
           }
         },
         "zh-Hans": {
@@ -30467,6 +31055,12 @@
             "value": "Privatchat öffnen"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir un chat privado"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -30543,6 +31137,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Özel sohbeti aç"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відкрити приватний чат"
           }
         },
         "zh-Hans": {
@@ -31163,6 +31763,12 @@
             "value": "Passwort geändert"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraseña modificada"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -31239,6 +31845,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Parola Değiştirildi"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пароль змінено"
           }
         },
         "zh-Hans": {
@@ -32429,6 +33041,124 @@
         }
       }
     },
+    "Quit %@": {
+      "localizations": {
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortir de %@"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ukončit %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ beenden"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir de %@"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir de %@"
+          }
+        },
+        "et": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sulge %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter %@"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilépés a %@ programból"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esci da %@"
+          }
+        },
+        "lv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iziet no %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ afsluiten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamknij %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sair do %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sair do %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выйти из %@"
+          }
+        },
+        "ta": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "நிகோடின்+ ஐ விட்டு வெளியேறவும்"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@'tan çık"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вийти з %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出%@"
+          }
+        }
+      }
+    },
     "Quit %@ %@!": {
       "localizations": {
         "ca": {
@@ -32447,6 +33177,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Beenden von %1$@ %2$@!"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Salir de %1$@ %2$@!"
           }
         },
         "es-ES": {
@@ -32537,124 +33273,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "退出 %1$@ %2$@ 中！"
-          }
-        }
-      }
-    },
-    "Quit Nicotine+": {
-      "localizations": {
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortir de Nicotine+"
-          }
-        },
-        "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ukončit Nicotine+"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+ beenden"
-          }
-        },
-        "es-CL": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Salir de Nicotine+"
-          }
-        },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Salir de Nicotine+"
-          }
-        },
-        "et": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sulge Nicotine+"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quitter Nicotine+"
-          }
-        },
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kilépés a Nicotine+ programból"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Esci da Nicotine+"
-          }
-        },
-        "lv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Iziet no Nicotine+"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+ afsluiten"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zamknij Nicotine+"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sair do Nicotine+"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sair do Nicotine+"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Выйти из Nicotine+"
-          }
-        },
-        "ta": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "நிகோடின்+ ஐ விட்டு வெளியேறவும்"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicotine+'tan çık"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Вийти з Nicotine+"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "退出Nicotine+"
           }
         }
       }
@@ -32797,6 +33415,12 @@
             "value": "Freigaben aktualisieren …"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconstruyendo los compartidos…"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -32875,6 +33499,12 @@
             "value": "Paylaşımlar yeniden oluşturuluyor…"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перебудова спільних каталогів…"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -32901,6 +33531,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wiederverbindung zum Server in %lld Sekunden"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconexión al servidor en %lld segundo(s)"
           }
         },
         "es-ES": {
@@ -32981,6 +33617,12 @@
             "value": "Sunucuya %lld saniye içinde yeniden bağlanılıyor"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повторне під’єднання до сервера через %lld секунд"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -33007,6 +33649,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entferne Kumpel aus der Kumpelliste"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar al usuario de tu lista de amigos"
           }
         },
         "es-ES": {
@@ -33087,6 +33735,12 @@
             "value": "Arkadaş listesinden arkadaşı kaldır"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Видалити друга зі списку друзів"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -33113,6 +33767,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Freigabe entfernen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar una acción"
           }
         },
         "es-ES": {
@@ -33193,6 +33853,12 @@
             "value": "Paylaşımı kaldır"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Видалити спільний каталог"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -33219,6 +33885,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Benutzer oder IP-Adresse aus der Sperrliste entfernen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar al usuario o la dirección IP de las listas de baneados"
           }
         },
         "es-ES": {
@@ -33299,6 +33971,12 @@
             "value": "Kullanıcı veya IP adresini yasaklama listelerinden kaldır"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Видалити користувача або IP-адресу зі списків блокування"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -33325,6 +34003,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Benutzer oder IP-Adresse von Ignorierlisten entfernen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar al usuario o la dirección IP de las listas de ignorados"
           }
         },
         "es-ES": {
@@ -33405,6 +34089,12 @@
             "value": "Kullanıcı veya IP adresini yok sayma listelerinden kaldır"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Видалити користувача або IP-адресу зі списків ігнорування"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -33431,6 +34121,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Freigabe \"%@\" entfernt (neuer Scan erforderlich)"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se ha eliminado el recurso compartido \"%@\" (es necesario volver a escanearlo)"
           }
         },
         "es-ES": {
@@ -33511,6 +34207,12 @@
             "value": "\"%@\" paylaşımı kaldırıldı (yeniden tarama gerekli)"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Видалено спільний каталог «%@» (потрібне повторне сканування)"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -33537,6 +34239,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Clientversion des Benutzers anfordern"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solicitar información del usuario"
           }
         },
         "es-ES": {
@@ -33617,6 +34325,12 @@
             "value": "Kullanıcının istemci sürümünü iste"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запитати версію клієнта користувача"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -33643,6 +34357,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Das erneute Scannen wurde abgebrochen, weil Freigaben nicht verfügbar sind: %@"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reescaneo interrumpido debido a compartidos no disponibles: %@"
           }
         },
         "es-ES": {
@@ -33721,6 +34441,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kullanılamayan paylaşımlar nedeniyle yeniden tarama iptal edildi: %@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сканування скасовано через недоступні спільні каталоги: %@"
           }
         },
         "zh-Hans": {
@@ -35993,6 +36719,12 @@
             "value": "Sag Nachricht im angegebenen Chatraum"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decir un mensaje a la sala de chat especificada"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -36069,6 +36801,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Belirtilen sohbet odasında mesaj yaz"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Надіслати повідомлення у вказану кімнату"
           }
         },
         "zh-Hans": {
@@ -36335,6 +37073,12 @@
             "value": "Suche in den freigegebenen Dateien eines Benutzers"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar los archivos compartidos de un usuario"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -36413,6 +37157,12 @@
             "value": "Bir kullanıcının paylaşılan dosyalarını ara"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Шукати у спільних файлах користувача"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -36439,6 +37189,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Suche Dateien in beigetretenen Räumen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar los archivos en salas conectadas"
           }
         },
         "es-ES": {
@@ -36519,6 +37275,12 @@
             "value": "Katıldığınız odalarda dosya ara"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Шукати файли у кімнатах, до яких ви увійшли"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -36545,6 +37307,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Suche Dateien von allen Kumpel"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar los archivos de todos los amigos"
           }
         },
         "es-ES": {
@@ -36625,6 +37393,12 @@
             "value": "Tüm arkadaşların dosyalarını ara"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Шукати файли всіх друзів"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -36651,6 +37425,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Suche nach Wunschlistenartikel \"%@\""
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscando el elemento de la lista de deseos \"%@\""
           }
         },
         "es-ES": {
@@ -36731,6 +37511,12 @@
             "value": "\"%@\" dilek listesi ögesi aranıyor"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пошук за бажанням «%@»"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -36757,6 +37543,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sende private Nachricht an Benutzer"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar un mensaje privado al usuario"
           }
         },
         "es-ES": {
@@ -36835,6 +37627,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kullanıcıya özel mesaj gönder"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Надіслати приватне повідомлення користувачу"
           }
         },
         "zh-Hans": {
@@ -37101,6 +37899,12 @@
             "value": "Ein schwerwiegender Fehler ist beim erneuten Scannen der Freigaben aufgetreten. Wenn das Problem weiterhin besteht, lösche %1$@/*.dbn und versuche es erneut. Wenn das nicht hilft, bitte einen Fehlerbericht mit diesem Stack-Trace einreichen: %2$@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se ha producido un error grave al reescanear los compartidos. Si el problema persiste, borra %1$@/*.dbn e inténtalo de nuevo. Si eso no lo soluciona, por favor, envía un informe de error con este stack trace incluido: %2$@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -37177,6 +37981,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Paylaşımlar yeniden taranırken ciddi bir hata oluştu. Bu sorun devam ederse, %1$@/*.db dosyalarını silin ve tekrar deneyin. Bu işe yaramazsa, lütfen şu yığın geri izlemesini içeren bir hata bildirimi gönderin: %2$@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Під час повторного сканування спільних каталогів сталася серйозна помилка. Якщо проблема не зникає, видаліть %@/*.dbn і спробуйте знову. Якщо це не допоможе, надішліть звіт про помилку разом із цим трасуванням: %@"
           }
         },
         "zh-Hans": {
@@ -37443,6 +38253,12 @@
             "value": "IP-Adresse oder Benutzername anzeigen"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar la dirección IP o el nombre del usuario"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -37521,6 +38337,12 @@
             "value": "IP adresini veya kullanıcı adını göster"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показати IP-адресу або ім’я користувача"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -37547,6 +38369,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zeige Benutzerprofilinformationen"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar la información del perfil del usuario"
           }
         },
         "es-ES": {
@@ -37625,6 +38453,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kullanıcı profili bilgilerini göster"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показати інформацію профілю користувача"
           }
         },
         "zh-Hans": {
@@ -37773,6 +38607,12 @@
             "value": "Nachrichten von Benutzer oder IP-Adresse stummschalten"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Silenciar los mensajes del usuario o la dirección IP"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -37849,6 +38689,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kullanıcıdan veya IP adresinden gelen mesajları sustur"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приховати повідомлення від користувача або IP-адреси"
           }
         },
         "zh-Hans": {
@@ -38823,6 +39669,12 @@
             "value": "Soulseek-Ankündigung"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anuncio de Soulseek"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -38899,6 +39751,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Soulseek Duyurusu"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Оголошення Soulseek"
           }
         },
         "zh-Hans": {
@@ -39519,6 +40377,12 @@
             "value": "Das angegebene Netzwerkinterface '%@' ist nicht verfügbar"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La interfaz de red especificada '%@' no está disponible"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -39595,6 +40459,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Belirtilen ağ arayüzü '%@' kullanılamıyor"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вказаний мережевий інтерфейс «%@» недоступний"
           }
         },
         "zh-Hans": {
@@ -39743,6 +40613,12 @@
             "value": "Starte globale Dateisuche"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar la búsqueda global de archivos"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -39819,6 +40695,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Genel dosya aramayı başlat"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Почати загальний пошук файлів"
           }
         },
         "zh-Hans": {
@@ -41009,124 +41891,6 @@
         }
       }
     },
-    "Text-to-speech for message failed: %@": {
-      "localizations": {
-        "ca": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ha fallat la conversió text a veu per al missatge: %@"
-          }
-        },
-        "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Selhal převod textu na řeč pro zprávu: %@"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Text-zu-Sprache-Umwandlung für die Nachricht ist fehlgeschlagen: %@"
-          }
-        },
-        "es-CL": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La síntesis de voz para el mensaje ha fallado: %@"
-          }
-        },
-        "es-ES": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La síntesis de voz para el mensaje ha fallado: %@"
-          }
-        },
-        "et": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sõnumi kõneks muutmine ebaõnnestus: %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La synthèse vocale du message a échoué : %@"
-          }
-        },
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Az üzenet szövegből beszéddé alakítása sikertelen: %@"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sintesi vocale per messaggio fallita: %@"
-          }
-        },
-        "lv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ziņas teksta pārvēršana runā neizdevās: %@"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tekst-naar-spraak voor bericht mislukt: %@"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Błędna zamiana tekstu na mowę dla wiadomości: %@"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Falha na conversão de texto em voz para mensagem: %@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Falha na conversão de texto em voz para mensagem: %@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ошибка преобразования текста в речь: %@"
-          }
-        },
-        "ta": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "செய்திக்கான உரை-க்கு-பேச்சு தோல்வியுற்றது: %@"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mesaj için metinden konuşmaya başarısız oldu: %@"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Помилка синтезу мовлення для повідомлення: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "文字转语音失败：%@"
-          }
-        }
-      }
-    },
     "Thailand": {
       "localizations": {
         "ca": {
@@ -41383,6 +42147,12 @@
             "value": "Abwesenheitsstatus umschalten"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternar el estado"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -41459,6 +42229,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uzakta durumunu değiştir"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемкнути статус «Відсутній»"
           }
         },
         "zh-Hans": {
@@ -42433,6 +43209,12 @@
             "value": "Gib %@ ein, um verfügbare Befehle anzuzeigen"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribe los %@ para listar los comandos disponibles"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -42511,6 +43293,12 @@
             "value": "Kullanılabilir komutları listelemek için %@ yazın"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Введіть %@, щоб побачити доступні команди"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -42537,6 +43325,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gib %@ ein, um ähnliche Befehle aufzulisten"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribe %@ para enumerar los comandos similares"
           }
         },
         "es-ES": {
@@ -42617,6 +43411,12 @@
             "value": "Benzer komutları listelemek için %@ yazın"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Введіть %@, щоб побачити подібні команди"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -42643,6 +43443,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Türkei"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turquía"
           }
         },
         "es-ES": {
@@ -42721,6 +43527,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Türkiye"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Туреччина"
           }
         },
         "zh-Hans": {
@@ -43695,6 +44507,12 @@
             "value": "Entsperrt %@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbaneado %@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -43773,6 +44591,12 @@
             "value": "%@ yasağı kaldırıldı"
           }
         },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Розблоковано %@"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -43799,6 +44623,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ nicht mehr ignoriert"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dejar de ignorar %@"
           }
         },
         "es-ES": {
@@ -43877,6 +44707,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ yok sayılması kaldırıldı"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Знято ігнорування %@"
           }
         },
         "zh-Hans": {
@@ -44261,6 +45097,12 @@
             "value": "Unbekannter Befehl: %1$@. Gib %2$@ ein, um verfügbare Befehle anzuzeigen."
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comando desconocido: %1$@. Escribe %2$@ para ver los comandos disponibles."
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -44337,6 +45179,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bilinmeyen komut: %1$@. Kullanılabilir komutları listelemek için %2$@ yazın."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Невідома команда: %@. Введіть %@, щоб побачити доступні команди."
           }
         },
         "zh-Hans": {
@@ -45075,6 +45923,12 @@
             "value": "Verwendung: %1$@ %2$@"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uso: %1$@ %2$@"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -45151,6 +46005,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kullanım: %1$@ %2$@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Використання: %@ %@"
           }
         },
         "zh-Hans": {
@@ -45417,6 +46277,12 @@
             "value": "Benutzer %@ sieht dein Profil an"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuario %@ está viendo tu perfil"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -45493,6 +46359,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ kullanıcısı profilinizi görüntülüyor"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Користувач %@ дивиться ваш профіль"
           }
         },
         "zh-Hans": {
@@ -46703,6 +47575,12 @@
             "value": "Du hast keine Soulseek Privilegien. Solange Privilegien aktiv sind, werden deine Downloads vor denen von nicht-privilegierten Nutzern in die Warteschlange eingereiht."
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tienes privilegios en Soulseek. Mientras los privilegios estén activos, tus descargas se pondrán en cola antes que las de los usuarios sin privilegios."
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -46779,6 +47657,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Soulseek ayrıcalığınız yok. Ayrıcalıklar etkinken, indirmeleriniz ayrıcalıklı olmayan kullanıcılarınkinden önce sıraya alınır."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У вас немає привілеїв Soulseek. Поки привілеї активні, ваші завантаження стають у черзі перед завантаженнями користувачів без привілеїв."
           }
         },
         "zh-Hans": {
@@ -46927,6 +47811,12 @@
             "value": "Dein Passwort wurde geändert"
           }
         },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu contraseña ha sido modificada"
+          }
+        },
         "es-ES": {
           "stringUnit": {
             "state": "translated",
@@ -47003,6 +47893,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Parolanız değiştirildi"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваш пароль змінено"
           }
         },
         "zh-Hans": {

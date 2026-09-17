@@ -513,6 +513,10 @@ final class PluginDebuggerPlugin: BasePlugin {
         log("search_request_notification(searchterm=\(searchTerm), user=\(user), token=\(token))")
     }
 
+    override func distribSearchNotification(searchTerm: String, user: String, token: Int) {
+        log("distrib_search_notification(searchterm=\(searchTerm), user=\(user), token=\(token))")
+    }
+
     override func incomingPrivateChatEvent(user: String, line: String) -> PluginResult<(user: String, line: String)> {
         log("incoming_private_chat_event(user=\(user), line=\(line))")
         return .pass
