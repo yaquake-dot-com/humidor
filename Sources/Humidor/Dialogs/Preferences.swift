@@ -28,28 +28,6 @@ final class Preferences {
         "$a - $b - $t ($l/$r KBps) from $y $c"
     ]
 
-    static let defaultURLProtocols = [
-        "http://", "https://", "audio", "image", "video", "document", "text", "archive", ".mp3", ".jpg", ".pdf"
-    ]
-
-    static let defaultURLCommands = [
-        "xdg-open $",
-        "firefox $",
-        "firefox --new-tab $",
-        "epiphany $",
-        "chromium-browser $",
-        "falkon $",
-        "links -g $",
-        "dillo $",
-        "konqueror $",
-        "\"c:\\Program Files\\Mozilla Firefox\\Firefox.exe\" $"
-    ]
-
-    static let fileManagerCommands = [
-        "", "xdg-open $", "explorer $", "nautilus $", "nemo $", "caja $", "thunar $", "dolphin $", "konqueror $",
-        "krusader --left $", "xterm -e mc $"
-    ]
-
     @ObservationIgnored let application: AppDelegate
     @ObservationIgnored private var needsRescanAfterClose = false
 
@@ -98,7 +76,6 @@ final class Preferences {
     private(set) var isFilterHistoryCleared = false
 
     // URL handlers page
-    @ObservationIgnored private(set) var protocolListView: TreeView!
 
     // Now playing page
     private(set) var nowPlayingOutput = ""
@@ -135,13 +112,8 @@ final class Preferences {
             PageInfo(id: "logging", title: String(localized: "Logging"), systemImage: "doc.text"),
             PageInfo(id: "banned-users", title: String(localized: "Banned Users"), systemImage: "nosign"),
             PageInfo(id: "ignored-users", title: String(localized: "Ignored Users"), systemImage: "speaker.slash"),
-            PageInfo(id: "url-handlers", title: String(localized: "URL Handlers"), systemImage: "link"),
             PageInfo(id: "plugins", title: String(localized: "Plugins"), systemImage: "puzzlepiece.extension")
         ]
-
-        if application.isolatedMode {
-            pages.removeAll { $0.id == "url-handlers" }
-        }
 
         self.pages = pages
 
@@ -226,17 +198,6 @@ final class Preferences {
             deleteAccelerator: { [unowned self] _ in onRemoveReplacement() }
         )
 
-        protocolListView = TreeView(
-            columns: [
-                TreeColumn(id: "protocol", title: String(localized: "Protocol"), width: 120, expandsColumn: true,
-                           defaultSortOrder: .ascending, isIteratorKey: true),
-                TreeColumn(id: "command", title: String(localized: "Command"), expandsColumn: true)
-            ],
-            multiSelect: true,
-            activateRow: { [unowned self] _, _, _ in onEditHandler() },
-            deleteAccelerator: { [unowned self] _ in onRemoveHandler() }
-        )
-
         pluginListView = TreeView(
             columns: [
                 TreeColumn(id: "enabled", title: String(localized: "Enabled"), kind: .toggle, width: 0,
@@ -313,16 +274,6 @@ final class Preferences {
         // Searches page
         isSearchHistoryCleared = false
         isFilterHistoryCleared = false
-
-        // URL handlers page
-        protocolListView.clear()
-        protocolListView.freeze()
-
-        for (urlProtocol, command) in draft.urls.protocols {
-            protocolListView.addRow([.string(urlProtocol), .string(command)], selectRow: false)
-        }
-
-        protocolListView.unfreeze()
 
         // Plugins page
         pluginListView.clear()
@@ -410,13 +361,6 @@ final class Preferences {
         settings.words.autoReplaced = Dictionary(uniqueKeysWithValues: replacementListView.iterators.values.map {
             (replacementListView.rowValue($0, "pattern").string, replacementListView.rowValue($0, "replacement").string)
         })
-        settings.ui.speechCommand = settings.ui.speechCommand.trimmingCharacters(in: .whitespaces)
-
-        // URL handlers page
-        settings.urls.protocols = Dictionary(uniqueKeysWithValues: protocolListView.iterators.values.map {
-            (protocolListView.rowValue($0, "protocol").string, protocolListView.rowValue($0, "command").string)
-        })
-        settings.ui.fileManager = settings.ui.fileManager.trimmingCharacters(in: .whitespaces)
 
         // Now playing page
         let nowPlayingFormat = settings.players.npFormat
@@ -1136,69 +1080,6 @@ final class Preferences {
     func onClearFilterHistory() {
         application.window.search.clearFilterHistory()
         isFilterHistoryCleared = true
-    }
-
-    // MARK: URL Handlers Page
-
-    func onAddHandler() {
-        EntryDialog(
-            title: String(localized: "Add URL Handler"),
-            message: String(localized: "Enter the protocol and the command for the URL handler:"),
-            useSecondEntry: true, actionButtonLabel: String(localized: "Add"),
-            droplist: Self.defaultURLProtocols, secondDroplist: Self.defaultURLCommands
-        ) { [weak self] dialog, _ in
-            guard let self, let dialog = dialog as? EntryDialog else {
-                return
-            }
-
-            var urlProtocol = dialog.entryValue.trimmingCharacters(in: .whitespaces)
-            let command = (dialog.secondEntryValue ?? "").trimmingCharacters(in: .whitespaces)
-
-            guard !urlProtocol.isEmpty, !command.isEmpty else {
-                return
-            }
-
-            if urlProtocol.hasPrefix(".") {
-                // Only keep last part of file extension (e.g. .tar.gz -> .gz)
-                urlProtocol = "." + (urlProtocol.components(separatedBy: ".").last ?? "")
-            } else if !urlProtocol.hasSuffix("://") && !Self.defaultURLProtocols.contains(urlProtocol) {
-                urlProtocol += "://"
-            }
-
-            if let row = protocolListView.iterators[.string(urlProtocol)] {
-                protocolListView.setRowValue(row, "command", .string(command))
-                return
-            }
-
-            protocolListView.addRow([.string(urlProtocol), .string(command)])
-        }.present()
-    }
-
-    func onEditHandler() {
-        guard let row = protocolListView.selectedRows.first else {
-            return
-        }
-
-        let urlProtocol = protocolListView.rowValue(row, "protocol").string
-        let command = protocolListView.rowValue(row, "command").string
-
-        EntryDialog(
-            title: String(localized: "Edit Command"),
-            message: String(localized: "Enter a new command for protocol \(urlProtocol):"),
-            defaultText: command, actionButtonLabel: String(localized: "Edit"), droplist: Self.defaultURLCommands
-        ) { [weak self] dialog, _ in
-            guard let self, let command = (dialog as? EntryDialog)?.entryValue.trimmingCharacters(in: .whitespaces),
-                  !command.isEmpty, let row = protocolListView.iterators[.string(urlProtocol)] else {
-                return
-            }
-            protocolListView.setRowValue(row, "command", .string(command))
-        }.present()
-    }
-
-    func onRemoveHandler() {
-        for row in protocolListView.selectedRows.reversed() {
-            protocolListView.removeRow(row)
-        }
     }
 
     // MARK: Now Playing Page

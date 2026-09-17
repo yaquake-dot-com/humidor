@@ -49,7 +49,6 @@ struct PreferencesView: View {
         case "logging": LoggingSettingsPage(preferences: preferences)
         case "banned-users": BannedUsersSettingsPage(preferences: preferences)
         case "ignored-users": IgnoredUsersSettingsPage(preferences: preferences)
-        case "url-handlers": URLHandlersSettingsPage(preferences: preferences)
         case "plugins": PluginsSettingsPage(preferences: preferences)
         default: EmptyView()
         }
@@ -735,12 +734,6 @@ private struct ChatsSettingsPage: View {
             Section(String(localized: "Text-to-Speech")) {
                 Toggle(String(localized: "Enable Text-to-Speech"), isOn: $preferences.draft.ui.speechEnabled)
 
-                LabeledContent(String(localized: "Text-to-Speech command:")) {
-                    ComboBox(placeholder: "", text: $preferences.draft.ui.speechCommand,
-                             items: ["flite -t $", "echo $ | festival --tts"])
-                        .frame(maxWidth: 260)
-                }
-
                 TextField(String(localized: "Private chat message:"), text: $preferences.draft.ui.speechPrivate)
                 TextField(String(localized: "Chat room message:"), text: $preferences.draft.ui.speechRooms)
             }
@@ -941,35 +934,6 @@ private struct IgnoredUsersSettingsPage: View {
                 ListBox(listView: preferences.ignoredIPsListView, height: 150, buttons: [
                     .add { preferences.onAddIgnoredIP() },
                     .remove { preferences.onRemoveIgnoredIP() }
-                ])
-            }
-        }
-    }
-}
-
-// MARK: - URL Handlers
-
-private struct URLHandlersSettingsPage: View {
-
-    @Bindable var preferences: Preferences
-
-    var body: some View {
-        PageForm {
-            Section(String(localized: "URL Handlers")) {
-                descriptionText(String(localized: "Instances of $ are replaced by the URL. Default system applications are used in cases where a protocol has not been configured."))
-
-                LabeledContent(String(localized: "File manager command:")) {
-                    ComboBox(placeholder: "", text: $preferences.draft.ui.fileManager,
-                             items: Preferences.fileManagerCommands)
-                        .frame(maxWidth: 260)
-                }
-            }
-
-            Section {
-                ListBox(listView: preferences.protocolListView, height: 260, buttons: [
-                    .add { preferences.onAddHandler() },
-                    .edit { preferences.onEditHandler() },
-                    .remove { preferences.onRemoveHandler() }
                 ])
             }
         }

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import AVFoundation
 import Foundation
 
 public struct NotificationMessage {
@@ -21,11 +22,11 @@ public extension EventName where Payload == NotificationMessage {
 @MainActor
 public final class Notifications {
 
-    private var tts: [String] = []
-    private var isPlayingTTS = false
+    /// Speaks messages one after another
+    private let speechSynthesizer = AVSpeechSynthesizer()
 
     init() {
-        events.connect(.quit) { [self] in tts.removeAll() }
+        events.connect(.quit) { [self] in speechSynthesizer.stopSpeaking(at: .immediate) }
     }
 
     // MARK: Notification Messages
@@ -56,7 +57,7 @@ public final class Notifications {
 
     // MARK: TTS
 
-    /// Speaks a message using the text-to-speech command. Placeholders in the
+    /// Speaks a message with the system voice. Placeholders in the
     /// form "%(name)s" are replaced by the values in `args`.
     public func newTTS(_ message: String, args: [String: String] = [:]) {
         guard config.ui.speechEnabled else {
@@ -76,35 +77,6 @@ public final class Notifications {
             message = message.replacingOccurrences(of: "%(\(key))s", with: cleanedValue)
         }
 
-        tts.append(message)
-
-        guard !isPlayingTTS else {
-            return
-        }
-
-        playTTS()
-    }
-
-    private func playTTS() {
-        guard !tts.isEmpty else {
-            isPlayingTTS = false
-            return
-        }
-
-        isPlayingTTS = true
-
-        let message = tts.removeFirst()
-        let command = config.ui.speechCommand
-
-        Thread {
-            do {
-                try executeCommand(command, replacement: message, background: false)
-            } catch {
-                log.add(String(localized: "Text-to-speech for message failed: \(error.localizedDescription)",
-                               bundle: .module))
-            }
-
-            events.invokeMainThread { [self] in playTTS() }
-        }.start()
+        speechSynthesizer.speak(AVSpeechUtterance(string: message))
     }
 }
