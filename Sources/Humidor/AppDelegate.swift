@@ -35,6 +35,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @ObservationIgnored private var signalSources: [DispatchSourceSignal] = []
 
     @ObservationIgnored private(set) var window: MainWindow!
+    @ObservationIgnored private let dockTile = DockTile()
 
     // Content of the other windows, created when they are first shown
     @ObservationIgnored private(set) lazy var preferences = Preferences(application: self)
@@ -75,6 +76,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         events.connect(.invalidUsername) { [unowned self] in onInvalidPassword() }
         events.connect(.quit) { [unowned self] in onQuit() }
         events.connect(.setup) { [unowned self] in onFastConfigure() }
+        events.connect(.setConnectionStats) { [unowned self] stats in
+            dockTile.update(downloadSpeed: stats.downloadBandwidth, uploadSpeed: stats.uploadBandwidth)
+        }
         events.connect(.serverLogin) { [unowned self] _ in updateUserStatus() }
         events.connect(.serverDisconnect) { [unowned self] _ in updateUserStatus() }
         events.connect(.sharesUnavailable) { [unowned self] shares in onSharesUnavailable(shares) }
