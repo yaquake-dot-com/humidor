@@ -9,3 +9,6 @@ DerivedData/
 
 # Upstream Python source, used as reference while porting
 /Reference
+
+# Instructions for the coding assistant, kept out of the repository
+/CLAUDE.md
