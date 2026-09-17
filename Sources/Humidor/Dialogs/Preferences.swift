@@ -97,7 +97,7 @@ final class Preferences {
     init(application: AppDelegate) {
         self.application = application
 
-        var pages = [
+        let pages = [
             PageInfo(id: "network", title: String(localized: "Network"), systemImage: "network"),
             PageInfo(id: "user-interface", title: String(localized: "User Interface"), systemImage: "square.grid.2x2"),
             PageInfo(id: "shares", title: String(localized: "Shares"), systemImage: "folder"),
