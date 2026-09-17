@@ -44,6 +44,9 @@ cp "$package_path/Packaging/AppIcon.icns" "$app_path/Contents/Resources/"
 sed "s/@VERSION@/$version/g" "$package_path/Packaging/Info.plist" > "$app_path/Contents/Info.plist"
 printf "APPL????" > "$app_path/Contents/PkgInfo"
 
+# Extended attributes (added by iCloud Drive, for example) make the signature invalid
+xattr -cr "$app_path"
+
 # Ad-hoc signature, required to run on Apple silicon
 codesign --force --sign - --timestamp=none "$app_path"
 
