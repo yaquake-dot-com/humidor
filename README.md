@@ -25,7 +25,11 @@ Humidor is not affiliated with the Nicotine+ project, and is not endorsed by it.
 - Built-in plugins (commands, leech detector, auto-browse, spam filter and more)
 - Port forwarding with UPnP and NAT-PMP
 - Translations into 20 languages
-- A native interface: system sidebar, toolbar and search fields, Liquid Glass on current macOS
+- A native interface: system sidebar, toolbar, search fields, alerts and Settings window, with
+  Liquid Glass on current macOS
+- Mac behavior: keeps running with its window closed, counts unread private chats and mentions on
+  the Dock icon, follows the system appearance, accent color and language, speaks messages with
+  the system voice, and shows files in Finder
 - A headless command line client
 
 ## Requirements
@@ -35,8 +39,9 @@ Humidor is not affiliated with the Nicotine+ project, and is not endorsed by it.
 
 ## Installation
 
-Download `Humidor.zip` from the [latest release](https://github.com/yaquake-dot-com/humidor/releases/latest),
-unzip it and move `Humidor.app` to the Applications folder.
+Download `Humidor.zip` from the [releases page](https://github.com/yaquake-dot-com/humidor/releases),
+unzip it and move `Humidor.app` to the Applications folder. Until the first release is published,
+build the application from source, as described below.
 
 The application is not notarized by Apple yet, so macOS blocks it the first time it is opened. To
 open it, Control-click `Humidor.app` in Finder, choose Open, and confirm. Alternatively, run:
@@ -47,7 +52,7 @@ xattr -dr com.apple.quarantine /Applications/Humidor.app
 
 ## Building from source
 
-Requires Xcode 16 or later (Swift 6).
+Requires Xcode 26 or later (Swift 6, macOS 26 SDK). The application runs on macOS 15 and later.
 
 ```sh
 git clone https://github.com/yaquake-dot-com/humidor.git
@@ -97,7 +102,8 @@ Contributors, © 2001–2003 PySoulSeek Contributors. See [NICOTINE_AUTHORS.md](
 for the authors of the original work, whose translations Humidor also uses.
 
 Changes made in this work: the program was rewritten in Swift, the GTK interface was replaced with
-one written in SwiftUI and AppKit for macOS, and the program was renamed. The application icon is
+one written in SwiftUI and AppKit for macOS, settings and behavior were adapted to macOS
+conventions, and the program was renamed. The application icon is
 original to this work.
 
 Humidor also includes:
