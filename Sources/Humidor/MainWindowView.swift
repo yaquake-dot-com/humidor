@@ -23,7 +23,7 @@ struct MainWindowView: View {
     var body: some View {
         NavigationSplitView {
             PageList(mainWindow: mainWindow)
-                .navigationSplitViewColumnWidth(min: 190, ideal: 220, max: 300)
+                .navigationSplitViewColumnWidth(190)
         } detail: {
             VStack(spacing: 0) {
                 SplitPane("Log", edge: .bottom, range: 60...600, idealLength: 140,

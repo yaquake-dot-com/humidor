@@ -122,9 +122,11 @@ struct AboutView: View {
                 Text(message)
 
             case let .outdated(message):
-                Image(systemName: "exclamationmark.triangle")
+                Image(systemName: "arrow.down.circle")
                     .foregroundStyle(.orange)
-                Text(message)
+                Link(destination: URL(string: Application.latestReleaseURL)!) {
+                    Text(message)
+                }
 
             case .upToDate:
                 Image(systemName: "checkmark")

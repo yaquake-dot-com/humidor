@@ -21,6 +21,9 @@ public enum Application {
         © 2001–2003 PySoulSeek Contributors
         """
     public static let websiteURL = "https://github.com/yaquake-dot-com/humidor"
+
+    /// Page offering the latest release for download
+    public static let latestReleaseURL = "https://github.com/yaquake-dot-com/humidor/releases/latest"
     public static func privilegesURL(username: String) -> String {
         "https://www.slsknet.org/qtlogin.php?username=\(username)"
     }
