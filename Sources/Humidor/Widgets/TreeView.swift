@@ -175,6 +175,8 @@ struct TreeRowPresentation {
     let height: @MainActor (TreeView, TreeRow) -> CGFloat
     /// View showing a row. Views can be reused with `outlineView.makeView(withIdentifier:owner:)`.
     let view: @MainActor (TreeView, TreeRow) -> NSView
+    /// Whether a row heads a group of rows. Group rows stay at the top while their rows scroll by.
+    var isGroupRow: @MainActor (TreeView, TreeRow) -> Bool = { _, _ in false }
 }
 
 // MARK: - Tree View
@@ -410,6 +412,7 @@ final class TreeView: NSObject {
             outlineView.outlineTableColumn = tableColumn
             outlineView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
             outlineView.headerView = nil
+            outlineView.floatsGroupRows = true
             scrollView.hasHorizontalScroller = false
             return
         }
@@ -1332,10 +1335,28 @@ extension TreeView: NSOutlineViewDataSource, NSOutlineViewDelegate, NSMenuDelega
     // Rows of equal height are faster to lay out, so the outline view only asks for row heights
     // when rows are presented as single views
     override func responds(to selector: Selector!) -> Bool {
-        if selector == #selector(NSOutlineViewDelegate.outlineView(_:heightOfRowByItem:)) {
+        if selector == #selector(NSOutlineViewDelegate.outlineView(_:heightOfRowByItem:))
+            || selector == #selector(NSOutlineViewDelegate.outlineView(_:isGroupItem:))
+            || selector == #selector(NSOutlineViewDelegate.outlineView(_:rowViewForItem:)) {
             return rowPresentation != nil
         }
         return super.responds(to: selector)
+    }
+
+    func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
+        guard let rowPresentation, let row = item as? TreeRow else {
+            return false
+        }
+        return rowPresentation.isGroupRow(self, row)
+    }
+
+    func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
+        guard let rowPresentation, let row = item as? TreeRow, rowPresentation.isGroupRow(self, row) else {
+            return nil
+        }
+
+        return outlineView.makeView(withIdentifier: GroupRowView.identifier, owner: nil) as? GroupRowView
+            ?? GroupRowView()
     }
 
     func outlineView(_ outlineView: NSOutlineView, heightOfRowByItem item: Any) -> CGFloat {
@@ -1476,6 +1497,47 @@ final class TreeOutlineView: NSOutlineView {
 
     override func frameOfOutlineCell(atRow row: Int) -> NSRect {
         showsExpanders ? super.frameOfOutlineCell(atRow: row) : .zero
+    }
+}
+
+// MARK: - Row Views
+
+/// Row heading a group: a separator above it, and a bar background while it stays at the top
+private final class GroupRowView: NSTableRowView {
+
+    static let identifier = NSUserInterfaceItemIdentifier("GroupRow")
+
+    init() {
+        super.init(frame: .zero)
+        identifier = Self.identifier
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override var isFloating: Bool {
+        didSet {
+            needsDisplay = true
+        }
+    }
+
+    override func drawBackground(in dirtyRect: NSRect) {
+        if isFloating {
+            NSColor.windowBackgroundColor.withAlphaComponent(0.95).setFill()
+            bounds.fill()
+        }
+
+        // Separator between groups, above each group but the first one
+        guard frame.minY > 0, !isFloating else {
+            return
+        }
+
+        NSColor.separatorColor.setFill()
+        NSRect(x: 10, y: 0, width: bounds.width - 20, height: 1 / (window?.backingScaleFactor ?? 2)).fill()
+    }
+
+    override func drawSeparator(in dirtyRect: NSRect) {
     }
 }
 

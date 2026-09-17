@@ -21,6 +21,9 @@ enum SearchResultRows {
                 as? ResultCellView ?? ResultCellView()
             configure(cellView, treeView: treeView, row: row)
             return cellView
+        },
+        isGroupRow: { treeView, row in
+            row.parent == nil && isGroupRow(treeView, row)
         }
     )
 
@@ -276,9 +279,6 @@ private final class ResultCellView: NSTableCellView {
             trailingStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
             trailingStack.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
-
-        textField = titleLabel
-        imageView = iconView
     }
 
     required init?(coder: NSCoder) {
