@@ -14,7 +14,6 @@ enum AppWindow: String {
     case wishlist
     case shortcuts
     case fileProperties = "file-properties"
-    case setupAssistant = "setup-assistant"
     case pluginSettings = "plugin-settings"
 }
 

@@ -51,6 +51,8 @@ final class FastConfigure {
     }
 
     @ObservationIgnored private(set) var isVisible = false
+    /// Whether the assistant is shown as a sheet on the main window
+    var isPresented = false
 
     func present(invalidPassword: Bool) {
         if invalidPassword, isVisible {
@@ -62,11 +64,12 @@ final class FastConfigure {
         }
 
         self.invalidPassword = invalidPassword
-        AppDelegate.shared.openWindow(.setupAssistant)
+        isPresented = true
+        AppDelegate.shared.window.present()
     }
 
     private func close() {
-        AppDelegate.shared.closeWindow(.setupAssistant)
+        isPresented = false
     }
 
     // MARK: Navigation

@@ -56,12 +56,6 @@ struct HumidorApp: App {
         }
         .dialogWindow(width: 600, height: 380)
 
-        Window(String(localized: "Setup Assistant"), id: AppWindow.setupAssistant.rawValue) {
-            FastConfigureView(assistant: application.fastConfigure)
-                .presentationHost(AppWindow.setupAssistant.rawValue)
-        }
-        .dialogWindow(width: 720, height: 450)
-
         Window(String(localized: "Settings"), id: AppWindow.pluginSettings.rawValue) {
             PluginSettingsView(dialog: application.preferences.pluginSettingsDialog)
                 .presentationHost(AppWindow.pluginSettings.rawValue)

@@ -8,10 +8,17 @@ struct MainWindowView: View {
 
     @Bindable var mainWindow: MainWindow
 
+    @Bindable private var fastConfigure: FastConfigure
+
     @Environment(\.appearsActive) private var appearsActive
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismissWindow) private var dismissWindow
     @Environment(\.openSettings) private var openSettings
+
+    init(mainWindow: MainWindow) {
+        self.mainWindow = mainWindow
+        fastConfigure = mainWindow.application.fastConfigure
+    }
 
     var body: some View {
         NavigationSplitView {
@@ -31,6 +38,11 @@ struct MainWindowView: View {
             }
         }
         .frame(minWidth: 700, minHeight: 450)
+        .sheet(isPresented: $fastConfigure.isPresented) {
+            FastConfigureView(assistant: fastConfigure)
+                .presentationHost("setup-assistant")
+                .frame(width: 720, height: 450)
+        }
         // The title stays in the Window menu and Mission Control, but not in the toolbar
         .toolbar(removing: .title)
         .onAppear {
