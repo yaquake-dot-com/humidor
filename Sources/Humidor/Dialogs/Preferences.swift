@@ -16,8 +16,6 @@ final class Preferences {
         let systemImage: String
     }
 
-    static let formatCodesURL = "https://docs.python.org/3/library/datetime.html#format-codes"
-
     static let defaultNowPlayingFormats = [
         "$n",
         "$n ($f)",
@@ -543,7 +541,7 @@ final class Preferences {
         FileChooser.saveFile(
             title: String(localized: "Pick a File Name for Config Backup"),
             initialFolder: (config.configFilePath as NSString).deletingLastPathComponent,
-            initialFile: "config_backup_\(currentDateTime).tar.bz2"
+            initialFile: "config_backup_\(currentDateTime).json"
         ) { filePaths in
             if let filePath = filePaths.first {
                 config.writeConfigBackup(to: filePath)

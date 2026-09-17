@@ -599,27 +599,18 @@ public final class Config {
         }
     }
 
+    /// Saves a copy of the configuration file. The save panel has already confirmed replacing an existing file.
     public func writeConfigBackup(to filePath: String) {
-        var filePath = filePath
-
-        if !filePath.hasSuffix(".tar.bz2") {
-            filePath += ".tar.bz2"
-        }
-
         do {
-            if FileManager.default.fileExists(atPath: filePath) {
-                throw CocoaError(.fileWriteFileExists, userInfo: [NSLocalizedDescriptionKey: "File \(filePath) exists"])
-            }
-
             guard FileManager.default.fileExists(atPath: configFilePath) else {
                 throw CocoaError(.fileNoSuchFile, userInfo: [NSLocalizedDescriptionKey: "Config file missing"])
             }
 
-            let folderPath = (configFilePath as NSString).deletingLastPathComponent
-            let fileName = (configFilePath as NSString).lastPathComponent
+            if FileManager.default.fileExists(atPath: filePath) {
+                try FileManager.default.removeItem(atPath: filePath)
+            }
 
-            try executeCommand("tar -cjf $ -C \"\(folderPath)\" \"\(fileName)\"", replacement: filePath,
-                               background: false)
+            try FileManager.default.copyItem(atPath: configFilePath, toPath: filePath)
 
         } catch {
             log.add(String(localized: "Error backing up config: \(error.localizedDescription)", bundle: .module))

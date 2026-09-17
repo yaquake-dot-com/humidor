@@ -726,9 +726,10 @@ private struct ChatsSettingsPage: View {
             }
 
             Section(String(localized: "Timestamps")) {
-                TextField(String(localized: "Private chat format:"), text: $preferences.draft.logging.privateTimestamp)
-                TextField(String(localized: "Chat room format:"), text: $preferences.draft.logging.roomsTimestamp)
-                FormatCodesLink()
+                TimestampPicker(title: String(localized: "Private chat format:"),
+                                format: $preferences.draft.logging.privateTimestamp)
+                TimestampPicker(title: String(localized: "Chat room format:"),
+                                format: $preferences.draft.logging.roomsTimestamp)
             }
 
             Section(String(localized: "Text-to-Speech")) {
@@ -763,10 +764,25 @@ private struct ChatsSettingsPage: View {
     }
 }
 
-private struct FormatCodesLink: View {
+/// Choice of a timestamp format, shown as the current time in each format
+private struct TimestampPicker: View {
+
+    let title: String
+    @Binding var format: String
+
+    /// Time, and date and time, in the format of the system locale
+    private static let formats = ["%X", "%x %X"]
+
+    private var choices: [String] {
+        Self.formats.contains(format) || format.isEmpty ? Self.formats : Self.formats + [format]
+    }
 
     var body: some View {
-        Link(String(localized: "Format codes"), destination: URL(string: Preferences.formatCodesURL)!)
+        Picker(title, selection: $format) {
+            ForEach(choices, id: \.self) { format in
+                Text(formatTimestamp(format)).tag(format)
+            }
+        }
     }
 }
 
@@ -840,8 +856,8 @@ private struct LoggingSettingsPage: View {
                 Toggle(String(localized: "Log transfers to file"), isOn: $preferences.draft.logging.transfers)
                 Toggle(String(localized: "Log debug messages to file"),
                        isOn: $preferences.draft.logging.debugFileOutput)
-                TextField(String(localized: "Log timestamp format:"), text: $preferences.draft.logging.logTimestamp)
-                FormatCodesLink()
+                TimestampPicker(title: String(localized: "Log timestamp format:"),
+                                format: $preferences.draft.logging.logTimestamp)
             }
 
             Section(String(localized: "Folder Locations")) {
