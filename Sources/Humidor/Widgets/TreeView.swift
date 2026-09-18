@@ -177,6 +177,8 @@ struct TreeRowPresentation {
     let view: @MainActor (TreeView, TreeRow) -> NSView
     /// Whether a row heads a group of rows. Group rows stay at the top while their rows scroll by.
     var isGroupRow: @MainActor (TreeView, TreeRow) -> Bool = { _, _ in false }
+    /// Color of the band behind group rows
+    var groupRowColor = NSColor.quaternarySystemFill
 }
 
 // MARK: - Tree View
@@ -1355,8 +1357,10 @@ extension TreeView: NSOutlineViewDataSource, NSOutlineViewDelegate, NSMenuDelega
             return nil
         }
 
-        return outlineView.makeView(withIdentifier: GroupRowView.identifier, owner: nil) as? GroupRowView
+        let rowView = outlineView.makeView(withIdentifier: GroupRowView.identifier, owner: nil) as? GroupRowView
             ?? GroupRowView()
+        rowView.color = rowPresentation.groupRowColor
+        return rowView
     }
 
     func outlineView(_ outlineView: NSOutlineView, heightOfRowByItem item: Any) -> CGFloat {
@@ -1507,6 +1511,8 @@ private final class GroupRowView: NSTableRowView {
 
     static let identifier = NSUserInterfaceItemIdentifier("GroupRow")
 
+    var color = NSColor.quaternarySystemFill
+
     init() {
         super.init(frame: .zero)
         identifier = Self.identifier
@@ -1529,8 +1535,8 @@ private final class GroupRowView: NSTableRowView {
             bounds.fill()
         }
 
-        NSColor.quaternarySystemFill.setFill()
-        bounds.fill()
+        color.setFill()
+        bounds.fill(using: .sourceOver)
     }
 
     override func drawSeparator(in dirtyRect: NSRect) {

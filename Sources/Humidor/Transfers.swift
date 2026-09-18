@@ -172,7 +172,7 @@ class TransfersPage: MainPage {
                 .data("id_data", isIteratorKey: true, sortOrder: .ascending)
             ],
             hasTree: true, multiSelect: true, persistentSort: true, name: type == .download ? "download" : "upload",
-            rowPresentation: TransferRows.presentation,
+            rowPresentation: TransferRows.presentation(for: type),
             activateRow: { [unowned self] _, row, _ in onRowActivated(row) },
             deleteAccelerator: { [unowned self] _ in onRemoveTransfersAccelerator() }
         )

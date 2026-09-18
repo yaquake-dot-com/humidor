@@ -10,20 +10,25 @@ enum TransferRows {
 
     private static let separator = "  ·  "
 
-    static let presentation = TreeRowPresentation(
-        height: { treeView, row in
-            isTwoLineRow(treeView, row) ? RowCellView.twoLineHeight : RowCellView.oneLineHeight
-        },
-        view: { treeView, row in
-            let cellView = treeView.outlineView.makeView(withIdentifier: TransferCellView.identifier, owner: nil)
-                as? TransferCellView ?? TransferCellView()
-            configure(cellView, treeView: treeView, row: row)
-            return cellView
-        },
-        isGroupRow: { treeView, row in
-            row.parent == nil && isGroupRow(treeView, row)
-        }
-    )
+    /// Rows of downloads or uploads, whose users are tinted in the color of the direction, as the
+    /// speeds in the sidebar and in the Dock
+    static func presentation(for direction: TransferDirection) -> TreeRowPresentation {
+        TreeRowPresentation(
+            height: { treeView, row in
+                isTwoLineRow(treeView, row) ? RowCellView.twoLineHeight : RowCellView.oneLineHeight
+            },
+            view: { treeView, row in
+                let cellView = treeView.outlineView.makeView(withIdentifier: TransferCellView.identifier, owner: nil)
+                    as? TransferCellView ?? TransferCellView()
+                configure(cellView, treeView: treeView, row: row, direction: direction)
+                return cellView
+            },
+            isGroupRow: { treeView, row in
+                row.parent == nil && isGroupRow(treeView, row)
+            },
+            groupRowColor: (direction == .download ? NSColor.systemBlue : .systemGreen).withAlphaComponent(0.1)
+        )
+    }
 
     /// A user or folder, grouping transfers
     private static func isGroupRow(_ treeView: TreeView, _ row: TreeRow) -> Bool {
@@ -35,7 +40,8 @@ enum TransferRows {
         isGroupRow(treeView, row) || row.parent == nil || !treeView.rowValue(row, "path").string.isEmpty
     }
 
-    private static func configure(_ cellView: TransferCellView, treeView: TreeView, row: TreeRow) {
+    private static func configure(_ cellView: TransferCellView, treeView: TreeView, row: TreeRow,
+                                  direction: TransferDirection) {
         let value = { (columnID: String) in treeView.rowValue(row, columnID) }
         let transfer = value("transfer_data").object(as: Transfer.self)
         let isDimmed = !value("is_sensitive_data").bool
@@ -47,14 +53,14 @@ enum TransferRows {
                                                  timeLeft: value("time_left").string)
 
         if isGroupRow(treeView, row) {
-            let folderPath = value("path").string
-            let isFolder = !folderPath.isEmpty
+            // Folders are grouped below their user, whose name is already shown there
+            let isFolder = row.parent != nil
 
             cellView.configure(
                 icon: NSImage(systemSymbolName: isFolder ? "folder.fill" : "person.crop.circle",
                               accessibilityDescription: nil),
-                title: isFolder ? folderName(transfer?.folderPath ?? folderPath) : value("user").string,
-                subtitle: groupSummary(treeView, row: row, showsUser: isFolder),
+                title: isFolder ? folderTitle(transfer, direction: direction) : value("user").string,
+                subtitle: RowCellView.symbolText("doc", text: humanize(fileCount(treeView, row))),
                 progress: progress, isTwoLines: true, isDimmed: isDimmed
             )
             cellView.toolTip = isFolder ? transfer?.folderPath : nil
@@ -79,22 +85,26 @@ enum TransferRows {
         cellView.toolTip = transfer?.virtualPath
     }
 
-    /// The user of a folder, and the number of files being transferred
-    private static func groupSummary(_ treeView: TreeView, row: TreeRow, showsUser: Bool) -> NSAttributedString {
-        let summary = NSMutableAttributedString()
-
-        if showsUser {
-            summary.append(NSAttributedString(string: treeView.rowValue(row, "user").string + separator))
+    /// A folder the way its user knows it: an upload below the shared folder it comes from, and a
+    /// download below the download folder, so "Music\Album\CD 1" is shown as "Album/CD 1"
+    private static func folderTitle(_ transfer: Transfer?, direction: TransferDirection) -> String {
+        guard let transfer else {
+            return ""
         }
 
-        summary.append(RowCellView.symbolText("doc", text: humanize(fileCount(treeView, row))))
-        return summary
-    }
+        if direction == .upload {
+            // Shared paths start with the name of the shared folder
+            let folders = transfer.folderPath.components(separatedBy: "\\")
+            return folders.count > 1 ? folders.dropFirst().joined(separator: "/") : transfer.folderPath
+        }
 
-    /// The name of a folder. Downloads are stored in local folders, uploads come from shared ones,
-    /// and the paths of a page can be shown in reverse, so the name is taken from the transfer.
-    private static func folderName(_ path: String) -> String {
-        path.components(separatedBy: CharacterSet(charactersIn: "/\\")).last ?? path
+        let downloadFolderPath = core.downloads.defaultDownloadFolder(username: transfer.username)
+        let folderPath = transfer.folderPath.isEmpty ? downloadFolderPath : transfer.folderPath
+
+        if folderPath.hasPrefix(downloadFolderPath + "/") {
+            return String(folderPath.dropFirst(downloadFolderPath.count + 1))
+        }
+        return (folderPath as NSString).lastPathComponent
     }
 
     /// Number of files below a user or folder, which are grouped in folders below a user
