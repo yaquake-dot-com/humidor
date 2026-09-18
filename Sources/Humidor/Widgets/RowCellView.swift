@@ -19,6 +19,13 @@ class RowCellView: NSTableCellView {
     private let subtitleLabel = NSTextField(labelWithString: "")
     private let textStack = NSStackView()
     private var iconWidth: NSLayoutConstraint!
+    private var iconLeading: NSLayoutConstraint!
+
+    /// Space before the icon
+    var leadingInset: CGFloat {
+        get { iconLeading.constant }
+        set { iconLeading.constant = newValue }
+    }
 
     init(identifier: NSUserInterfaceItemIdentifier) {
         super.init(frame: .zero)
@@ -52,9 +59,10 @@ class RowCellView: NSTableCellView {
         }
 
         iconWidth = iconView.widthAnchor.constraint(equalToConstant: 16)
+        iconLeading = iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2)
 
         NSLayoutConstraint.activate([
-            iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2),
+            iconLeading,
             iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
             iconWidth,
             iconView.heightAnchor.constraint(equalTo: iconView.widthAnchor),

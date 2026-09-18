@@ -156,6 +156,9 @@ enum TransferRows {
             isTwoLines: !folderPath.isEmpty, isDimmed: !value("is_sensitive_data").bool
         )
         cellView.toolTip = transfer?.virtualPath
+
+        // Files start where the progress bar of their folder does, one level of indentation further
+        cellView.leadingInset = max(2, TransferItemCellView.textLeading - treeView.outlineView.indentationPerLevel)
     }
 
     // MARK: Values
@@ -216,6 +219,10 @@ private final class TransferItemCellView: NSTableCellView {
 
     static let identifier = NSUserInterfaceItemIdentifier("TransferItemCell")
 
+    private static let iconSize: CGFloat = 32
+    /// Where the name, summary, bar and status start
+    static let textLeading: CGFloat = 2 + iconSize + 10
+
     private let iconView = NSImageView()
     private let titleLabel = NSTextField(labelWithString: "")
     private let infoLabel = NSTextField(labelWithString: "")
@@ -257,9 +264,9 @@ private final class TransferItemCellView: NSTableCellView {
         NSLayoutConstraint.activate([
             iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 2),
             iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 32),
-            iconView.heightAnchor.constraint(equalToConstant: 32),
-            stack.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 10),
+            iconView.widthAnchor.constraint(equalToConstant: Self.iconSize),
+            iconView.heightAnchor.constraint(equalToConstant: Self.iconSize),
+            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Self.textLeading),
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
             stack.centerYAnchor.constraint(equalTo: centerYAnchor),
             progressBar.widthAnchor.constraint(equalTo: stack.widthAnchor),
