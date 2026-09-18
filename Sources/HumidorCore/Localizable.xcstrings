@@ -18,7 +18,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nikotin+ Befehle"
+            "value": "%@-Befehle"
           }
         },
         "es-CL": {
@@ -96,7 +96,7 @@
         "ta": {
           "stringUnit": {
             "state": "translated",
-            "value": "நிகோடின்+ கட்டளைகள்"
+            "value": "%@ கட்டளைகள்"
           }
         },
         "tr": {
@@ -587,6 +587,125 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ 已上线"
+          }
+        }
+      }
+    },
+    "%@/s": {
+      "comment": "A speed, such as \"532 KB/s\"",
+      "localizations": {
+        "ca": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "es-CL": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "es-ES": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "et": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "lv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/с"
+          }
+        },
+        "ta": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/s"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/sn"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/с"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/秒"
           }
         }
       }
@@ -33136,7 +33255,7 @@
         "ta": {
           "stringUnit": {
             "state": "translated",
-            "value": "நிகோடின்+ ஐ விட்டு வெளியேறவும்"
+            "value": "%@ ஐ விட்டு வெளியேறவும்"
           }
         },
         "tr": {

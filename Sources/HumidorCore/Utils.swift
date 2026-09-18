@@ -52,8 +52,6 @@ public enum FileSizeUnit: String, Sendable {
     case bytes = "B"
 }
 
-private let fileSizeSuffixes = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"]
-
 /// Formats a duration in seconds as "m:ss", "h:mm:ss" or "d:hh:mm:ss".
 public func humanLength(_ seconds: Int) -> String {
     var minutes = seconds / 60
@@ -74,32 +72,34 @@ public func humanLength(_ seconds: Int) -> String {
     return String(format: "%d:%02d", minutes, seconds)
 }
 
-private func humanSpeedOrSize(_ number: Double, unit: FileSizeUnit = .automatic) -> String {
-    if unit == .bytes {
-        return humanize(Int(number))
-    }
+// Formatters are safe to use from any thread as long as they aren't changed
+nonisolated(unsafe) private let sizeFormatter: ByteCountFormatter = {
+    let formatter = ByteCountFormatter()
+    formatter.countStyle = .file
+    formatter.allowsNonnumericFormatting = false
+    return formatter
+}()
 
-    var number = number
+nonisolated(unsafe) private let speedFormatter: ByteCountFormatter = {
+    let formatter = ByteCountFormatter()
+    formatter.countStyle = .file
+    formatter.allowedUnits = [.useKB, .useMB, .useGB, .useTB]
+    formatter.allowsNonnumericFormatting = false
+    return formatter
+}()
 
-    for suffix in fileSizeSuffixes {
-        if number < 1024 {
-            if number > 999 {
-                return String(format: "%.4g %@", number, suffix)
-            }
-            return String(format: "%.3g %@", number, suffix)
-        }
-        number /= 1024
-    }
-
-    return String(number)
-}
-
+/// A speed as Finder would show its size, like "532 KB/s". Stopped transfers show "0 KB/s".
 public func humanSpeed(_ speed: Int) -> String {
-    humanSpeedOrSize(Double(speed)) + "/s"
+    let size = speedFormatter.string(fromByteCount: Int64(speed))
+    return String(localized: "\(size)/s", bundle: .module, comment: "A speed, such as \"532 KB/s\"")
 }
 
+/// A size as Finder shows it, like "532 KB" or "1,2 GB"
 public func humanSize(_ fileSize: Int, unit: FileSizeUnit = .automatic) -> String {
-    humanSpeedOrSize(Double(fileSize), unit: unit)
+    if unit == .bytes {
+        return humanize(fileSize)
+    }
+    return sizeFormatter.string(fromByteCount: Int64(fileSize))
 }
 
 private let groupingFormatter: NumberFormatter = {

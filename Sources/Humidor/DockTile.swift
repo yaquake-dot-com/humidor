@@ -8,7 +8,7 @@ import AppKit
 final class DockTile {
 
     /// Speeds below this are not worth a badge
-    fileprivate static let minimumSpeed = 1024
+    fileprivate static let minimumSpeed = 1000
 
     private let tileView = DockTileView()
     private var downloadSpeed = 0
@@ -112,13 +112,14 @@ private final class DockTileView: NSView {
         return result
     }
 
-    /// A speed without its unit, short enough for the Dock, like "1,2 M" or "392 K"
+    /// A speed without its unit, short enough for the Dock, like "1,2 M" or "392 K". Units are
+    /// multiples of 1000, as in the rest of the application.
     private static func shortSpeed(_ speed: Int) -> String {
         var value = Double(speed)
         var unit = ""
 
-        for nextUnit in ["K", "M", "G"] where value >= 1024 {
-            value /= 1024
+        for nextUnit in ["K", "M", "G"] where value >= 1000 {
+            value /= 1000
             unit = nextUnit
         }
 
