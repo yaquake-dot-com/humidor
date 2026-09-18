@@ -4,7 +4,7 @@
 public enum Application {
     public static let name = "Humidor"
     public static let identifier = "org.humidor.Humidor"
-    public static let version = "1.2.0"
+    public static let version = "1.2.1"
 
     /// Address returning the latest released version, as the "tag_name" of a GitHub release.
     /// No version check is made while this is empty.
