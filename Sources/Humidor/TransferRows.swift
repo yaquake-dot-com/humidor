@@ -40,6 +40,11 @@ enum TransferRows {
             isExpandable: { treeView, row in
                 // A folder or user with a single file is shown as that file
                 treeView.children(of: row).count > 1
+            },
+            backgroundColor: { treeView, row in
+                // Every other item is shaded, together with its files
+                let index = treeView.outlineView.childIndex(forItem: row.parent ?? row)
+                return index % 2 == 1 ? NSColor.alternatingContentBackgroundColors[1] : nil
             }
         )
     }

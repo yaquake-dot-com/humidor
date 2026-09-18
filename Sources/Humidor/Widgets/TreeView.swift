@@ -179,6 +179,8 @@ struct TreeRowPresentation {
     var isGroupRow: @MainActor (TreeView, TreeRow) -> Bool = { _, _ in false }
     /// Whether a row with child rows can be expanded to show them
     var isExpandable: @MainActor (TreeView, TreeRow) -> Bool = { _, _ in true }
+    /// Background of a row that isn't a group row, nil for none
+    var backgroundColor: @MainActor (TreeView, TreeRow) -> NSColor? = { _, _ in nil }
 }
 
 // MARK: - Tree View
@@ -1357,12 +1359,23 @@ extension TreeView: NSOutlineViewDataSource, NSOutlineViewDelegate, NSMenuDelega
     }
 
     func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
-        guard let rowPresentation, let row = item as? TreeRow, rowPresentation.isGroupRow(self, row) else {
+        guard let rowPresentation, let row = item as? TreeRow else {
             return nil
         }
 
-        return outlineView.makeView(withIdentifier: GroupRowView.identifier, owner: nil) as? GroupRowView
-            ?? GroupRowView()
+        if rowPresentation.isGroupRow(self, row) {
+            return outlineView.makeView(withIdentifier: GroupRowView.identifier, owner: nil) as? GroupRowView
+                ?? GroupRowView()
+        }
+
+        guard let color = rowPresentation.backgroundColor(self, row) else {
+            return nil
+        }
+
+        let rowView = outlineView.makeView(withIdentifier: ColoredRowView.identifier, owner: nil) as? ColoredRowView
+            ?? ColoredRowView()
+        rowView.color = color
+        return rowView
     }
 
     func outlineView(_ outlineView: NSOutlineView, heightOfRowByItem item: Any) -> CGFloat {
@@ -1509,6 +1522,31 @@ final class TreeOutlineView: NSOutlineView {
 // MARK: - Row Views
 
 /// Row heading a group, on a band of background color like group headers in Finder
+private final class ColoredRowView: NSTableRowView {
+
+    static let identifier = NSUserInterfaceItemIdentifier("ColoredRow")
+
+    var color = NSColor.clear {
+        didSet {
+            needsDisplay = true
+        }
+    }
+
+    init() {
+        super.init(frame: .zero)
+        identifier = Self.identifier
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func drawBackground(in dirtyRect: NSRect) {
+        color.setFill()
+        bounds.fill(using: .sourceOver)
+    }
+}
+
 private final class GroupRowView: NSTableRowView {
 
     static let identifier = NSUserInterfaceItemIdentifier("GroupRow")
