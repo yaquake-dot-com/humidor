@@ -53,9 +53,10 @@ private final class DockTileView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         NSApp.applicationIconImage.draw(in: bounds, from: .zero, operation: .sourceOver, fraction: 1)
 
-        let height = bounds.height * 0.21
-        let spacing = height * 0.14
-        var bottom = bounds.height * 0.05
+        // As large as the badges of other applications, so the speed can be read at a glance
+        let height = bounds.height * 0.28
+        let spacing = height * 0.1
+        var bottom = bounds.height * 0.01
 
         // The upload badge is the lower one, as in the status of the sidebar
         for (speed, symbolName, color) in [(uploadSpeed, "arrow.up", NSColor.systemGreen),
@@ -69,7 +70,7 @@ private final class DockTileView: NSView {
 
     private func drawBadge(_ text: NSAttributedString, color: NSColor, height: CGFloat, bottom: CGFloat) {
         let textSize = text.size()
-        let width = min(bounds.width, textSize.width + height)
+        let width = min(bounds.width, textSize.width + height * 0.8)
         let badge = NSRect(x: (bounds.width - width) / 2, y: bottom, width: width, height: height)
 
         NSGraphicsContext.saveGraphicsState()
@@ -86,7 +87,7 @@ private final class DockTileView: NSView {
         NSColor.white.setStroke()
         let border = NSBezierPath(roundedRect: badge.insetBy(dx: height * 0.04, dy: height * 0.04),
                                   xRadius: height / 2, yRadius: height / 2)
-        border.lineWidth = height * 0.08
+        border.lineWidth = height * 0.06
         border.stroke()
 
         text.draw(at: NSPoint(x: badge.midX - textSize.width / 2, y: badge.midY - textSize.height / 2))
@@ -94,12 +95,12 @@ private final class DockTileView: NSView {
 
     /// An arrow and a short speed, like "392 K"
     private func text(speed: Int, symbolName: String, height: CGFloat) -> NSAttributedString {
-        let fontSize = height * 0.58
-        let font = NSFont.systemFont(ofSize: fontSize, weight: .bold)
+        let fontSize = height * 0.7
+        let font = NSFont.systemFont(ofSize: fontSize, weight: .heavy)
         let result = NSMutableAttributedString()
 
         if let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
-            .withSymbolConfiguration(.init(pointSize: fontSize, weight: .bold)) {
+            .withSymbolConfiguration(.init(pointSize: fontSize * 0.9, weight: .heavy)) {
             let attachment = NSTextAttachment()
             attachment.image = image
             let arrow = NSMutableAttributedString(attachment: attachment)
