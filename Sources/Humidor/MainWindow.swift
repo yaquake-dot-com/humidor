@@ -83,8 +83,10 @@ final class MainWindow {
     private(set) var scanProgressText: String?
     private(set) var userStatus = UserStatus.offline
     private(set) var userStatusUsername: String?
-    var downloadStatusText = ""
-    var uploadStatusText = ""
+    var downloadSpeed = 0
+    var uploadSpeed = 0
+    var downloadUserCount = 0
+    var uploadUserCount = 0
     var isDownloadLimitAlternative = false
     var isUploadLimitAlternative = false
     var isShutdownPending = false

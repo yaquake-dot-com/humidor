@@ -1238,8 +1238,8 @@ final class DownloadsPage: TransfersPage {
         // Sync parent row updates with connection stats
         updatePendingParentRows()
 
-        let downloadBandwidth = humanSpeed(stats.downloadBandwidth)
-        window.downloadStatusText = "\(downloadBandwidth) ( \(core.downloads.activeUsers.count) )"
+        window.downloadSpeed = stats.downloadBandwidth
+        window.downloadUserCount = core.downloads.activeUsers.count
     }
 
     func onClearFinishedFiltered() {
@@ -1410,8 +1410,8 @@ final class UploadsPage: TransfersPage {
         // Sync parent row updates with connection stats
         updatePendingParentRows()
 
-        let uploadBandwidth = humanSpeed(stats.uploadBandwidth)
-        window.uploadStatusText = "\(uploadBandwidth) ( \(core.uploads.activeUsers.count) )"
+        window.uploadSpeed = stats.uploadBandwidth
+        window.uploadUserCount = core.uploads.activeUsers.count
     }
 
     private func shutdownRequest() {

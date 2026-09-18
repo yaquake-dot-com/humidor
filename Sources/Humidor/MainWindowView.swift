@@ -215,55 +215,98 @@ private struct SidebarStatus: View {
                             .fill(statusColor)
                             .frame(width: 8, height: 8)
                         Text(mainWindow.userStatusText)
-                            .lineLimit(1)
                     }
                 }
                 .help(mainWindow.userStatusUsername ?? "")
 
                 Spacer(minLength: 0)
 
+                // Numbers keep their width, the status is shortened when space runs out
                 Button {
                     AppDelegate.shared.onTransferStatistics()
                 } label: {
                     Label(mainWindow.connectionsText, systemImage: "network")
+                        .monospacedDigit()
                 }
+                .fixedSize()
                 .help(String(localized: "Connections"))
 
                 Toggle(isOn: $mainWindow.isLogPaneVisible) {
                     Image(systemName: "text.alignleft")
                 }
                 .toggleStyle(.button)
+                .fixedSize()
                 .help(String(localized: "Show Log Pane"))
             }
 
-            HStack(spacing: 10) {
-                Button {
-                    isDownloadSpeedsShown.toggle()
-                } label: {
-                    Label(mainWindow.downloadStatusText, systemImage: "arrow.down")
-                }
-                .help(String(localized: "Downloading (Speed / Active Users)"))
-                .popover(isPresented: $isDownloadSpeedsShown) {
-                    TransferSpeedsView(direction: .download)
-                }
-
-                Button {
-                    isUploadSpeedsShown.toggle()
-                } label: {
-                    Label(mainWindow.uploadStatusText, systemImage: "arrow.up")
-                }
-                .help(String(localized: "Uploading (Speed / Active Users)"))
-                .popover(isPresented: $isUploadSpeedsShown) {
-                    TransferSpeedsView(direction: .upload)
-                }
+            SpeedMeter(symbolName: "arrow.down", speed: mainWindow.downloadSpeed, color: .blue,
+                       isLimitAlternative: mainWindow.isDownloadLimitAlternative) {
+                isDownloadSpeedsShown.toggle()
             }
-            .lineLimit(1)
+            .help(speedTooltip(String(localized: "Downloading (Speed / Active Users)"),
+                               speed: mainWindow.downloadSpeed, userCount: mainWindow.downloadUserCount))
+            .popover(isPresented: $isDownloadSpeedsShown) {
+                TransferSpeedsView(direction: .download)
+            }
+
+            SpeedMeter(symbolName: "arrow.up", speed: mainWindow.uploadSpeed, color: .green,
+                       isLimitAlternative: mainWindow.isUploadLimitAlternative) {
+                isUploadSpeedsShown.toggle()
+            }
+            .help(speedTooltip(String(localized: "Uploading (Speed / Active Users)"),
+                               speed: mainWindow.uploadSpeed, userCount: mainWindow.uploadUserCount))
+            .popover(isPresented: $isUploadSpeedsShown) {
+                TransferSpeedsView(direction: .upload)
+            }
         }
+        .lineLimit(1)
         .buttonStyle(.borderless)
         .labelStyle(.titleAndIcon)
         .font(.callout)
         .foregroundStyle(.secondary)
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+    }
+
+    private func speedTooltip(_ title: String, speed: Int, userCount: Int) -> String {
+        "\(title)\n\(humanSpeed(speed)) / \(humanize(userCount))"
+    }
+}
+
+/// A transfer speed, and its level on a row of segments. Speeds range from a few kilobytes to tens
+/// of megabytes a second, so each segment stands for four times the speed of the one before.
+private struct SpeedMeter: View {
+
+    let symbolName: String
+    let speed: Int
+    let color: Color
+    /// Whether the alternative speed limit is in use, shown by underlining the speed
+    let isLimitAlternative: Bool
+    let action: () -> Void
+
+    /// Speeds lighting each segment: 1 KB/s, 4 KB/s, 16 KB/s … 16 MB/s
+    private static let levels = (0..<8).map { 1000 << (2 * $0) }
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: symbolName)
+                    .foregroundStyle(color)
+
+                Text(humanSpeed(speed))
+                    .monospacedDigit()
+                    .underline(isLimitAlternative)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+
+                HStack(spacing: 2) {
+                    ForEach(Self.levels, id: \.self) { level in
+                        RoundedRectangle(cornerRadius: 1.5)
+                            .fill(speed >= level ? AnyShapeStyle(color) : AnyShapeStyle(.quaternary))
+                            .frame(width: 5, height: 11)
+                    }
+                }
+            }
+            .contentShape(.rect)
+        }
     }
 }
