@@ -177,8 +177,8 @@ struct TreeRowPresentation {
     let view: @MainActor (TreeView, TreeRow) -> NSView
     /// Whether a row heads a group of rows. Group rows stay at the top while their rows scroll by.
     var isGroupRow: @MainActor (TreeView, TreeRow) -> Bool = { _, _ in false }
-    /// Color of the band behind group rows
-    var groupRowColor = NSColor.quaternarySystemFill
+    /// Whether a row with child rows can be expanded to show them
+    var isExpandable: @MainActor (TreeView, TreeRow) -> Bool = { _, _ in true }
 }
 
 // MARK: - Tree View
@@ -1072,7 +1072,7 @@ final class TreeView: NSObject {
 
     @discardableResult
     func expandRow(_ row: TreeRow) -> Bool {
-        guard row.hasChildren else {
+        guard isExpandable(row) else {
             return false
         }
 
@@ -1331,7 +1331,11 @@ extension TreeView: NSOutlineViewDataSource, NSOutlineViewDelegate, NSMenuDelega
     }
 
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        hasTree && ((item as? TreeRow)?.hasChildren ?? false)
+        (item as? TreeRow).map(isExpandable) ?? false
+    }
+
+    private func isExpandable(_ row: TreeRow) -> Bool {
+        hasTree && row.hasChildren && (rowPresentation?.isExpandable(self, row) ?? true)
     }
 
     // Rows of equal height are faster to lay out, so the outline view only asks for row heights
@@ -1357,10 +1361,8 @@ extension TreeView: NSOutlineViewDataSource, NSOutlineViewDelegate, NSMenuDelega
             return nil
         }
 
-        let rowView = outlineView.makeView(withIdentifier: GroupRowView.identifier, owner: nil) as? GroupRowView
+        return outlineView.makeView(withIdentifier: GroupRowView.identifier, owner: nil) as? GroupRowView
             ?? GroupRowView()
-        rowView.color = rowPresentation.groupRowColor
-        return rowView
     }
 
     func outlineView(_ outlineView: NSOutlineView, heightOfRowByItem item: Any) -> CGFloat {
@@ -1511,8 +1513,6 @@ private final class GroupRowView: NSTableRowView {
 
     static let identifier = NSUserInterfaceItemIdentifier("GroupRow")
 
-    var color = NSColor.quaternarySystemFill
-
     init() {
         super.init(frame: .zero)
         identifier = Self.identifier
@@ -1535,7 +1535,7 @@ private final class GroupRowView: NSTableRowView {
             bounds.fill()
         }
 
-        color.setFill()
+        NSColor.quaternarySystemFill.setFill()
         bounds.fill(using: .sourceOver)
     }
 

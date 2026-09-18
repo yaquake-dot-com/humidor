@@ -541,8 +541,14 @@ class TransfersPage: MainPage {
         if childTransfers.isEmpty {
             // Remove parent row if no children are present anymore
             if let userFolderPath {
-                if let transfer = treeView.rowValue(row, "transfer_data").object(as: Transfer.self) {
-                    users[transfer.username]?.childTransfers.removeAll { $0 === transfer }
+                if let transfer = treeView.rowValue(row, "transfer_data").object(as: Transfer.self),
+                   let userParentRow = users[transfer.username] {
+                    userParentRow.childTransfers.removeAll { $0 === transfer }
+
+                    // Users without a row of their own have no row to remove them with
+                    if userParentRow.row == nil && userParentRow.childTransfers.isEmpty {
+                        users.removeValue(forKey: transfer.username)
+                    }
                 }
                 paths.removeValue(forKey: userFolderPath)
 
@@ -740,20 +746,21 @@ class TransfersPage: MainPage {
         }
 
         if groupingMode != .ungrouped {
-            // Group by folder or user
+            // Group by folder or user. Folders are listed by themselves, as the items of a download
+            // manager, and show their user; users only get a row of their own when grouping by user.
             if users[user] == nil {
-                // Create parent if it doesn't exist
-                let row = treeView.addRow(
-                    parentRowValues(user: user, path: "", status: translatedStatus, isSensitive: isSensitive,
-                                    transfer: Transfer(username: user, virtualPath: "", status: status)),
-                    selectRow: false
-                )
+                var row: TreeRow?
 
-                if isExpandAllowed {
-                    shouldExpandUser = (groupingMode == .folderGrouping) || isExpanded
+                if groupingMode == .userGrouping {
+                    row = treeView.addRow(
+                        parentRowValues(user: user, path: "", status: translatedStatus, isSensitive: isSensitive,
+                                        transfer: Transfer(username: user, virtualPath: "", status: status)),
+                        selectRow: false
+                    )
+                    shouldExpandUser = isExpandAllowed && isExpanded
+                    rowID += 1
                 }
 
-                rowID += 1
                 users[user] = ParentRow(row: row)
             }
 
@@ -791,7 +798,7 @@ class TransfersPage: MainPage {
                 parentRow = userFolderPathRow
                 folderParentRow.childTransfers.append(transfer)
 
-                if selectParent, let userRow, shouldExpandUser || treeView.isRowExpanded(userRow) {
+                if selectParent {
                     selectRow = parentRow
                 }
 
@@ -978,10 +985,6 @@ class TransfersPage: MainPage {
             treeView.expandAllRows()
         } else {
             treeView.collapseAllRows()
-
-            if groupingMode == .folderGrouping {
-                treeView.expandRootRows()
-            }
         }
 
         if type == .download {
