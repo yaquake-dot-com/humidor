@@ -18,6 +18,8 @@ final class Presentations {
 
     private(set) var dialogs: [MessageDialog] = []
     private(set) var fileRequest: FileRequest?
+    /// A request whose panel has closed, until its answer arrives
+    @ObservationIgnored private var closedFileRequest: FileRequest?
 
     /// Window that shows what is requested now
     @ObservationIgnored fileprivate var activeHost: String?
@@ -48,14 +50,29 @@ final class Presentations {
     func present(_ request: FileRequest) {
         request.host = host()
         fileRequest = request
+        closedFileRequest = nil
     }
 
-    fileprivate func finishFileRequest(_ request: FileRequest, urls: [URL]?) {
+    /// The panel closes before or after it answers, so the request is kept until the answer
+    fileprivate func closeFileRequest(_ request: FileRequest) {
         guard fileRequest === request else {
             return
         }
 
         fileRequest = nil
+        closedFileRequest = request
+    }
+
+    /// Chosen files and folders, or nil when the panel was cancelled
+    fileprivate func answerFileRequest(urls: [URL]?, host: String) {
+        guard let request = closedFileRequest ?? fileRequest, request.host == host else {
+            return
+        }
+
+        if fileRequest === request {
+            fileRequest = nil
+        }
+        closedFileRequest = nil
 
         if let urls {
             request.callback(urls.map(\.path))
@@ -144,7 +161,7 @@ private struct PresentationHost: ViewModifier {
             get: { fileRequest != nil },
             set: { isPresented in
                 if !isPresented, let fileRequest {
-                    presentations.finishFileRequest(fileRequest, urls: nil)
+                    presentations.closeFileRequest(fileRequest)
                 }
             }
         )
@@ -164,9 +181,9 @@ private struct PresentationHost: ViewModifier {
             .fileImporter(isPresented: isFileImporterPresented,
                           allowedContentTypes: fileRequest?.contentTypes ?? [.item],
                           allowsMultipleSelection: fileRequest?.selectMultiple ?? false) { result in
-                if let fileRequest {
-                    presentations.finishFileRequest(fileRequest, urls: try? result.get())
-                }
+                presentations.answerFileRequest(urls: try? result.get(), host: id)
+            } onCancellation: {
+                presentations.answerFileRequest(urls: nil, host: id)
             }
             .fileDialogMessage(Text(fileRequest?.title ?? ""))
             .fileDialogDefaultDirectory(fileRequest?.initialFolder)
