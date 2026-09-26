@@ -8,13 +8,15 @@ struct PageDescription: View {
 
     let systemImage: String
     let title: String
-    let description: String
+    var description = ""
 
     var body: some View {
         ContentUnavailableView {
             Label(title, systemImage: systemImage)
         } description: {
-            Text(description)
+            if !description.isEmpty {
+                Text(description)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -65,6 +67,9 @@ struct TransfersView: View {
                     .bottomBar(horizontalPadding: 10, verticalPadding: 6) {
                         actionBar
                     }
+            } else if page.filterMode != .all && !page.transferList.isEmpty {
+                // Transfers are there, but none of them passes the filter
+                PageDescription(systemImage: "line.3.horizontal.decrease", title: filterTitle)
             } else if isDownloads {
                 PageDescription(
                     systemImage: "arrow.down.circle",
@@ -97,6 +102,8 @@ struct TransfersView: View {
                 }
                 .help(String(localized: "Files"))
 
+                filterMenu
+
                 sortMenu
 
                 if page.groupingMode != .ungrouped {
@@ -116,6 +123,35 @@ struct TransfersView: View {
 
             }
         }
+    }
+
+    private static let filters: [(mode: TransferFilter, title: String)] = [
+        (.all, String(localized: "All")),
+        (.active, String(localized: "Active")),
+        (.queued, String(localized: "In Queue")),
+        (.finished, String(localized: "Finished")),
+        (.failed, String(localized: "Failed"))
+    ]
+
+    private var filterTitle: String {
+        Self.filters.first { $0.mode == page.filterMode }?.title ?? ""
+    }
+
+    private var filterMenu: some View {
+        Menu {
+            Picker(String(localized: "Filter"),
+                   selection: Binding(get: { page.filterMode }, set: { page.onFilter($0) })) {
+                ForEach(Self.filters, id: \.mode) { filter in
+                    Text(filter.title).tag(filter.mode)
+                }
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+        } label: {
+            Label(filterTitle, systemImage: "line.3.horizontal.decrease")
+                .labelStyle(.titleAndIcon)
+        }
+        .help(String(localized: "Filter"))
     }
 
     private static let sortColumns: [(id: String, title: String)] = [

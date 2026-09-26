@@ -79,6 +79,15 @@ public enum SpeedLimitMode: String, Codable, Sendable {
     case alternative
 }
 
+/// Which transfers a page of transfers shows
+public enum TransferFilter: String, Codable, Sendable {
+    case all
+    case active
+    case queued
+    case finished
+    case failed
+}
+
 public enum GroupingMode: String, Codable, Sendable {
     case ungrouped
     case folderGrouping = "folder_grouping"
@@ -143,6 +152,8 @@ public struct TransferSettings: Codable, Sendable {
     public var friendsNoLimits = false
     public var groupDownloads = GroupingMode.folderGrouping
     public var groupUploads = GroupingMode.folderGrouping
+    public var filterDownloads = TransferFilter.all
+    public var filterUploads = TransferFilter.all
     public var geoBlock = false
     public var geoBlockCountryCodes: [String] = [""]
     public var remoteDownloads = false

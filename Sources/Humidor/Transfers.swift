@@ -36,9 +36,9 @@ class TransfersPage: MainPage {
         .finished: 1,
         .paused: 2,
         .cancelled: 3,
-        .queued: 4,
-        TransferStatus(rawValue: "Queued (prioritized)"): 4,
-        TransferStatus(rawValue: "Queued (privileged)"): 4,
+        .queued: queuedStatusPriority,
+        TransferStatus(rawValue: "Queued (prioritized)"): queuedStatusPriority,
+        TransferStatus(rawValue: "Queued (privileged)"): queuedStatusPriority,
         .userLoggedOff: 5,
         .connectionClosed: 6,
         .connectionTimeout: 7,
@@ -52,6 +52,7 @@ class TransfersPage: MainPage {
         .transferring: 9999
     ]
 
+    static let queuedStatusPriority = 4
     static let unknownStatusPriority = 1000
 
     /// Row of a transfer in the list view
@@ -113,6 +114,8 @@ class TransfersPage: MainPage {
     @ObservationIgnored private var popupMenuCopy: PopupMenu!
 
     private(set) var groupingMode: GroupingMode?
+    private(set) var filterMode = TransferFilter.all
+    @ObservationIgnored private var visibleFileCount = 0
     private(set) var hasTransfers = false
     private(set) var userCountText = "0"
     private(set) var fileCountText = "0"
@@ -133,6 +136,7 @@ class TransfersPage: MainPage {
         self.retryLabel = retryLabel
         self.abortLabel = abortLabel
         self.isExpanded = (type == .download) ? config.transfers.downloadsExpanded : config.transfers.uploadsExpanded
+        self.filterMode = (type == .download) ? config.transfers.filterDownloads : config.transfers.filterUploads
 
         treeView = TreeView(
             columns: [
@@ -371,9 +375,10 @@ class TransfersPage: MainPage {
         }
     }
 
+    /// Users and files of the list, which the filter can leave out
     private func updateNumUsersFiles() {
         userCountText = humanize(users.count)
-        fileCountText = humanize(transferList.count)
+        fileCountText = humanize(filterMode == .all ? transferList.count : visibleFileCount)
     }
 
     func updateModel(_ transfer: Transfer? = nil, updateParent: Bool = true) {
@@ -662,6 +667,11 @@ class TransfersPage: MainPage {
             status = TransferStatus(rawValue: "\(status.rawValue) (\(modifier))")
         }
 
+        guard matchesFilter(status) else {
+            removeTransferRow(transfer)
+            return false
+        }
+
         let translatedStatus = translateStatus(status)
         let size = transfer.size
         let speed = transfer.speed
@@ -840,6 +850,10 @@ class TransfersPage: MainPage {
         ], selectRow: false, parent: parentRow)
 
         iterators[transfer] = row.map { .row($0) }
+
+        if row != nil {
+            visibleFileCount += 1
+        }
         rowID += 1
 
         if shouldExpandUser, let userRow {
@@ -874,6 +888,7 @@ class TransfersPage: MainPage {
 
     func clearModel() {
         isInitialized = false
+        visibleFileCount = 0
         users.removeAll()
         paths.removeAll()
         pendingFolderRows.removeAll()
@@ -905,12 +920,16 @@ class TransfersPage: MainPage {
     }
 
     func clearTransfer(_ event: TransferUpdate) {
-        let transfer = event.transfer
-        let rowState = iterators.removeValue(forKey: transfer)
+        removeTransferRow(event.transfer, updateParent: event.updateParent)
+    }
 
-        guard let row = rowState?.row else {
+    /// Removes the row of a transfer that was cleared, or that the filter doesn't let through
+    private func removeTransferRow(_ transfer: Transfer, updateParent: Bool = true) {
+        guard let row = iterators.removeValue(forKey: transfer)?.row else {
             return
         }
+
+        visibleFileCount -= 1
 
         let user = transfer.username
 
@@ -926,7 +945,7 @@ class TransfersPage: MainPage {
 
         treeView.removeRow(row)
 
-        if event.updateParent {
+        if updateParent {
             updateParentRows(transfer)
             updateNumUsersFiles()
         }
@@ -934,6 +953,37 @@ class TransfersPage: MainPage {
         if treeView.isEmpty {
             // Show tab description
             hasTransfers = false
+        }
+    }
+
+    /// Whether a transfer of this status is one of those the page shows
+    private func matchesFilter(_ status: TransferStatus) -> Bool {
+        let isQueued = Self.statusPriorities[status] == Self.queuedStatusPriority
+        let isActive = (status == .transferring || status == .gettingStatus)
+
+        return switch filterMode {
+        case .all: true
+        case .active: isActive
+        case .queued: isQueued
+        case .finished: status == .finished
+        // Cancelled, paused and filtered transfers, and those that ran into an error
+        case .failed: !isActive && !isQueued && status != .finished
+        }
+    }
+
+    func onFilter(_ mode: TransferFilter) {
+        if type == .download {
+            config.transfers.filterDownloads = mode
+        } else {
+            config.transfers.filterUploads = mode
+        }
+        config.writeConfiguration()
+
+        filterMode = mode
+        clearModel()
+
+        if !transferList.isEmpty {
+            updateModel()
         }
     }
 
